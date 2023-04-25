@@ -13,7 +13,7 @@ export interface Credentials {
   password: string;
 }
 
-export class AuthClient {
+export class Login {
   private axiosInstance: AxiosInstance;
   private baseURL: string;
 
