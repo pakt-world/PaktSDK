@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 
-interface LoginResponse {
+export interface LoginResponse {
   access_token: string;
   expires_in: number;
   token_type: string;
@@ -13,7 +13,7 @@ export interface Credentials {
   password: string;
 }
 
-export class Login {
+class Login {
   private axiosInstance: AxiosInstance;
   private baseURL: string;
 

@@ -1,4 +1,4 @@
-import { Registration } from "../src/services/authentication";
+import { Registration } from "../../src/services/authentication";
 import * as dotenv from "dotenv";
 dotenv.config();
 
@@ -10,13 +10,13 @@ const lastName = process.env.LASTNAME as string;
 
 (async () => {
   try {
-    const token = await authSDK.registration({
+    const response = await authSDK.registration({
       firstName: firstName,
       lastName: lastName,
       email: email,
       password: password,
     });
-    console.log("Registration was successful:", token);
+    console.log("Registration was successful:", response);
   } catch (error: Error | any) {
     console.error("Registration was not successful:", error.message);
   }

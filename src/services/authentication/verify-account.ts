@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 
-interface VerificationResponse {
+export interface VerificationResponse {
   code: number;
   message: string;
   data?: any;

@@ -1,4 +1,4 @@
-import { PasswordReset } from "../src/services/authentication";
+import { PasswordReset } from "../../src/services/authentication";
 
 const baseUrl = "https://pakt-module-api.herokuapp.com";
 const sdk = new PasswordReset(baseUrl);

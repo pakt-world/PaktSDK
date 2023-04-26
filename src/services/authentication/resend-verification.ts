@@ -1,16 +1,16 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 
-interface ResendVerificationEmailData {
+export interface ResendVerificationEmailData {
   email: string;
 }
 
-interface ResendVerificationEmailResponse {
+export interface ResendVerificationEmailResponse {
   code: number;
   message: string;
   data?: any;
 }
 
-export class ResendVerificationEmail {
+class ResendVerificationEmail {
   private axiosInstance: AxiosInstance;
   private baseURL: string;
 
@@ -25,7 +25,6 @@ export class ResendVerificationEmail {
     resendVerificationEmailData: ResendVerificationEmailData
   ): Promise<ResendVerificationEmailResponse> {
     try {
-      console.log(resendVerificationEmailData)
       const response: AxiosResponse<ResendVerificationEmailResponse> =
         await this.axiosInstance.post(
           "/v1/auth/verify/resend",

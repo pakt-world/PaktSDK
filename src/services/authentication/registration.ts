@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 
-interface RegistrationResponse {
+export interface RegistrationResponse {
   code: number;
   message: string;
   meta: string;

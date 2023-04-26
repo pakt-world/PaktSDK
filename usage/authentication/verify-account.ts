@@ -1,4 +1,4 @@
-import { Verification } from "../src/services/authentication";
+import { Verification } from "../../src/services/authentication";
 
 const authSDK = new Verification("https://pakt-module-api.herokuapp.com");
 // const verificationToken = "884072" as string; // Replace with a valid verification token

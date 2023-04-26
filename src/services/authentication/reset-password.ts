@@ -2,20 +2,20 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 
 // Define the request payload interface
-interface ResetPasswordPayload {
+export interface ResetPasswordPayload {
   email: string;
   new_password: string;
   reset_token: string;
 }
 
 // Define the response data interface
-interface ResetPasswordResponse {
+export interface ResetPasswordResponse {
   success: boolean;
   message: string;
 }
 
 // Define the error response data interface
-interface ErrorResponseData {
+export interface ErrorResponseData {
   message: string;
 }
 
