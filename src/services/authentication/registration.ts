@@ -71,3 +71,5 @@ export class Registration {
     }
   }
 }
+
+export default Registration

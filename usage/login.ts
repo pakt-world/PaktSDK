@@ -1,4 +1,4 @@
-import { Login } from '../src/services/authentication/login';
+import { Login } from '../src/services/authentication';
 import * as dotenv from 'dotenv'
 dotenv.config()
 
@@ -13,8 +13,8 @@ const password = process.env.PASSWORD as string
         email: email,
         password: password,
       });
-      console.log('Access Token:', token);
+      console.log('Login Was Successfull:', token);
     } catch (error:Error | any) {
-    console.error('Error:', error.message);
+    console.error('Login Failed:', error.message);
     }
 })();

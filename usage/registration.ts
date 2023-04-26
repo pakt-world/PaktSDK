@@ -1,4 +1,4 @@
-import { Registration } from '../src/services/authentication/registration';
+import { Registration } from '../src/services/authentication';
 import * as dotenv from 'dotenv'
 dotenv.config()
 
@@ -17,8 +17,8 @@ const lastName = process.env.LASTNAME as string
         email: email,
         password: password,
       });
-      console.log('Access Token:', token);
+      console.log('Registration was successful:', token);
     } catch (error:Error | any) {
-    console.error('Error:', error.message);
+    console.error('Registration was not successful:', error.message);
     }
 })();
