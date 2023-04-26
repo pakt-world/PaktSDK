@@ -1,4 +1,4 @@
-import { ResendVerificationEmail } from "../src/services/authentication";
+import { ResendVerificationEmail } from "../../src/services/authentication";
 import * as dotenv from 'dotenv'
 dotenv.config();
 

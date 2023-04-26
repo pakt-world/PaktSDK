@@ -1,4 +1,4 @@
-import { Login } from '../src/services/authentication';
+import { Login } from '../../src/services/authentication';
 import * as dotenv from 'dotenv'
 dotenv.config()
 
