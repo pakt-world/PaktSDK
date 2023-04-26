@@ -70,4 +70,4 @@ class PasswordReset {
   }
 }
 
-export default PasswordReset
+export default PasswordReset;

@@ -6,6 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "npx ts-node usage/registration.ts ",
+    "verify": "npx ts-node usage/verify-account.ts ",
+    "resend": "npx ts-node usage/resend-verification.ts ",
     "build": "rimraf ./build && tsc",
     "server": "node build/usage/registration.js"
   },

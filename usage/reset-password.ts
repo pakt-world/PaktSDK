@@ -1,4 +1,4 @@
-import { PasswordReset}  from "../src/services/authentication";
+import { PasswordReset } from "../src/services/authentication";
 
 const baseUrl = "https://pakt-module-api.herokuapp.com";
 const sdk = new PasswordReset(baseUrl);
@@ -11,7 +11,7 @@ const sdk = new PasswordReset(baseUrl);
 
     const response = await sdk.resetPassword(email, newPassword, resetToken);
     console.log("Password reset successful:", response);
-  } catch (error:Error | any) {
+  } catch (error: Error | any) {
     console.error("Error resetting password:", error.message);
   }
 })();

@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosResponse } from "axios";
 
 interface LoginResponse {
   access_token: string;
@@ -26,15 +26,13 @@ export class Login {
 
   async login(credentials: Credentials): Promise<LoginResponse> {
     try {
-      const response: AxiosResponse<LoginResponse> = await this.axiosInstance.post(
-        '/v1/auth/login',
-        credentials
-      );
+      const response: AxiosResponse<LoginResponse> =
+        await this.axiosInstance.post("/v1/auth/login", credentials);
       return response.data;
-    } catch (error) {
+    } catch (error: Error | any) {
       throw error;
     }
   }
 }
 
-export default Login
+export default Login;

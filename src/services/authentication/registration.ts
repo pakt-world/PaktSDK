@@ -63,13 +63,9 @@ export class Registration {
         await this.axiosInstance.post("/v1/auth/create-account", credentials);
       return response.data;
     } catch (error: Error | any) {
-      if (error instanceof Error) {
-        console.log(error);
-        throw error;
-      }
-      throw new Error(`Registration failed: ${error.message}`);
+      throw error;
     }
   }
 }
 
-export default Registration
+export default Registration;
