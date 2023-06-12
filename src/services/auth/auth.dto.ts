@@ -11,3 +11,7 @@ export interface LoginRequest {
   email: string;
   password: string;
 }
+
+export interface AuthenticationModuleType {
+  login(credential: LoginRequest): Promise<LoginResponse>;
+}

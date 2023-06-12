@@ -1,39 +1,38 @@
-import axios, { AxiosInstance } from "axios";
-import AuthenticationModule, { AuthenticationModuleType } from "./authentication";
+import { Container, Service } from 'typedi';
+import { AuthenticationModule, AuthenticationModuleType } from "./auth";
+import { PaktConfig } from '../utils/config';
+import { PAKT_CONFIG } from '../utils/token';
 
-export interface LoginResponse {
-  access_token: string;
-  expires_in: number;
-  token_type: string;
-  scope: string;
-  refresh_token: string;
-}
+@Service({ transient: true })
+class PaktSDK<T>  {
+  auth: AuthenticationModuleType;
 
-export interface Credentials {
-  email: string;
-  password: string;
-}
-
-class PaktSDK {
-  private axiosInstance: AxiosInstance;
-  private baseURL: string;
-
-  constructor(baseURL: string, apiKey: string) {
-    this.baseURL = baseURL;
-    this.axiosInstance = axios.create({
-      baseURL: this.baseURL,
-      headers: {
-        "api-key": apiKey
-      }
-    });
+  constructor(private readonly id: string) {
+    this.auth = Container.of(id).get(AuthenticationModule)
   }
 
-  async authentication(): Promise<AuthenticationModuleType> {
-    try {
-      return new AuthenticationModule(this.axiosInstance);
-    } catch (error: Error | any) {
-      throw error;
+  /**
+   * Initialize Pakt SDK. This method must be called before any other method.
+   * Default configuration is used if no configuration is provided.
+   * @param config
+   */
+  public static async init<T>(config: PaktConfig): Promise<PaktSDK<T>> {
+    const defaultConfig: PaktConfig = {
+      ...config,
     }
+
+    const id = PaktSDK.generateRandomString()
+    Container.of(id).set(PAKT_CONFIG, defaultConfig)
+    return new PaktSDK<T>(id)
+  }
+
+  private static generateRandomString() {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    let result = ''
+    for (let i = 0; i < 60; i++) {
+      result += characters.charAt(Math.floor(Math.random() * characters.length))
+    }
+    return result
   }
 }
 
