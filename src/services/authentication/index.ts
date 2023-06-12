@@ -1,6 +1,6 @@
 import { AxiosInstance, AxiosResponse } from "axios";
 import { LoginRequest, LoginResponse} from "../../dto/authentication/types";
-import { API_PATHS } from "../utils/constants";
+import { API_PATHS } from "../../utils/constants";
 
 export interface AuthenticationModuleType  {
   login: (credential: LoginRequest)=> Promise<LoginResponse>;
