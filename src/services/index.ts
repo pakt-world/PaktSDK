@@ -10,7 +10,6 @@ class PaktSDK<T>  {
   constructor(private readonly id: string) {
     this.auth = Container.of(id).get(AuthenticationModule)
   }
-
   /**
    * Initialize Pakt SDK. This method must be called before any other method.
    * Default configuration is used if no configuration is provided.
@@ -25,7 +24,10 @@ class PaktSDK<T>  {
     Container.of(id).set(PAKT_CONFIG, defaultConfig)
     return new PaktSDK<T>(id)
   }
-
+  /**
+   * Generate Random String. This method is used to generate random strings.
+   * @param config
+   */
   private static generateRandomString() {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
     let result = ''

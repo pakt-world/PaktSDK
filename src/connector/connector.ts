@@ -1,7 +1,10 @@
 import { Container, Service } from 'typedi';
-// import { version } from '../../package.json';
+import { version } from '../../package.json';
 import { GetUrl, PostRequest } from "./connector.dto";
 import { PAKT_CONFIG } from '../utils/token';
+import { Headers, RequestInfo, RequestInit } from 'node-fetch';
+import { API_PATHS } from '../utils';
+const fetch = (url: RequestInfo, init?: RequestInit) => import("node-fetch").then(({ default: fetch }) => fetch(url, init));
 
 @Service({
   factory: (data: { id: string }) => {
@@ -32,7 +35,7 @@ export class PaktConnector {
     const request: RequestInit = {
       headers,
       method,
-      body: body ? JSON.stringify(body) : null,
+      body: body ? JSON.stringify(body) : undefined,
     }
 
     const start = Date.now()
@@ -50,9 +53,8 @@ export class PaktConnector {
             await res.clone().text(),
           )
         }
-        if (res.ok) {
-          return res.json()
-        }
+        const response = await res.json();
+        return { ...response, code: res.status };
       })
     } catch (error) {
       if (verbose) {
@@ -64,7 +66,9 @@ export class PaktConnector {
 
   private getUrl({ path, params }: GetUrl) {
     const config = Container.of(this.id).get(PAKT_CONFIG)
-    const url = new URL(path || "", config.baseUrl)
+    const realPath = API_PATHS.API_VERSION + path;
+    const url = new URL(realPath || "", config.baseUrl)
+    console.log(realPath, url);
 
     if (params) {
       Object.keys(params)
@@ -83,7 +87,7 @@ export class PaktConnector {
     const config = Container.of(this.id).get(PAKT_CONFIG)
     const headers = new Headers({
       'Content-Type': 'application/json',
-      'x-pkt-sdk-version': "1.0.0",
+      'x-pkt-sdk-version': version,
       'x-pkt-sdk-product': 'JS',
       'x-pkt-testnet': `${config.testnet}`,
       'x-pkt-sdk-retry': `${retry}`,

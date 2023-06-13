@@ -18,7 +18,7 @@ type ErrorWithMessage = {
 }
 
 export const ErrorUtils = {
-  tryFail: async <T>(f: (() => Promise<T>) | (() => T)): Promise<ResponseDto<T>> => {
+  tryFail: async <T>(f: (() => Promise<T>) | (() => T)): (Promise<ResponseDto<T> | T>) => {
     try {
       const data = await f()
       return {

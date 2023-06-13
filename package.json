@@ -9,7 +9,7 @@
   "types": "./dist/src/main.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx ts-node usage/authentication/registration.ts ",
+    "dev": "npx ts-node ./examples/typescript/src/index.ts",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
     "build": "rimraf ./build && tsc",
@@ -20,7 +20,7 @@
     "url": "git+https://github.com/pakt-world/PaktSDK.git"
   },
   "keywords": [
-    "pakt"
+    "pakt", "pakt-api", "pakt-sdk"
   ],
   "author": {
     "name": "BeardKoda",
@@ -55,6 +55,7 @@
     "undici": "^5.21.0"
   },
   "dependencies": {
+    "node-fetch": "^2.6.6",
     "reflect-metadata": "^0.1.13",
     "typedi": "^0.10.0"
   }
