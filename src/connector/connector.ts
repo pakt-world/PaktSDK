@@ -23,6 +23,10 @@ export class PaktConnector {
     return this.request<T>({ ...request, method: 'POST' })
   }
 
+  public async put<T>(request: PostRequest) {
+    return this.request<T>({ ...request, method: 'PUT' })
+  }
+
   public async delete<T>(request: GetUrl) {
     return this.request<T>({ ...request, method: 'DELETE' })
   }
