@@ -56,7 +56,12 @@ export type AccountVerifyDto = {
   expiresIn: number;
 } & IUser;
 
-export type ResetDto = void;
+export type ResetDto = {
+  tempToken: {
+    token: string;
+    expiresIn: number;
+  };
+};
 export type ResendVerifyDto = void;
 export type ChangePasswordDto = void;
 export type ValidatePasswordToken = void;
