@@ -20,4 +20,11 @@ export const API_PATHS = {
   NOTIFICATION_FETCH: "/notifications/",
   NOTIFICATION_MARK_ALL: "/notifications/mark/all",
   NOTIFICATION_MARK_ONE: "/notifications/mark",
+  ACCOUNT: "/account",
+  ACCOUNT_ONBOARD: "/account/onboard",
+  ACCOUNT_PASSWORD: "/account/password/change",
+  ACCOUNT_TWO_INIT: "/account/initiate/2fa",
+  ACCOUNT_TWO_ACTIVATE: "/account/activate/2fa",
+  ACCOUNT_TWO_DEACTIVATE: "/account/deactivate/2fa",
+  ACCOUNT_LOGOUT: "/account/logout",
 };

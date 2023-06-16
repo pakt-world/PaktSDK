@@ -1,7 +1,7 @@
 import { Container, Service } from 'typedi';
 import { version } from '../../package.json';
 import { GetUrl, PostRequest } from "./connector.dto";
-import { PAKT_CONFIG } from '../utils/token';
+import { AUTH_TOKEN, PAKT_CONFIG } from '../utils/token';
 import { Headers, RequestInfo, RequestInit } from 'node-fetch';
 import { API_PATHS } from '../utils';
 const fetch = (url: RequestInfo, init?: RequestInit) => import("node-fetch").then(({ default: fetch }) => fetch(url, init));
@@ -88,13 +88,21 @@ export class PaktConnector {
   }
 
   private async headers(retry: number) {
+    let authHeader = {};
     const config = Container.of(this.id).get(PAKT_CONFIG)
+    const authToken = Container.of(this.id).get(AUTH_TOKEN)
+    if (authToken){
+      authHeader = {
+        "Authorization": `Bearer ${authToken}`,
+      };
+    }
     const headers = new Headers({
       'Content-Type': 'application/json',
       'x-pkt-sdk-version': version,
       'x-pkt-sdk-product': 'JS',
       'x-pkt-testnet': `${config.testnet}`,
       'x-pkt-sdk-retry': `${retry}`,
+      ...authHeader,
     })
     if (config.token) {
       headers.append('x-api-key', config.token)
