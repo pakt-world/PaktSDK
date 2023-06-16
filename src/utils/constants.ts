@@ -1,13 +1,12 @@
-
 export const API_PATHS = {
   API_VERSION: "/v1",
   LOGIN: "/auth/login",
   REGISTER: "/auth/create-account",
-  ACCOUNT_VERIFY:"/auth/account/verify",
-  RESEND_VERIFY_LINK:"/auth/account/verify",
-  VALIDATE_PASSWORD_TOKEN:"/auth/validate/password",
-  RESET_PASSWORD:"/auth/password/reset",
-  CHANGE_PASSWORD:"/auth/password/change",
+  ACCOUNT_VERIFY: "/auth/account/verify",
+  RESEND_VERIFY_LINK: "/auth/account/verify",
+  VALIDATE_PASSWORD_TOKEN: "/auth/validate/password",
+  RESET_PASSWORD: "/auth/password/reset",
+  CHANGE_PASSWORD: "/auth/password/change",
   JOB_CREATE: "/job/create",
   JOB_FIND: "/job/views",
   JOB_SAVED: "/job/bookmarks",
@@ -18,4 +17,7 @@ export const API_PATHS = {
   JOB_DELIVERABLE: "/job/deliverable",
   JOB_FETCH: "/job/",
   JOB_COMPLETE: "/job/complete",
-}
+  NOTIFICATION_FETCH: "/notifications/",
+  NOTIFICATION_MARK_ALL: "/notifications/mark/all",
+  NOTIFICATION_MARK_ONE: "/notifications/mark",
+};
