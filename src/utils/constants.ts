@@ -27,4 +27,12 @@ export const API_PATHS = {
   ACCOUNT_TWO_ACTIVATE: "/account/activate/2fa",
   ACCOUNT_TWO_DEACTIVATE: "/account/deactivate/2fa",
   ACCOUNT_LOGOUT: "/account/logout",
+  WALLET_TRANSACTIONS: "/wallet/transactions",
+  A_WALLET_TRANSACTION: "/wallet/transaction",
+  WALLET_EXCHANGE: "/wallet/exchange",
+  WALLET_DATA: "/wallet/data",
+  WALLET_STATS: "/wallet/stats",
+  WALLET_AGGREGATE_STATS: "/wallet/aggregate/stats",
+  WALLETS: "/wallet",
+  SINGLE_WALLET: "/wallet/coin",
 };
