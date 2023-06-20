@@ -35,4 +35,5 @@ export const API_PATHS = {
   WALLET_AGGREGATE_STATS: "/wallet/aggregate/stats",
   WALLETS: "/wallet",
   SINGLE_WALLET: "/wallet/coin",
+  FILE_UPLOAD: "/upload/",
 };
