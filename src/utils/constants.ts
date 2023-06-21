@@ -36,4 +36,5 @@ export const API_PATHS = {
   WALLETS: "/wallet",
   SINGLE_WALLET: "/wallet/coin",
   FILE_UPLOAD: "/upload/",
+  ADD_REVIEW: "/job/review",
 };
