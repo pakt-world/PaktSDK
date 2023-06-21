@@ -2,28 +2,26 @@ import { PaktConnector } from "src/connector";
 import { API_PATHS } from "src/utils/constants";
 import { ErrorUtils, ResponseDto } from "src/utils/response";
 import Container, { Service } from "typedi";
-import { CreateFileUpload, IUploadDto, UploadModuleType } from "./upload.dto";
+import { AddReviewDto, ReviewModuleType } from "./review.dto";
 
 @Service({
   factory: (data: { id: string }) => {
-    return new UploadModule(data.id);
+    return new ReviewModule(data.id);
   },
   transient: true,
 })
-export class UploadModule implements UploadModuleType {
+export class ReviewModule implements ReviewModuleType {
   private id: string;
   private connector: PaktConnector;
-
   constructor(id: string) {
     this.id = id;
     this.connector = Container.of(this.id).get(PaktConnector);
   }
-
-  fileUpload(payload: CreateFileUpload): Promise<ResponseDto<IUploadDto>> {
+  addReview(payload: AddReviewDto): Promise<ResponseDto<void>> {
     const credentials = { ...payload };
     return ErrorUtils.tryFail(async () => {
-      const response: ResponseDto<IUploadDto> = await this.connector.post({
-        path: API_PATHS.FILE_UPLOAD,
+      const response: ResponseDto<void> = await this.connector.post({
+        path: API_PATHS.ADD_REVIEW,
         body: credentials,
       });
       return response.data;

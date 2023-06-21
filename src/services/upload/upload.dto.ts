@@ -15,6 +15,10 @@ interface UploadedUser {
   afroScore: number;
 }
 
+export interface CreateFileUpload {
+  file: Object;
+}
+
 export interface IUploadDto {
   name: string;
   uploaded_by: UploadedUser;
@@ -25,5 +29,5 @@ export interface IUploadDto {
 }
 
 export interface UploadModuleType {
-  fileUpload(): Promise<ResponseDto<IUploadDto>>;
+  fileUpload(payload: CreateFileUpload): Promise<ResponseDto<IUploadDto>>;
 }
