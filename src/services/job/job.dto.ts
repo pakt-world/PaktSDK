@@ -6,8 +6,8 @@ interface JobUser {
       skills: string[];
       availability: string;
       skillIds: object[];
-    }
-  },
+    };
+  };
   _id: string;
   firstName: string;
   lastName: string;
@@ -20,8 +20,8 @@ interface JobDeliverables {
   content: string;
   completed: boolean;
   stage: number;
-  progress: number,
-  status: string,
+  progress: number;
+  status: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -60,14 +60,14 @@ export interface IJobDto {
   paymentCoin: string;
   creator: JobUser | string;
   owner: JobUser | string;
-  invites: string[],
-  applications: string[],
+  invites: string[];
+  applications: string[];
   deliverableIds: JobDeliverables[];
   deliverables: String[];
   category: string;
-  skills: string[],
-  skillIds: JobSkills[],
-  inviteAccepted: boolean,
+  skills: string[];
+  skillIds: JobSkills[];
+  inviteAccepted: boolean;
   isPrivate: boolean;
   recipientCompletedJob: boolean;
   slug: string;
@@ -82,15 +82,15 @@ export type CreateJobDto = {
   paymentFee: string;
   isPrivate: boolean;
   deliveryDate: string;
-  skills: string[],
-  deliverables: string[],
-  invites: string[]
+  skills: string[];
+  deliverables: string[];
+  invites: string[];
 };
 
 export type assignJobDto = {
   jobId: string;
   talentId: string;
-}
+};
 
 export type FindJobDto = {
   page: number;
@@ -98,17 +98,19 @@ export type FindJobDto = {
   total: number;
   limit: number;
   jobs: IJobDto[];
-}
+};
 
-export type filterDto = {
-  page?: string;
-  limit?: string;
-} & object | any;
+export type filterDto =
+  | ({
+      page?: string;
+      limit?: string;
+    } & IJobDto)
+  | any;
 
 export type cancelJobDto = {
   reason: string;
   paymentPercentage: number;
-}
+};
 
 export interface JobModuleType {
   create(payload: CreateJobDto): Promise<ResponseDto<IJobDto>>;
