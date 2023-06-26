@@ -1,3 +1,4 @@
+import { ResponseDto } from "src/utils/response";
 import { IUser } from "../auth";
 
 export type fetchAccountDto = {} & IUser;
@@ -12,28 +13,28 @@ export type updateUserDto = {
       city: string;
       address: string;
       phone: string;
-    },
+    };
     bio: {
       title: string;
       description: string;
-    },
+    };
     talent: {
       about: string;
       availability: string;
       skills: string[];
-    },
+    };
     privateEarnings: boolean;
     privateInvestments: boolean;
-  },
+  };
   socials: {
     github: string;
     twitter: string;
     linkedin: string;
     website: string;
-  }
-}
+  };
+};
 
-export type TwoFATypeDto = "google_auth" | "email"
+export type TwoFATypeDto = "google_auth" | "email";
 
 export type TwoFAresponse = {
   type: TwoFATypeDto;
@@ -42,4 +43,15 @@ export type TwoFAresponse = {
     token: string;
     expiresIn: number;
   };
+};
+
+export interface AccountModuleType {
+  getUser(): Promise<ResponseDto<fetchAccountDto>>;
+  onboardEndpoint(skillCategory: string, profileImage: string, type: string): Promise<ResponseDto<fetchAccountDto>>;
+  updateAccount(payload: updateUserDto): Promise<ResponseDto<fetchAccountDto>>;
+  changePassword(oldPassword: string, newPassword: string): Promise<ResponseDto<fetchAccountDto>>;
+  initate2FA(type: TwoFATypeDto): Promise<ResponseDto<TwoFAresponse>>;
+  active2FA(code: string): Promise<ResponseDto<void>>;
+  deactive2FA(code: string): Promise<ResponseDto<void>>;
+  logout(): Promise<ResponseDto<void>>;
 }
