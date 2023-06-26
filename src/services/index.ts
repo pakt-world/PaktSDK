@@ -15,7 +15,7 @@ import { WalletModuleType } from "./wallet/wallet.dto";
 @Service({ transient: true })
 class PaktSDK<T> {
   auth: AuthenticationModuleType;
-  job: JobModuleType;
+  connection: JobModuleType;
   account: AccountModuleType;
   notifications: NotificationModuleType;
   file: UploadModuleType;
@@ -23,7 +23,7 @@ class PaktSDK<T> {
 
   constructor(private readonly id: string) {
     this.auth = Container.of(id).get(AuthenticationModule);
-    this.job = Container.of(id).get(JobModule);
+    this.connection = Container.of(id).get(JobModule);
     this.account = Container.of(id).get(AccountModule);
     this.notifications = Container.of(id).get(NotificationModule);
     this.file = Container.of(id).get(UploadModule);
