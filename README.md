@@ -154,6 +154,33 @@ export const verifyAccount = async (tempToken: string, token: string) => {
 };
 ```
 
+### Resend Verification Link
+
+In the event, a user needs a new verification OTP (token), this function is used to resend the verification
+
+```typescript
+export const resendVerification = async (email: string) => {
+  type ResetDto = {
+    tempToken: {
+      token: string;
+      expiresIn: number;
+    };
+  };
+  const resent: ResetDto = await sdkInit.auth.resendVerifyLink(email);
+};
+```
+
+### Reset Password
+
+Users can reset password in the case the password cannot be recollected. A temporary authorization is returned as the response, see `ResetDto`.
+An example below:
+
+```typescript
+export const resetPassword = async (email: string) => {
+  const reset: ResetDto = await sdkInit.auth.resetPassword(email);
+};
+```
+
 ## Account
 
 With the Pakt SDK, users can:
@@ -485,4 +512,105 @@ export const exchangeRate = async () => {
 
 ---
 
-## Job
+## Connections
+
+With the PAKT SDK, users can
+
+- Create connections,
+- Get all connections,
+- Get a connection by the id,
+- Get Saved Connections,
+- Get Suggested Connections,
+- Get Invites,
+- Get Related Connections,
+- Cancel Connection,
+- Complete Deliverable for a Connection
+
+### Create Connection
+
+```typescript
+interface IJobDto {
+  _id: string;
+  equity: string;
+  status: string;
+  payoutStatus: string;
+  paymentStatus: string;
+  feePayoutStatus: string;
+  balanceStatus: string;
+  afroScore: number;
+  progress: number;
+  isCard: boolean;
+  deleted: boolean;
+  name: string;
+  build: string;
+  deliveryDate: string;
+  earlyBonus: string;
+  paymentFee: string;
+  description: string;
+  latePenaltyFee: string;
+  failureFee: string;
+  createdAt: string;
+  updatedAt: string;
+  paymentCoin: string;
+  creator: JobUser | string;
+  owner: JobUser | string;
+  invites: string[];
+  applications: string[];
+  deliverableIds: JobDeliverables[];
+  deliverables: String[];
+  category: string;
+  skills: string[];
+  skillIds: JobSkills[];
+  inviteAccepted: boolean;
+  isPrivate: boolean;
+  recipientCompletedJob: boolean;
+  slug: string;
+  cancellationReason: string;
+  expectedAmount: string;
+}
+
+type CreateJobDto = {
+  name: string;
+  category: string;
+  description: string;
+  paymentFee: string;
+  isPrivate: boolean;
+  deliveryDate: string;
+  skills: string[];
+};
+
+export const createConnection = async (payload: CreateJobDto) => {
+  const create: IJobDto = await sdkInit.connection.create(payload);
+};
+```
+
+### Get all Connections
+
+Get all Connections corresponding to an optional filter, else return ALL connections
+
+```typescript
+type filterDto = {
+  page?: string;
+  limit?: string;
+} & IConnectionDto;
+
+type FindConnectionDto = {
+  page: number;
+  pages: number;
+  total: number;
+  limit: number;
+  jobs: IConnectionDto[];
+};
+
+export const getAllConnections = async (filter?: filterDto) => {
+  const connections: FindConnectionDto = await sdkInit.connections.getAll(filter);
+};
+```
+
+### Get Details of a connection
+
+```typescript
+export const getASingleConnection = async (id: string, filter?: filterDto) => {
+  const connection: IConnectionDto = await sdkInit.connections.getById(id, filter);
+};
+```
