@@ -48,8 +48,8 @@ export type RegisterDto = {
     token: string;
     token_type: string;
     expiresIn: number;
-  }
-}
+  };
+};
 
 export type AccountVerifyDto = {
   token: string;
@@ -70,7 +70,7 @@ export interface AuthenticationModuleType {
   login(email: string, password: string): Promise<ResponseDto<LoginDto>>;
   register(firstName: string, lastName: string, email: string, password: string): Promise<ResponseDto<RegisterDto>>;
   verifyAccount(tempToken: string, token: string): Promise<ResponseDto<AccountVerifyDto>>;
-  resendVerifyLink(email: string): Promise<ResponseDto<ResendVerifyDto>>;
+  resendVerifyLink(email: string): Promise<ResponseDto<ResetDto>>;
   resetPassword(email: string): Promise<ResponseDto<ResetDto>>;
   changePassword(token: string, pasword: string): Promise<ResponseDto<ChangePasswordDto>>;
   validatePasswordToken(token: string): Promise<ResponseDto<ValidatePasswordToken>>;
