@@ -7,6 +7,10 @@ import { AuthenticationModule, AuthenticationModuleType } from "./auth";
 import { JobModule } from "./job/job";
 import { JobModuleType } from "./job/job.dto";
 import { NotificationModule, NotificationModuleType } from "./notification";
+import { UploadModule } from "./upload";
+import { UploadModuleType } from "./upload/upload.dto";
+import { WalletModule } from "./wallet/wallet";
+import { WalletModuleType } from "./wallet/wallet.dto";
 
 @Service({ transient: true })
 class PaktSDK<T> {
@@ -14,12 +18,16 @@ class PaktSDK<T> {
   job: JobModuleType;
   account: AccountModuleType;
   notifications: NotificationModuleType;
+  file: UploadModuleType;
+  wallet: WalletModuleType;
 
   constructor(private readonly id: string) {
     this.auth = Container.of(id).get(AuthenticationModule);
     this.job = Container.of(id).get(JobModule);
     this.account = Container.of(id).get(AccountModule);
     this.notifications = Container.of(id).get(NotificationModule);
+    this.file = Container.of(id).get(UploadModule);
+    this.wallet = Container.of(id).get(WalletModule);
   }
   /**
    * Initialize Pakt SDK. This method must be called before any other method.
