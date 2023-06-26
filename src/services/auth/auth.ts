@@ -1,25 +1,33 @@
-import { Container, Service } from 'typedi'
-import { AccountVerifyDto, ChangePasswordDto, LoginDto, RegisterDto, ResetDto } from "./auth.dto";
+import { AUTH_TOKEN, TEMP_TOKEN } from "src/utils/token";
+import { Container, Service } from "typedi";
+import { PaktConnector } from "../../connector";
 import { API_PATHS } from "../../utils/constants";
-import { PaktConnector } from '../../connector';
-import { ErrorUtils, ResponseDto } from '../../utils/response';
-import { AUTH_TOKEN, TEMP_TOKEN } from 'src/utils/token';
+import { ErrorUtils, ResponseDto } from "../../utils/response";
+import {
+  AccountVerifyDto,
+  AuthenticationModuleType,
+  ChangePasswordDto,
+  LoginDto,
+  RegisterDto,
+  ResetDto,
+  ValidatePasswordToken,
+} from "./auth.dto";
 
 // Export all Types to Service
 export * from "./auth.dto";
 
 @Service({
   factory: (data: { id: string }) => {
-    return new AuthenticationModule(data.id)
+    return new AuthenticationModule(data.id);
   },
   transient: true,
 })
-export class AuthenticationModule {
-  private id: string
-  private connector: PaktConnector
+export class AuthenticationModule implements AuthenticationModuleType {
+  private id: string;
+  private connector: PaktConnector;
   constructor(id: string) {
     this.id = id;
-    this.connector = Container.of(this.id).get(PaktConnector)
+    this.connector = Container.of(this.id).get(PaktConnector);
   }
 
   /**
@@ -31,13 +39,13 @@ export class AuthenticationModule {
     return ErrorUtils.tryFail(async () => {
       const credentials = { email, password };
       const response: ResponseDto<LoginDto> = await this.connector.post({ path: API_PATHS.LOGIN, body: credentials });
-      if (response.data.tempToken){
+      if (response.data.tempToken) {
         Container.of(this.id).set(TEMP_TOKEN, response.data.tempToken.token);
-      }else{
+      } else {
         Container.of(this.id).set(AUTH_TOKEN, response.data.token);
       }
       return response.data;
-    })
+    });
   }
 
   /**
@@ -47,11 +55,19 @@ export class AuthenticationModule {
    * @param email
    * @param password
    */
-  async register(firstName: string, lastName: string, email: string, password: string): Promise<ResponseDto<RegisterDto>> {
+  async register(
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string,
+  ): Promise<ResponseDto<RegisterDto>> {
     return ErrorUtils.tryFail(async () => {
-      const credentials = { firstName, lastName, email, password }
-      const response: ResponseDto<RegisterDto> = await this.connector.post({ path: API_PATHS.REGISTER, body: credentials });
-      if (response.data.tempToken.token){
+      const credentials = { firstName, lastName, email, password };
+      const response: ResponseDto<RegisterDto> = await this.connector.post({
+        path: API_PATHS.REGISTER,
+        body: credentials,
+      });
+      if (response.data.tempToken.token) {
         Container.of(this.id).set(TEMP_TOKEN, response.data.tempToken.token);
       }
       return response.data;
@@ -65,8 +81,11 @@ export class AuthenticationModule {
    */
   async verifyAccount(tempToken: string, token: string): Promise<ResponseDto<AccountVerifyDto>> {
     return ErrorUtils.tryFail(async () => {
-      const credentials = { tempToken, token }
-      const response: AccountVerifyDto = await this.connector.post({ path: API_PATHS.ACCOUNT_VERIFY, body: credentials });
+      const credentials = { tempToken, token };
+      const response: AccountVerifyDto = await this.connector.post({
+        path: API_PATHS.ACCOUNT_VERIFY,
+        body: credentials,
+      });
       return response;
     });
   }
@@ -77,9 +96,12 @@ export class AuthenticationModule {
    */
   async resendVerifyLink(email: string): Promise<ResponseDto<ResetDto>> {
     return ErrorUtils.tryFail(async () => {
-      const credentials = { email }
-      const response: ResponseDto<ResetDto> = await this.connector.post({ path: API_PATHS.RESET_PASSWORD, body: credentials });
-      if (response.data.tempToken){
+      const credentials = { email };
+      const response: ResponseDto<ResetDto> = await this.connector.post({
+        path: API_PATHS.RESET_PASSWORD,
+        body: credentials,
+      });
+      if (response.data.tempToken) {
         Container.of(this.id).set(TEMP_TOKEN, response.data.tempToken.token);
       }
       return response.data;
@@ -92,10 +114,13 @@ export class AuthenticationModule {
    */
   async resetPassword(email: string): Promise<ResponseDto<ResetDto>> {
     return ErrorUtils.tryFail(async () => {
-      const credentials = { email }
-      const response: ResponseDto<ResetDto> = await this.connector.post({ path: API_PATHS.RESET_PASSWORD, body: credentials });
+      const credentials = { email };
+      const response: ResponseDto<ResetDto> = await this.connector.post({
+        path: API_PATHS.RESET_PASSWORD,
+        body: credentials,
+      });
       return response.data;
-    })
+    });
   }
 
   /**
@@ -105,8 +130,22 @@ export class AuthenticationModule {
    */
   async changePassword(token: string, password: string): Promise<ResponseDto<ChangePasswordDto>> {
     return ErrorUtils.tryFail(async () => {
-      const credentials = { token, password }
-      const response: ResponseDto<ChangePasswordDto> = await this.connector.post({ path: API_PATHS.CHANGE_PASSWORD, body: credentials });
+      const credentials = { token, password };
+      const response: ResponseDto<ChangePasswordDto> = await this.connector.post({
+        path: API_PATHS.CHANGE_PASSWORD,
+        body: credentials,
+      });
+      return response.data;
+    });
+  }
+
+  validatePasswordToken(token: string): Promise<ResponseDto<ValidatePasswordToken>> {
+    return ErrorUtils.tryFail(async () => {
+      const credentials = { token };
+      const response: ResponseDto<ChangePasswordDto> = await this.connector.post({
+        path: API_PATHS.VALIDATE_PASSWORD_TOKEN,
+        body: credentials,
+      });
       return response.data;
     });
   }
