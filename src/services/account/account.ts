@@ -1,24 +1,24 @@
-import { Container, Service } from 'typedi'
-import { fetchAccountDto, updateUserDto, TwoFATypeDto, TwoFAresponse } from "./account.dto";
+import { Container, Service } from "typedi";
+import { PaktConnector } from "../../connector";
 import { API_PATHS } from "../../utils/constants";
-import { PaktConnector } from '../../connector';
-import { ErrorUtils, ResponseDto, parseUrlWithQUery } from '../../utils/response';
+import { ErrorUtils, ResponseDto } from "../../utils/response";
+import { AccountModuleType, TwoFATypeDto, TwoFAresponse, fetchAccountDto, updateUserDto } from "./account.dto";
 
 // Export all Types to Service
 export * from "./account.dto";
 
 @Service({
   factory: (data: { id: string }) => {
-    return new AccountModule(data.id)
+    return new AccountModule(data.id);
   },
   transient: true,
 })
-export class AccountModule {
-  private id: string
-  private connector: PaktConnector
+export class AccountModule implements AccountModuleType {
+  private id: string;
+  private connector: PaktConnector;
   constructor(id: string) {
     this.id = id;
-    this.connector = Container.of(this.id).get(PaktConnector)
+    this.connector = Container.of(this.id).get(PaktConnector);
   }
 
   /**
@@ -29,7 +29,7 @@ export class AccountModule {
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<fetchAccountDto> = await this.connector.get({ path: API_PATHS.ACCOUNT });
       return response.data;
-    })
+    });
   }
 
   /**
@@ -38,12 +38,19 @@ export class AccountModule {
    * @param profileImage string
    * @param type string
    */
-  async onboardEndpoint(skillCategory: string, profileImage: string, type: string): Promise<ResponseDto<fetchAccountDto>> {
+  async onboardEndpoint(
+    skillCategory: string,
+    profileImage: string,
+    type: string,
+  ): Promise<ResponseDto<fetchAccountDto>> {
     return ErrorUtils.tryFail(async () => {
       const body = { skillCategory, profileImage, type };
-      const response: ResponseDto<fetchAccountDto> = await this.connector.post({ path: API_PATHS.ACCOUNT_ONBOARD, body });
+      const response: ResponseDto<fetchAccountDto> = await this.connector.post({
+        path: API_PATHS.ACCOUNT_ONBOARD,
+        body,
+      });
       return response.data;
-    })
+    });
   }
 
   /**
@@ -55,9 +62,12 @@ export class AccountModule {
   async updateAccount(payload: updateUserDto): Promise<ResponseDto<fetchAccountDto>> {
     return ErrorUtils.tryFail(async () => {
       const body = { ...payload };
-      const response: ResponseDto<fetchAccountDto> = await this.connector.post({ path: API_PATHS.ACCOUNT_ONBOARD, body });
+      const response: ResponseDto<fetchAccountDto> = await this.connector.post({
+        path: API_PATHS.ACCOUNT_ONBOARD,
+        body,
+      });
       return response.data;
-    })
+    });
   }
 
   /**
@@ -65,12 +75,15 @@ export class AccountModule {
    * @param oldPassword string
    * @param newPassword string
    */
-  async changePassword(oldPassword: string, newPassword:string): Promise<ResponseDto<fetchAccountDto>> {
+  async changePassword(oldPassword: string, newPassword: string): Promise<ResponseDto<fetchAccountDto>> {
     return ErrorUtils.tryFail(async () => {
       const body = { oldPassword, newPassword };
-      const response: ResponseDto<fetchAccountDto> = await this.connector.put({ path: API_PATHS.ACCOUNT_PASSWORD, body });
+      const response: ResponseDto<fetchAccountDto> = await this.connector.put({
+        path: API_PATHS.ACCOUNT_PASSWORD,
+        body,
+      });
       return response.data;
-    })
+    });
   }
 
   /**
@@ -80,9 +93,12 @@ export class AccountModule {
   async initate2FA(type: TwoFATypeDto): Promise<ResponseDto<TwoFAresponse>> {
     return ErrorUtils.tryFail(async () => {
       const body = { type };
-      const response: ResponseDto<TwoFAresponse> = await this.connector.post({ path: API_PATHS.ACCOUNT_PASSWORD, body });
+      const response: ResponseDto<TwoFAresponse> = await this.connector.post({
+        path: API_PATHS.ACCOUNT_PASSWORD,
+        body,
+      });
       return response.data;
-    })
+    });
   }
 
   /**
@@ -94,7 +110,7 @@ export class AccountModule {
       const body = { code };
       const response: ResponseDto<void> = await this.connector.post({ path: API_PATHS.ACCOUNT_TWO_ACTIVATE, body });
       return response.data;
-    })
+    });
   }
 
   /**
@@ -106,7 +122,7 @@ export class AccountModule {
       const body = { code };
       const response: ResponseDto<void> = await this.connector.post({ path: API_PATHS.ACCOUNT_TWO_DEACTIVATE, body });
       return response.data;
-    })
+    });
   }
 
   /**
@@ -116,6 +132,6 @@ export class AccountModule {
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<void> = await this.connector.post({ path: API_PATHS.ACCOUNT_LOGOUT });
       return response.data;
-    })
+    });
   }
 }

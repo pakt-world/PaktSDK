@@ -2,7 +2,7 @@ import { PaktConnector } from "src/connector";
 import { API_PATHS } from "src/utils/constants";
 import { ErrorUtils, ResponseDto, parseUrlWithQUery } from "src/utils/response";
 import { Container, Service } from "typedi";
-import { INotificationDto } from "./notification.dto";
+import { FindNotificationDto, NotificationModuleType, filterDto } from "./notification.dto";
 
 export * from "./notification.dto";
 
@@ -12,7 +12,7 @@ export * from "./notification.dto";
   },
   transient: true,
 })
-export class NotificationModule {
+export class NotificationModule implements NotificationModuleType {
   private id: string;
   private connector: PaktConnector;
   constructor(id: string) {
@@ -20,10 +20,11 @@ export class NotificationModule {
     this.connector = Container.of(this.id).get(PaktConnector);
   }
 
-  async getAll(): Promise<ResponseDto<INotificationDto>> {
+  async getAll(filter?: filterDto): Promise<ResponseDto<FindNotificationDto>> {
+    const fetchUrl = parseUrlWithQUery(API_PATHS.NOTIFICATION_FETCH, filter);
     return ErrorUtils.tryFail(async () => {
-      const response: ResponseDto<INotificationDto> = await this.connector.get({
-        path: API_PATHS.NOTIFICATION_FETCH,
+      const response: ResponseDto<FindNotificationDto> = await this.connector.get({
+        path: fetchUrl,
       });
       return response.data;
     });
