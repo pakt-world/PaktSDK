@@ -1,6 +1,10 @@
-![Alt PAKT](https://chainsite-storage.s3.us-east-1.amazonaws.com/lj8mzug9_sdklogo.png)
+![Alt PAKT](https://chainsite-storage.s3.us-east-1.amazonaws.com/ljcvdkvm_SDK.png)
 
 # PAKT
+
+[![Twitter](https://img.shields.io/twitter/follow/PaktWorld?style=social)](https://twitter.com/PaktWorld)
+
+PAKT SDK is a modern software development kit, built for NodeJs.
 
 # Installation
 
@@ -12,11 +16,14 @@ To install PAKT SDK, simply
 
 > :warning: Ensure you are registered on www.pakt.world, with a paid and activated chainsite.
 
-## Usage
+# Usage
 
-### Initialization
+## Initialization
+
+See below code block for initilization
 
 ```typescript
+//Typescript
 import PaktSDK from "pakt-sdk";
 
 const apiKey = config.PAKT_SDK_API_KEY;
@@ -29,6 +36,7 @@ const sdkInit = await PaktSDK.init(configData);
 ```
 
 ```javascript
+//Javascript
 const PaktSDK = require("pakt-sdk");
 
 const apiKey = config.PAKT_SDK_API_KEY;
@@ -43,6 +51,109 @@ The above code initializes the PAKT SDK, ensure the API KEY is generated on www.
 
 ---
 
+To make calls with the PAKT SDK is very easy. See below code blocks for examples. The SDK is also typed with the models and wrapped with a default `ResponseDto<T>`.
+
+`ResponseDto<T>` is declared as
+
+```typescript
+interface ResponseDto<T> {
+  data: T;
+  status: Status;
+  message?: string;
+  code?: string;
+}
+
+//For example, from the initialized sdk, we can login like so:
+
+const auth: ResponseDto<UserModelDto> = await sdkInit.auth.login();
+```
+
+For brevity, the examples below will include the encapsulating `T`.
+
+## Authentication
+
+With the PAKT SDK, users can:
+
+- Register on the Chainsite,
+- Login,
+- Verify Account,
+- Resend Verification Link,
+- Reset Password,
+- Change Password,
+- Validate Reset Password,
+
+### Registration
+
+Here's how to register via the PAKT SDK
+
+```typescript
+export const signUp = async ({
+  firstName,
+  lastName,
+  email,
+  password,
+}: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+}) => {
+  const payload: RegisterPaylod = {
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string,
+  };
+
+  type RegisterDto = {
+    tempToken: {
+      token: string;
+      token_type: string;
+      expiresIn: number;
+    };
+  };
+  const register: RegisterDto = await sdkInit.auth.register(firstName, lastName, email, password);
+};
+```
+
+### Login
+
+With the PAKT SDK, users can login to their account, see example below:
+
+```typescript
+export const login = async (email: string, password: string) => {
+  type LoginDto = {
+    email: string;
+    token: string;
+    onboarded: boolean;
+    isVerified: boolean;
+    tempToken: {
+      token: string;
+      expiresIn: number;
+    };
+  };
+  const login: LoginDto = await sdkInit.auth.login(email, password);
+};
+```
+
+### Verify Account
+
+Every registered email needs to be verified, hence, PAKT SDK allows for verifying the account. The temporary authorization token and the OTP (token) sent to the email is entered to complete verification.
+
+See example below:
+
+```typescript
+export const verifyAccount = async (tempToken: string, token: string) => {
+  type AccountVerifyDto = {
+    email: string;
+    token: string;
+    expiresIn: number;
+  };
+
+  const verify: AccountVerifyDto = await sdkInit.auth.verifyAccount(tempToken, token);
+};
+```
+
 ## Account
 
 With the Pakt SDK, users can:
@@ -54,7 +165,7 @@ With the Pakt SDK, users can:
 - Setup Two-factor Authentication
 - Activate/Deactivate Two-factor Authentication
 
-### Example
+### Update User Info
 
 ```typescript
 //From the initialised sdkInit,
@@ -83,24 +194,6 @@ The example above updates a user account, setup the payload with the latest info
 
 ---
 
-### Onboard User
-
-To improve user success, there is the onboarding setup. See example below:
-
-```typescript
-export const onboardUser = async (skillCategory: string, profileImage: string, type: "Client" | "Talent") => {
-  const payload: OnboardUser = {
-    skillCategory,
-    profileImage,
-    type,
-  };
-
-  const onboardUser: UserAccountDto = await sdkInit.account.onboardEndpoint(payload);
-};
-```
-
----
-
 ### Change Password
 
 With the Pakt SDK, users can change their password, see example below:
@@ -117,7 +210,7 @@ export const changeUserPassword = async (oldPassword: string, newPassword: strin
 
 ---
 
-## Two Factor Authentication
+### Two Factor Authentication
 
 To improve user securing their accounts better, the PAKT SDK offers the two-factor authentication. Users can initiate, activate and deactivate the two-factor auth.
 
@@ -168,3 +261,228 @@ export const activateTwoFa = async (code: string) => {
 ---
 
 ## Notification
+
+With the PAKT SDK, users can:
+
+- Mark all their notifications as read
+- Mark a notification as read
+- Get all notifications
+
+Notification Model is as below
+
+```typescript
+interface NotificationModel {
+  owner: NotificationUser;
+  title: string;
+  description: string;
+  read: boolean;
+  notifyUser: NotificationUser;
+  data: string;
+  isAdmin: boolean;
+  type: INotificationType;
+}
+```
+
+### Mark all Notifications as read
+
+```typescript
+export const markAll = async () => {
+  //it returns a void
+  await sdkInit.notifications.markAll();
+};
+```
+
+### Mark a notification as read
+
+```typescript
+export const markSingleAsRead = (notificationId: string, filter?: NotificationModel) => {
+  //it returns a void
+  await sdkInit.notifications.markOneAsRead();
+};
+```
+
+### Get All Notifications
+
+```typescript
+type FilterDto = {
+  page?: string;
+  limit?: string;
+} & INotificationDto;
+
+type FindNotificationDto = {
+  page: number;
+  pages: number;
+  total: number;
+  limit: number;
+  notification: INotificationDto[];
+};
+
+export const getAll = async (filter?: FilterDto) => {
+  const notifications: FindNotificationDto = await sdkInit.notifications.getAll(filter);
+};
+```
+
+## Upload
+
+With the PAKT SDK, users can:
+
+- Upload a file, Users can upload the following file extensions
+- Video files with extensions, .mp4, .mkv
+- Music files with extension, .mp3, .wma, .oog, .mpeg
+- Image files with extension, .png, .jpg, jpeg, .svg
+- Document files with extension, .pdf, .doc, .docx, .xls, xlsx, .ppt, .csv.
+
+### Upload a File
+
+```typescript
+interface IUploadDto {
+  name: string;
+  uploaded_by: UploadedUser;
+  url: string;
+  meta: Record<string, any> | undefined;
+  status: boolean;
+  deletedAt: Date;
+}
+
+export const upload = async (file: Object) => {
+  const upload: IUploadDto = await sdkInit.file.fileUpload({
+    file: Object,
+  });
+};
+```
+
+---
+
+## Review
+
+Users can leave a review via the PAKT SDK.
+
+### Leave Review
+
+```typescript
+export const addReview = async () => {
+  interface AddReviewDto {
+    jobId: string;
+    rating: number;
+    review: string;
+  }
+
+  //returns void
+  await sdkInit.review.addReview(payload);
+};
+```
+
+---
+
+## Wallet
+
+PAKT SDK allows the user to get the following:
+
+- Details of all the wallets,
+- Details of a single wallet,
+- Get Transactions records executed,
+- Get A Transaction details,
+- Get Exchange rate for crypto currencies in use,
+
+Models for Wallet & Transaction are typed like so:
+
+```typescript
+//Wallet Model
+interface IWalletDto {
+  owner: UserAccountDto;
+  amount: number;
+  ledger: number;
+  lock: number;
+  lockedUsd: number;
+  usdValue: number;
+  usdRate: number;
+  spendable: number;
+  address: string;
+  addressC: string;
+  addressX: string;
+  coin: string;
+  walletId: string;
+  walletData: string;
+  status: IWalletStatus;
+  prod: boolean;
+  isSystem: boolean;
+}
+
+enum ITransactionStatus {
+  PENDING = "pending",
+  PROCESSING = "processing",
+  COMPLETED = "completed",
+  FAILED = "failed",
+}
+
+enum ITransactionMethod {
+  SENT = "sent",
+  DEPOSIT = "deposit",
+  WITHDRAWAL = "withdrawal",
+  RECIEVED = "recieved",
+  ESCROW = "escrow",
+  JOBPAYOUT = "job-payout",
+  FEEPAYOUT = "fee-payout",
+}
+
+//Transaction Model
+interface ITransactionDto {
+  owner: UserAccountDto;
+  amount: number;
+  sender: string;
+  reciever: string;
+  currency: string;
+  usdValue: number;
+  description: string;
+  tx: string;
+  type: string;
+  hash: string;
+  method: ITransactionMethod;
+  status: ITransactionStatus;
+}
+```
+
+### Get all Wallets
+
+```typescript
+export const getAllWallets = async () => {
+  const wallets: IWalletDto[] = await sdkInit.wallet.getWallets();
+};
+```
+
+### Get Single Wallet Details
+
+Get a single Wallet details
+
+```typescript
+export const getSingleWallet = async (coin: string) => {
+  const wallet: IWalletDto = await sdkInit.wallet.getSingleWallet(coin);
+};
+```
+
+### Get a Transaction Details
+
+Returns the details of a transaction of a user
+
+```typescript
+export const getATransactionDetails = async (transactionId: string) => {
+  const transaction: ITransactionDto = await sdkInit.wallet.getATransaction(transactionId);
+};
+```
+
+### Get Exchange Rate
+
+Get the exchange rate of Avalanche `$AVAX`, the prevailing cryptocurrency & platform used.
+
+```typescript
+export const exchangeRate = async () => {
+  interface IWalletExchangeDto {
+    avax: number;
+  }
+  const rate: IWalletExchangeDto = await sdkInit.wallet.getExchange();
+};
+```
+
+---
+
+## Job

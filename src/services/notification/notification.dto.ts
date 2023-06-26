@@ -59,7 +59,7 @@ export type filterDto =
   | ({
       page?: string;
       limit?: string;
-    } & object)
+    } & INotificationDto)
   | any;
 
 export interface NotificationModuleType {
