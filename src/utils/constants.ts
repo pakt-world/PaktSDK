@@ -1,5 +1,6 @@
 export const API_PATHS = {
   API_VERSION: "/v1",
+  // auth endpoints
   LOGIN: "/auth/login",
   REGISTER: "/auth/create-account",
   ACCOUNT_VERIFY: "/auth/account/verify",
@@ -7,8 +8,10 @@ export const API_PATHS = {
   VALIDATE_PASSWORD_TOKEN: "/auth/validate/password",
   RESET_PASSWORD: "/auth/password/reset",
   CHANGE_PASSWORD: "/auth/password/change",
-  JOB_CREATE: "/job/create",
-  JOB_FIND: "/job/views",
+  // collection endpoints
+  COLLECTION: "/collection",
+  COLLECTION_TYPE: "/collection-type",
+  COLLECTION_MANY: "/collection/many",
   JOB_SAVED: "/job/bookmarks",
   JOB_SUGGESTED: "/job/suggested",
   JOB_INVITE: "/job/invites",
