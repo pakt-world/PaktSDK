@@ -4,8 +4,8 @@ import { PAKT_CONFIG } from "../utils/token";
 import { AccountModule } from "./account/account";
 import { AccountModuleType } from "./account/account.dto";
 import { AuthenticationModule, AuthenticationModuleType } from "./auth";
-import { JobModule } from "./job/job";
-import { JobModuleType } from "./job/job.dto";
+import { CollectionModule } from "./collection/collection";
+import { JobModuleType } from "./collection/collection.dto";
 import { NotificationModule, NotificationModuleType } from "./notification";
 import { UploadModule } from "./upload";
 import { UploadModuleType } from "./upload/upload.dto";
@@ -23,7 +23,7 @@ class PaktSDK<T> {
 
   constructor(private readonly id: string) {
     this.auth = Container.of(id).get(AuthenticationModule);
-    this.connection = Container.of(id).get(JobModule);
+    this.connection = Container.of(id).get(CollectionModule);
     this.account = Container.of(id).get(AccountModule);
     this.notifications = Container.of(id).get(NotificationModule);
     this.file = Container.of(id).get(UploadModule);
