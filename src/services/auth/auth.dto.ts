@@ -6,7 +6,7 @@ export interface IUser {
   email: string;
   lastName: string;
   firstName: string;
-  afroScore: number;
+  score: number;
   profileCompleteness: number;
   profileImage?: {
     url: string;
@@ -29,6 +29,11 @@ export interface IUser {
       skillIds: any[];
       about?: string;
     };
+  }; 
+  socket?: {
+    id: string;
+    status: string;
+    conversation: string; // TODO:: Add Conversation Type
   };
 }
 

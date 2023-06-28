@@ -15,6 +15,7 @@ const run = async () => {
     email: "test@yopmail.com",
     password: "12345678",
   };
+  // const loginData = await sdkINit.auth.login(loginDetails.email, loginDetails.password);
   const loginData = await sdkINit.auth.login(loginDetails.email, loginDetails.password);
   // const loginData = await sdkINit.auth.login(loginDetails.firstName, loginDetails.lastName, loginDetails.email, loginDetails.password);
   console.log("login--=-=-=", loginData);

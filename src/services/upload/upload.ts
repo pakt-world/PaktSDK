@@ -3,6 +3,7 @@ import { API_PATHS } from "src/utils/constants";
 import { ErrorUtils, ResponseDto } from "src/utils/response";
 import Container, { Service } from "typedi";
 import { CreateFileUpload, IUploadDto, UploadModuleType } from "./upload.dto";
+export * from "./upload.dto";
 
 @Service({
   factory: (data: { id: string }) => {

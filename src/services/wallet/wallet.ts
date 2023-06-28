@@ -11,6 +11,7 @@ import {
   IWalletExchangeDto,
   WalletModuleType,
 } from "./wallet.dto";
+export * from "./wallet.dto";
 
 @Service({
   factory: (data: { id: string; coin?: string }) => {
