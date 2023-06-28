@@ -205,7 +205,7 @@ interface UserAccountDto {
   email: string;
   lastName: string;
   firstName: string;
-  afroScore: number;
+  paktScore: number;
   profileCompleteness: number;
   profileImage?: {
     url: string;
