@@ -1,19 +1,20 @@
 import { Container, Service } from 'typedi'
-import { CreateJobDto, FindJobDto, IJobDto, assignJobDto, cancelJobDto, filterDto } from "./bookmark.dto";
+import { FindCollectionBookMarkDto, ICollectionBookmarkDto, createBookMarkDto } from "./bookmark.dto";
 import { API_PATHS } from "../../utils/constants";
 import { PaktConnector } from '../../connector';
 import { ErrorUtils, ResponseDto, parseUrlWithQUery } from '../../utils/response';
+import { filterDto } from '../notification';
 
 // Export all Types to Service
 export * from "./bookmark.dto";
 
 @Service({
   factory: (data: { id: string }) => {
-    return new CollectionTypeModule(data.id)
+    return new BookMarkModule(data.id)
   },
   transient: true,
 })
-export class CollectionTypeModule {
+export class BookMarkModule {
   private id: string
   private connector: PaktConnector
   constructor(id: string) {
@@ -22,37 +23,48 @@ export class CollectionTypeModule {
   }
 
   /**
-   * create. This method creates a new Job.
+   * findall. This method finds all logged User's Bookmark collections.
+   * @param filter filterDto
+   */
+  async getAll(filter?: filterDto): Promise<ResponseDto<FindCollectionBookMarkDto>> {
+    return ErrorUtils.tryFail(async () => {
+      const fetchUrl = parseUrlWithQUery(API_PATHS.BOOKMARK, filter);
+      const response: ResponseDto<FindCollectionBookMarkDto> = await this.connector.get({ path: fetchUrl });
+      return response.data;
+    })
+  }
+
+  /**
+   * findall. This method finds bookmarked collection by id.
+   * @param filter filterDto
+   */
+  async getById(id: string, filter?: filterDto): Promise<ResponseDto<ICollectionBookmarkDto>> {
+    return ErrorUtils.tryFail(async () => {
+      const fetchUrl = parseUrlWithQUery(API_PATHS.BOOKMARK + "/" + id, filter);
+      const response: ResponseDto<ICollectionBookmarkDto> = await this.connector.get({ path: fetchUrl });
+      return response.data;
+    })
+  }
+
+  /**
+   * create. This method creates a new collection bookmark.
    * @param payload CreateJobDto
    */
-  async create(payload: CreateJobDto): Promise<ResponseDto<IJobDto>> {
+  async create(payload: createBookMarkDto): Promise<ResponseDto<ICollectionBookmarkDto>> {
     return ErrorUtils.tryFail(async () => {
       const credentials = { ...payload };
-      const response: ResponseDto<IJobDto> = await this.connector.post({ path: API_PATHS.JOB_CREATE, body: credentials });
+      const response: ResponseDto<ICollectionBookmarkDto> = await this.connector.post({ path: API_PATHS.BOOKMARK, body: credentials });
       return response.data;
     })
   }
 
   /**
-   * findall. This method finds all logged User's Jobs both created and assigned.
-   * @param filter filterDto
+   * delete. This method deleted a collection bookmark.
+   * @param payload CreateJobDto
    */
-  async getAll(filter?: filterDto): Promise<ResponseDto<FindJobDto>> {
+  async delete(id: string): Promise<ResponseDto<ICollectionBookmarkDto>> {
     return ErrorUtils.tryFail(async () => {
-      const fetchUrl = parseUrlWithQUery(API_PATHS.JOB_FIND, filter);
-      const response: ResponseDto<FindJobDto> = await this.connector.get({ path: fetchUrl });
-      return response.data;
-    })
-  }
-
-  /**
-   * findall. This method finds all logged User's Jobs both created and assigned.
-   * @param filter filterDto
-   */
-  async getById(id: string, filter?: filterDto): Promise<ResponseDto<IJobDto>> {
-    return ErrorUtils.tryFail(async () => {
-      const fetchUrl = parseUrlWithQUery(API_PATHS.JOB_FIND + "/" + id, filter);
-      const response: ResponseDto<IJobDto> = await this.connector.get({ path: fetchUrl });
+      const response: ResponseDto<ICollectionBookmarkDto> = await this.connector.delete({ path: API_PATHS.BOOKMARK + "/" + id });
       return response.data;
     })
   }

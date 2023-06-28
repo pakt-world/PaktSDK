@@ -107,7 +107,6 @@ export type FindCollectionDto = {
   data: ICollectionDto[];
 };
 
-
 export type FindCollectionTypeDto = {
   page: number;
   pages: number;
@@ -128,10 +127,10 @@ export type cancelJobDto = {
   paymentPercentage: number;
 };
 
-export interface JobModuleType {
+export interface CollectionModuleType {
   getAll(filter?: filterDto): Promise<ResponseDto<FindCollectionDto>>;
   getById(id: string, filter?: object): Promise<ResponseDto<ICollectionDto>>;
   getTypes(filter?: filterDto): Promise<ResponseDto<FindCollectionTypeDto>>;
   create(payload: CreateCollectionDto): Promise<ResponseDto<ICollectionDto>>;
-  createMany(payload: CreateManyCollectionDto): Promise<ResponseDto<ICollectionDto>>;
+  createMany(payload: CreateManyCollectionDto): Promise<ResponseDto<ICollectionDto[]>>;
 }

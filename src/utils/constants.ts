@@ -12,14 +12,9 @@ export const API_PATHS = {
   COLLECTION: "/collection",
   COLLECTION_TYPE: "/collection-type",
   COLLECTION_MANY: "/collection/many",
-  JOB_SAVED: "/job/bookmarks",
-  JOB_SUGGESTED: "/job/suggested",
-  JOB_INVITE: "/job/invites",
-  JOB_RELATED: "/job/related",
-  JOB_ASSIGN: "/job/assign",
-  JOB_DELIVERABLE: "/job/deliverable",
-  JOB_FETCH: "/job/",
-  JOB_COMPLETE: "/job/complete",
+  // bookmark endpoints
+  BOOKMARK: "/bookmark",
+  // notifications
   NOTIFICATION_FETCH: "/notifications/",
   NOTIFICATION_MARK_ALL: "/notifications/mark/all",
   NOTIFICATION_MARK_ONE: "/notifications/mark",

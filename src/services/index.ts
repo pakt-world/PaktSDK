@@ -1,21 +1,17 @@
 import { Container, Service } from "typedi";
 import { PaktConfig } from "../utils/config";
 import { PAKT_CONFIG } from "../utils/token";
-import { AccountModule } from "./account/account";
-import { AccountModuleType } from "./account/account.dto";
+import { AccountModule, AccountModuleType } from "./account/account";
 import { AuthenticationModule, AuthenticationModuleType } from "./auth";
-import { CollectionModule } from "./collection/collection";
-import { JobModuleType } from "./collection/collection.dto";
+import { CollectionModule, CollectionModuleType } from "./collection/collection";
 import { NotificationModule, NotificationModuleType } from "./notification";
-import { UploadModule } from "./upload";
-import { UploadModuleType } from "./upload/upload.dto";
-import { WalletModule } from "./wallet/wallet";
-import { WalletModuleType } from "./wallet/wallet.dto";
+import { UploadModule, UploadModuleType } from "./upload/upload";
+import { WalletModule, WalletModuleType } from "./wallet/wallet";
 
 @Service({ transient: true })
 class PaktSDK<T> {
   auth: AuthenticationModuleType;
-  connection: JobModuleType;
+  collection: CollectionModuleType;
   account: AccountModuleType;
   notifications: NotificationModuleType;
   file: UploadModuleType;
@@ -23,7 +19,7 @@ class PaktSDK<T> {
 
   constructor(private readonly id: string) {
     this.auth = Container.of(id).get(AuthenticationModule);
-    this.connection = Container.of(id).get(CollectionModule);
+    this.collection = Container.of(id).get(CollectionModule);
     this.account = Container.of(id).get(AccountModule);
     this.notifications = Container.of(id).get(NotificationModule);
     this.file = Container.of(id).get(UploadModule);
