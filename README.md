@@ -1,4 +1,4 @@
-![Alt PAKT](https://chainsite-storage.s3.us-east-1.amazonaws.com/ljcvdkvm_SDK.png)
+![Alt PAKT](./PAKT_SDK.png)
 
 # PAKT
 
@@ -205,7 +205,7 @@ interface UserAccountDto {
   email: string;
   lastName: string;
   firstName: string;
-  afroScore: number;
+  paktScore: number;
   profileCompleteness: number;
   profileImage?: {
     url: string;
