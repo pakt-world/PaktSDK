@@ -1,11 +1,14 @@
 import PaktSDK from "../../../src/services";
 import { PaktConfig } from "../../../src/utils/config";
 
-  // Test SDK initalization
+const baseUrl = "http://localhost:9090";
+const apiToken = "token";
+
+// Test SDK initalization
 const PaktSDKInit = () => {
   const configData: PaktConfig = {
-    baseUrl: "https://pakt-module-api.herokuapp.com",
-    token: "1234567890383",
+    baseUrl,
+    token: apiToken,
     verbose: true,
   };
   return PaktSDK.init(configData);
