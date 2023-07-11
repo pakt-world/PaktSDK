@@ -21,7 +21,7 @@ const Login = async () => {
 const Register = async () => {
   try {
     const sdk = await PaktSDKInit();
-    // test payload for registeration
+    // test payload for registration
     const payload = {
       firstName: "John",
       lastName: "Tunde",
@@ -36,7 +36,7 @@ const Register = async () => {
   }
 }
 
-
 export {
   Login,
+  Register,
 }
