@@ -46,7 +46,7 @@ export class CollectionModule {
   }
 
   /**
-   * SavedJobs. This method finds collection types accepted for creating collection
+   * getTypes. This method finds collection types accepted for creating collection
    * @param filter filterDto
    */
   async getTypes(filter?: filterDto): Promise<ResponseDto<FindCollectionTypeDto>> {
@@ -79,6 +79,5 @@ export class CollectionModule {
       const response: ResponseDto<ICollectionDto[]> = await this.connector.post({ path: API_PATHS.COLLECTION, body: credentials });
       return response.data;
     })
-  }
-  
+  }  
 }
