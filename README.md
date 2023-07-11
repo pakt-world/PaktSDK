@@ -6,6 +6,55 @@
 
 PAKT SDK is a modern software development kit, built for NodeJs.
 
+# Table of Contents
+
+- [Installation](#Installation)
+- [Usage](#Usage)
+
+  - [Initialization](##Initialization)
+
+  - [Authentication](##Authentication)
+
+    - [Registration](###Registration)
+    - [Login](###Login)
+    - [Verify Account](###Verify-Account)
+    - [Resend Verification Link](###Resend-Verification-Link)
+    - [Reset Password](###Reset-Password)
+
+  - [Account](##Account)
+
+    - [Update User Info](###Update-User-Info)
+    - [Change Password](###Change-Password)
+    - [Two Factor Authentication](###Two-Factor-Authentication)
+    - [Activate Two-factor authentication](###Activate-Two-factor-authentication)
+    - [Deactivate Two-factor authentication](###Deactivate-Two-factor-authentication)
+
+  - [Notification](##Notification)
+
+    - [Mark all Notifications as read](###Mark-all-Notifications-as-read)
+    - [Mark a notification as read](###Mark-a-notification-as-read)
+    - [Get All Notifications](###Get-All-Notifications)
+
+  - [Upload](##Upload)
+
+    - [Upload a File](###Upload-a-File)
+
+  - [Review](##Review)
+
+    - [Leave Review](###Leave-Review)
+
+  - [Wallet](##Wallet)
+
+    - [Get all Wallets](###Get-all-Wallets)
+    - [Get Single Wallet Details](###Get-Single-Wallet-Details)
+    - [Get a Transaction Details](###Get-a-Transaction-Details)
+    - [Get Exchange Rate](###Get-Exchange-Rate)
+
+  - [Connections](##Wallet)
+    - [Create Connection](###Create-Connection)
+    - [Get all Connections](###Get-all-Connections)
+    - [Get Details of a connection](###Get-Details-of-a-connection)
+
 # Installation
 
 To install PAKT SDK, simply
@@ -136,7 +185,7 @@ export const login = async (email: string, password: string) => {
 };
 ```
 
-### Verify Account
+### VerifyAccount
 
 Every registered email needs to be verified, hence, PAKT SDK allows for verifying the account. The temporary authorization token and the OTP (token) sent to the email is entered to complete verification.
 
