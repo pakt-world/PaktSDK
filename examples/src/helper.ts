@@ -1,5 +1,5 @@
-import PaktSDK from "../../../src/services";
-import { PaktConfig } from "../../../src/utils/config";
+import PaktSDK from "../../src/services";
+import { PaktConfig } from "../../src/utils/config";
 
 const baseUrl = "http://localhost:9090";
 const apiToken = "token";
