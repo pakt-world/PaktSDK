@@ -1,8 +1,8 @@
-import PaktSDK from "../../../src/services";
-import { PaktConfig } from "../../../src/utils/config";
+import { Login } from "./auth";
 
 const run = async () => {
-  
+  const responseLogin = await Login();
+  console.log(responseLogin);
 };
 
-// run();
+run();
