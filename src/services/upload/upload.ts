@@ -1,6 +1,6 @@
-import { PaktConnector } from "src/connector";
-import { API_PATHS } from "src/utils/constants";
-import { ErrorUtils, ResponseDto } from "src/utils/response";
+import { PaktConnector } from "../../connector";
+import { API_PATHS } from "../../utils/constants";
+import { ErrorUtils, ResponseDto } from "../../utils/response";
 import Container, { Service } from "typedi";
 import { CreateFileUpload, IUploadDto, UploadModuleType } from "./upload.dto";
 export * from "./upload.dto";
