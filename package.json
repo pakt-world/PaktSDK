@@ -9,7 +9,7 @@
   "types": "./dist/src/main.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx ts-node ./examples/typescript/src/index.ts",
+    "dev": "npx ts-node ./examples/src/index.ts",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
     "build": "rimraf ./build && tsc",

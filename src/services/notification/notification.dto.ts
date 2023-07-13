@@ -33,7 +33,7 @@ interface NotificationUser {
   firstName: string;
   lastName: string;
   type: string;
-  afroScore: number;
+  score: number;
 }
 
 export interface INotificationDto {
