@@ -1,6 +1,6 @@
 import { Container, Service } from "typedi";
 import { PaktConfig } from "../utils/config";
-import { PAKT_CONFIG } from "../utils/token";
+import { AUTH_TOKEN, PAKT_CONFIG, TEMP_TOKEN } from "../utils/token";
 import { AccountModule, AccountModuleType } from "./account/account";
 import { AuthenticationModule, AuthenticationModuleType } from "./auth";
 import { CollectionModule, CollectionModuleType } from "./collection/collection";
@@ -37,6 +37,8 @@ class PaktSDK<T> {
 
     const id = PaktSDK.generateRandomString();
     Container.of(id).set(PAKT_CONFIG, defaultConfig);
+    Container.of(id).set(AUTH_TOKEN, "");
+    Container.of(id).set(TEMP_TOKEN, "");
     return new PaktSDK<T>(id);
   }
   /**

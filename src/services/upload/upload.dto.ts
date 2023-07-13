@@ -12,7 +12,7 @@ interface UploadedUser {
   firstName: string;
   lastName: string;
   type: string;
-  afroScore: number;
+  score: number;
 }
 
 export interface CreateFileUpload {

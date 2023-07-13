@@ -1,4 +1,4 @@
-import { AUTH_TOKEN, TEMP_TOKEN } from "src/utils/token";
+import { AUTH_TOKEN, TEMP_TOKEN } from "../../utils/token";
 import { Container, Service } from "typedi";
 import { PaktConnector } from "../../connector";
 import { API_PATHS } from "../../utils/constants";
