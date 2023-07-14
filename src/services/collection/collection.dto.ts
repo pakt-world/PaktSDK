@@ -1,4 +1,6 @@
 import { ResponseDto } from "src/utils/response";
+import { IUser } from "../auth";
+import { IUploadDto } from "../upload";
 
 interface ICollectionTypeDto {
   _id: string;
@@ -8,11 +10,15 @@ interface ICollectionTypeDto {
   updateAt?: string;
 }
 
+interface IAttachmentDto {
+  _id?: string;
+  url?: string;
+}
 export interface ICollectionDto {
   _id?: string;
-  creator: string;  //TODO:: addd IUserDto
-  owner?: string;  //TODO:: addd IUserDto
-  owners?: string[];  //TODO:: addd IUserDto
+  creator: IUser;
+  owner?: IUser;
+  owners?: IUser[];
   name: string;
   description: string;
   type: string;
@@ -22,14 +28,16 @@ export interface ICollectionDto {
   parent?: ICollectionDto | string;
   collections?: ICollectionDto[] | string[];
   stage?: number;
-  image?: string; //TODO:: addd IFileDto
-  invite?: string;  //TODO:: addd ICOllectionInviteDto
+  image?: IUploadDto;
+  invite?: string; //TODO:: addd ICOllectionInviteDto
   invites?: string[]; //TODO:: addd ICOllectionInviteDto
   applications?: string[]; //TODO:: addd IApplicationDto
   wallet?: string; //TODO:: addd IWalletDto
   isFreelance?: boolean;
   skillsData?: string[];
   skills?: string[]; //TODO:: addd ICategoryDto
+  attachments?: IAttachmentDto[];
+  attachmentData?: string[];
   status?: string;
   inviteAccepted?: boolean;
   payoutStatus?: string;
@@ -43,7 +51,7 @@ export interface ICollectionDto {
   encodeKey?: string;
   avaxPrivateKey?: string;
   avaxAddress?: string;
-  paymentCoin?: string
+  paymentCoin?: string;
   isPrivate?: boolean;
   paymentAddress?: string;
   payoutResponse?: string;
@@ -78,11 +86,12 @@ export type CreateCollectionDto = {
   paymentFee?: string;
   deliveryDate?: string;
   skills?: string[];
+  attachments?: string[];
 };
 
 export type CreateManyCollectionDto = {
   type: string;
-  parent: string
+  parent: string;
   collections: {
     name: string;
     description: string;
@@ -91,7 +100,8 @@ export type CreateManyCollectionDto = {
     paymentFee?: string;
     deliveryDate?: string;
     skills?: string[];
-  }[]
+    attachments?: string[];
+  }[];
 };
 
 export type assignCollectionDto = {
@@ -117,9 +127,9 @@ export type FindCollectionTypeDto = {
 
 export type filterDto =
   | ({
-    page?: string;
-    limit?: string;
-  } & ICollectionDto)
+      page?: string;
+      limit?: string;
+    } & ICollectionDto)
   | any;
 
 export type cancelJobDto = {
