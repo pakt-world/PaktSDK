@@ -1,6 +1,6 @@
 {
   "name": "pakt-sdk",
-  "version": "1.0.0",
+  "version": "0.1.1",
   "description": "Pakt SDK",
   "files": [
     "dist/"
@@ -20,13 +20,15 @@
     "url": "git+https://github.com/pakt-world/PaktSDK.git"
   },
   "keywords": [
-    "pakt", "pakt-api", "pakt-sdk"
+    "pakt",
+    "pakt-api",
+    "pakt-sdk"
   ],
   "author": {
-    "name": "BeardKoda",
-    "email": "akinsuyi.joshua84@gmail.com"
+    "name": "PAKT",
+    "email": "joshuaa@pakt.com"
   },
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/pakt-world/PaktSDK/issues"
   },
