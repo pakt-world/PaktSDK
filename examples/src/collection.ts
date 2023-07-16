@@ -1,7 +1,7 @@
 import { CreateCollectionDto, CreateManyCollectionDto } from "../../src/services/collection/collection.dto";
 import PaktSDKInit from "./helper";
 
-// how to create a new collection
+// How to create a new collection
 const CreateCollection = async () => {
   try {
     const sdk = await PaktSDKInit();

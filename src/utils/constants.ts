@@ -10,16 +10,20 @@ export const API_PATHS = {
   VALIDATE_PASSWORD_TOKEN: "/auth/validate/password",
   RESET_PASSWORD: "/auth/password/reset",
   CHANGE_PASSWORD: "/auth/password/change",
+
   // Collection endpoints
   COLLECTION: "/collection",
   COLLECTION_TYPE: "/collection-type",
   COLLECTION_MANY: "/collection/many",
+
   // Bookmark endpoints
   BOOKMARK: "/bookmark",
+
   // Notifications
   NOTIFICATION_FETCH: "/notifications/",
   NOTIFICATION_MARK_ALL: "/notifications/mark/all",
   NOTIFICATION_MARK_ONE: "/notifications/mark",
+
   // Manage Account and settings
   ACCOUNT: "/account",
   ACCOUNT_ONBOARD: "/account/onboard",
@@ -28,6 +32,7 @@ export const API_PATHS = {
   ACCOUNT_TWO_ACTIVATE: "/account/activate/2fa",
   ACCOUNT_TWO_DEACTIVATE: "/account/deactivate/2fa",
   ACCOUNT_LOGOUT: "/account/logout",
+
   // Wallet Endpoints
   WALLET_TRANSACTIONS: "/wallet/transactions",
   A_WALLET_TRANSACTION: "/wallet/transaction",
@@ -37,8 +42,10 @@ export const API_PATHS = {
   WALLET_AGGREGATE_STATS: "/wallet/aggregate/stats",
   WALLETS: "/wallet",
   SINGLE_WALLET: "/wallet/coin",
+
   // File Upload
   FILE_UPLOAD: "/upload/",
+  
   // Review
   // ADD_REVIEW: "/job/review",
 };
