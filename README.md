@@ -10,9 +10,9 @@ PAKT SDK is a modern software development kit, built for NodeJs.
 
   - [Installation](#Installation)
 
-  - [Initialization](##Initialization)
+  - [Initialization](#Initialization)
 
-  - [Authentication](##Authentication)
+  - [Authentication](#Authentication)
 
     <!-- - [Registration](###Registration)
     - [Login](###Login)
@@ -20,7 +20,7 @@ PAKT SDK is a modern software development kit, built for NodeJs.
     - [Resend Verification Link](###Resend-Verification-Link)
     - [Reset Password](###Reset-Password) -->
 
-  - [Account](##Account)
+  - [Account](#Account)
 
     <!-- - [Update User Info](###Update-User-Info)
     - [Change Password](###Change-Password)
@@ -28,28 +28,28 @@ PAKT SDK is a modern software development kit, built for NodeJs.
     - [Activate Two-factor authentication](###Activate-Two-factor-authentication)
     - [Deactivate Two-factor authentication](###Deactivate-Two-factor-authentication) -->
 
-  - [Notification](##Notification)
+  - [Notification](#Notification)
 
     <!-- - [Mark all Notifications as read](###Mark-all-Notifications-as-read)
     - [Mark a notification as read](###Mark-a-notification-as-read)
     - [Get All Notifications](###Get-All-Notifications) -->
 
-  - [Upload](##Upload)
+  - [Upload](#Upload)
 
     <!-- - [Upload a File](###Upload-a-File) -->
 
-  - [Review](##Review)
+  - [Review](#Review)
 
     <!-- - [Leave Review](###Leave-Review) -->
 
-  - [Wallet](##Wallet)
+  - [Wallet](#Wallet)
 
     <!-- - [Get all Wallets](###Get-all-Wallets)
     - [Get Single Wallet Details](###Get-Single-Wallet-Details)
     - [Get a Transaction Details](###Get-a-Transaction-Details)
     - [Get Exchange Rate](###Get-Exchange-Rate) -->
 
-  - [Connections](##Wallet)
+  - [Connections](#Wallet)
     <!-- - [Create Connection](###Create-Connection)
     - [Get all Connections](###Get-all-Connections)
     - [Get Details of a connection](###Get-Details-of-a-connection) -->
