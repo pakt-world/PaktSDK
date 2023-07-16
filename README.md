@@ -8,11 +8,11 @@ PAKT SDK is a modern software development kit, built for NodeJs.
 
 # Table of Contents
 
-  - [Installation](#Installation)
+  - [Installation](#installation)
 
-  - [Initialization](#Initialization)
+  - [Initialization](#initialization)
 
-  - [Authentication](#Authentication)
+  - [Authentication](#authentication)
 
     <!-- - [Registration](###Registration)
     - [Login](###Login)
@@ -20,7 +20,7 @@ PAKT SDK is a modern software development kit, built for NodeJs.
     - [Resend Verification Link](###Resend-Verification-Link)
     - [Reset Password](###Reset-Password) -->
 
-  - [Account](#Account)
+  - [Account](#account)
 
     <!-- - [Update User Info](###Update-User-Info)
     - [Change Password](###Change-Password)
@@ -28,33 +28,33 @@ PAKT SDK is a modern software development kit, built for NodeJs.
     - [Activate Two-factor authentication](###Activate-Two-factor-authentication)
     - [Deactivate Two-factor authentication](###Deactivate-Two-factor-authentication) -->
 
-  - [Notification](#Notification)
+  - [Notification](#notification)
 
     <!-- - [Mark all Notifications as read](###Mark-all-Notifications-as-read)
     - [Mark a notification as read](###Mark-a-notification-as-read)
     - [Get All Notifications](###Get-All-Notifications) -->
 
-  - [Upload](#Upload)
+  - [Upload](#upload)
 
     <!-- - [Upload a File](###Upload-a-File) -->
 
-  - [Review](#Review)
+  - [Review](#review)
 
     <!-- - [Leave Review](###Leave-Review) -->
 
-  - [Wallet](#Wallet)
+  - [Wallet](#wallet)
 
     <!-- - [Get all Wallets](###Get-all-Wallets)
     - [Get Single Wallet Details](###Get-Single-Wallet-Details)
     - [Get a Transaction Details](###Get-a-Transaction-Details)
     - [Get Exchange Rate](###Get-Exchange-Rate) -->
 
-  - [Connections](#Wallet)
+  - [Collections](#collections)
     <!-- - [Create Connection](###Create-Connection)
     - [Get all Connections](###Get-all-Connections)
     - [Get Details of a connection](###Get-Details-of-a-connection) -->
 
-# Installation
+## Installation
 
 To install PAKT SDK, simply
 
@@ -560,105 +560,132 @@ export const exchangeRate = async () => {
 
 ---
 
-## Connections
+## Collections
 
 With the PAKT SDK, users can
 
-- Create connections,
-- Get all connections,
-- Get a connection by the id,
-- Get Saved Connections,
-- Get Suggested Connections,
+- Create collection,
+- Get all collection,
+- Get a collection by the id,
+- Get Saved collection,
+- Get Suggested collection,
 - Get Invites,
-- Get Related Connections,
-- Cancel Connection,
-- Complete Deliverable for a Connection
+- Get Related collection,
+- Cancel collection,
+- Complete Deliverable for a collection
 
-### Create Connection
+### Create Collections
 
 ```typescript
-interface IJobDto {
-  _id: string;
-  equity: string;
-  status: string;
-  payoutStatus: string;
-  paymentStatus: string;
-  feePayoutStatus: string;
-  balanceStatus: string;
-  afroScore: number;
-  progress: number;
-  isCard: boolean;
-  deleted: boolean;
+interface ICollectionDto {
+  _id?: string;
+  creator: IUser;
+  owner?: IUser;
+  owners?: IUser[];
   name: string;
-  build: string;
-  deliveryDate: string;
-  earlyBonus: string;
-  paymentFee: string;
   description: string;
-  latePenaltyFee: string;
-  failureFee: string;
-  createdAt: string;
-  updatedAt: string;
-  paymentCoin: string;
-  creator: JobUser | string;
-  owner: JobUser | string;
-  invites: string[];
-  applications: string[];
-  deliverableIds: JobDeliverables[];
-  deliverables: String[];
-  category: string;
-  skills: string[];
-  skillIds: JobSkills[];
-  inviteAccepted: boolean;
-  isPrivate: boolean;
-  recipientCompletedJob: boolean;
-  slug: string;
-  cancellationReason: string;
-  expectedAmount: string;
+  type: string;
+  build?: string;
+  category?: string;
+  equity?: string;
+  parent?: ICollectionDto | string;
+  collections?: ICollectionDto[] | string[];
+  stage?: number;
+  image?: IUploadDto;
+  invite?: string; //TODO:: addd ICOllectionInviteDto
+  invites?: string[]; //TODO:: addd ICOllectionInviteDto
+  applications?: string[]; //TODO:: addd IApplicationDto
+  wallet?: string; //TODO:: addd IWalletDto
+  isFreelance?: boolean;
+  skillsData?: string[];
+  skills?: string[]; //TODO:: addd ICategoryDto
+  attachments?: IAttachmentDto[];
+  attachmentData?: string[];
+  status?: string;
+  inviteAccepted?: boolean;
+  payoutStatus?: string;
+  paymentStatus?: string;
+  feePayoutStatus?: string;
+  escrowPaid?: boolean;
+  paymentFee?: number;
+  earlyBonus?: string;
+  latePenaltyFee?: string;
+  failureFee?: string;
+  encodeKey?: string;
+  avaxPrivateKey?: string;
+  avaxAddress?: string;
+  paymentCoin?: string;
+  isPrivate?: boolean;
+  paymentAddress?: string;
+  payoutResponse?: string;
+  feePayoutResponse?: string;
+  paymentWebHook?: string;
+  webHookAmount?: string;
+  emailToken?: string;
+  deliveryDate?: string;
+  completedDate?: string;
+  rating?: string; //TODO:: addd IRatingDto
+  recipientRating?: string; //TODO:: addd IRatingDto
+  recipientCompletedJob?: boolean;
+  score?: number;
+  progress?: number;
+  isDeleted?: boolean;
+  charges?: string;
+  expectedAmount?: string;
+  usdExpectedAmount?: string;
+  usdExpectedFee?: string;
+  feePercentage?: string;
+  rate?: string;
+  cancellationReason?: string;
+  completed?: boolean;
 }
 
-type CreateJobDto = {
+type CreateCollectionDto = {
+  type: string;
   name: string;
-  category: string;
+  category?: string;
   description: string;
-  paymentFee: string;
   isPrivate: boolean;
-  deliveryDate: string;
-  skills: string[];
+  paymentFee?: string;
+  deliveryDate?: string;
+  skills?: string[];
+  attachments?: string[];
 };
 
-export const createConnection = async (payload: CreateJobDto) => {
-  const create: IJobDto = await sdkInit.connection.create(payload);
+export const createCollection = async (payload: CreateCollectionDto) => {
+  const create: ICollectionDto = await sdkInit.connection.create(payload);
 };
 ```
 
-### Get all Connections
+### Get all Collections
 
-Get all Connections corresponding to an optional filter, else return ALL connections
+Get all Collections corresponding to an optional filter, else return ALL collection
 
 ```typescript
-type filterDto = {
-  page?: string;
-  limit?: string;
-} & IConnectionDto;
+type filterDto =
+  | ({
+      page?: string;
+      limit?: string;
+    } & ICollectionDto)
+  | any;
 
-type FindConnectionDto = {
+ type FindCollectionDto = {
   page: number;
   pages: number;
   total: number;
   limit: number;
-  jobs: IConnectionDto[];
+  data: ICollectionDto[];
 };
 
-export const getAllConnections = async (filter?: filterDto) => {
-  const connections: FindConnectionDto = await sdkInit.connections.getAll(filter);
+export const getAllCollections = async (filter?: filterDto) => {
+  const collections: FindCollectionDto = await sdkInit.collections.getAll(filter);
 };
 ```
 
-### Get Details of a connection
+### Get Details of a collection
 
 ```typescript
-export const getASingleConnection = async (id: string, filter?: filterDto) => {
-  const connection: IConnectionDto = await sdkInit.connections.getById(id, filter);
+export const getASingleCollection = async (id: string, filter?: filterDto) => {
+  const collection: ICollectionDto = await sdkInit.collection.getById(id, filter);
 };
 ```
