@@ -8,8 +8,7 @@ PAKT SDK is a modern software development kit, built for NodeJs.
 
 # Table of Contents
 
-- [Installation](#Installation)
-- [Usage](#Usage)
+  - [Installation](#Installation)
 
   - [Initialization](##Initialization)
 
@@ -65,7 +64,7 @@ To install PAKT SDK, simply
 
 > :warning: Ensure you are registered on www.pakt.world, with a paid and activated chainsite.
 
-# Usage
+<!-- # Usage -->
 
 ## Initialization
 
