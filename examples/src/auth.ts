@@ -6,7 +6,7 @@ const Login = async () => {
     const sdk = await PaktSDKInit();
     // test payload for login
     const loginDetails = {
-      email: "test@yopmail.com",
+      email: "test@email.com",
       password: "12345678",
     };
     const loginData = await sdk.auth.login(loginDetails.email, loginDetails.password);
@@ -25,7 +25,7 @@ const Register = async () => {
     const payload = {
       firstName: "John",
       lastName: "Tunde",
-      email: "test@yopmail.com",
+      email: "test@email.com",
       password: "12345678",
     };
     const loginData = await sdk.auth.register(payload.firstName, payload.lastName, payload.email, payload.password);

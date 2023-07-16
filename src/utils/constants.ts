@@ -1,6 +1,8 @@
+// Please note that some of these endpoints can be enabled or disabled according to policy settings on your Chainsite dashboard. Ensure the endpoint you want to utilize has its policy settings enabled.
+
 export const API_PATHS = {
   API_VERSION: "/v1",
-  // auth endpoints
+  // Authentication endpoints
   LOGIN: "/auth/login",
   REGISTER: "/auth/create-account",
   ACCOUNT_VERIFY: "/auth/account/verify",
@@ -8,16 +10,17 @@ export const API_PATHS = {
   VALIDATE_PASSWORD_TOKEN: "/auth/validate/password",
   RESET_PASSWORD: "/auth/password/reset",
   CHANGE_PASSWORD: "/auth/password/change",
-  // collection endpoints
+  // Collection endpoints
   COLLECTION: "/collection",
   COLLECTION_TYPE: "/collection-type",
   COLLECTION_MANY: "/collection/many",
-  // bookmark endpoints
+  // Bookmark endpoints
   BOOKMARK: "/bookmark",
-  // notifications
+  // Notifications
   NOTIFICATION_FETCH: "/notifications/",
   NOTIFICATION_MARK_ALL: "/notifications/mark/all",
   NOTIFICATION_MARK_ONE: "/notifications/mark",
+  // Manage Account and settings
   ACCOUNT: "/account",
   ACCOUNT_ONBOARD: "/account/onboard",
   ACCOUNT_PASSWORD: "/account/password/change",
@@ -25,6 +28,7 @@ export const API_PATHS = {
   ACCOUNT_TWO_ACTIVATE: "/account/activate/2fa",
   ACCOUNT_TWO_DEACTIVATE: "/account/deactivate/2fa",
   ACCOUNT_LOGOUT: "/account/logout",
+  // Wallet Endpoints
   WALLET_TRANSACTIONS: "/wallet/transactions",
   A_WALLET_TRANSACTION: "/wallet/transaction",
   WALLET_EXCHANGE: "/wallet/exchange",
@@ -33,6 +37,8 @@ export const API_PATHS = {
   WALLET_AGGREGATE_STATS: "/wallet/aggregate/stats",
   WALLETS: "/wallet",
   SINGLE_WALLET: "/wallet/coin",
+  // File Upload
   FILE_UPLOAD: "/upload/",
-  ADD_REVIEW: "/job/review",
+  // Review
+  // ADD_REVIEW: "/job/review",
 };
