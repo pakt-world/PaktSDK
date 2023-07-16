@@ -8,51 +8,51 @@ PAKT SDK is a modern software development kit, built for NodeJs.
 
 # Table of Contents
 
-  - [Installation](#installation)
+- [Installation](#installation)
 
-  - [Initialization](#initialization)
+- [Initialization](#initialization)
 
-  - [Authentication](#authentication)
+- [Authentication](#authentication)
 
-    <!-- - [Registration](###Registration)
-    - [Login](###Login)
-    - [Verify Account](###Verify-Account)
-    - [Resend Verification Link](###Resend-Verification-Link)
-    - [Reset Password](###Reset-Password) -->
+  <!-- - [Registration](###Registration)
+  - [Login](###Login)
+  - [Verify Account](###Verify-Account)
+  - [Resend Verification Link](###Resend-Verification-Link)
+  - [Reset Password](###Reset-Password) -->
 
-  - [Account](#account)
+- [Account](#account)
 
-    <!-- - [Update User Info](###Update-User-Info)
-    - [Change Password](###Change-Password)
-    - [Two Factor Authentication](###Two-Factor-Authentication)
-    - [Activate Two-factor authentication](###Activate-Two-factor-authentication)
-    - [Deactivate Two-factor authentication](###Deactivate-Two-factor-authentication) -->
+  <!-- - [Update User Info](###Update-User-Info)
+  - [Change Password](###Change-Password)
+  - [Two Factor Authentication](###Two-Factor-Authentication)
+  - [Activate Two-factor authentication](###Activate-Two-factor-authentication)
+  - [Deactivate Two-factor authentication](###Deactivate-Two-factor-authentication) -->
 
-  - [Notification](#notification)
+- [Notification](#notification)
 
-    <!-- - [Mark all Notifications as read](###Mark-all-Notifications-as-read)
-    - [Mark a notification as read](###Mark-a-notification-as-read)
-    - [Get All Notifications](###Get-All-Notifications) -->
+  <!-- - [Mark all Notifications as read](###Mark-all-Notifications-as-read)
+  - [Mark a notification as read](###Mark-a-notification-as-read)
+  - [Get All Notifications](###Get-All-Notifications) -->
 
-  - [Upload](#upload)
+- [Upload](#upload)
 
-    <!-- - [Upload a File](###Upload-a-File) -->
+  <!-- - [Upload a File](###Upload-a-File) -->
 
-  - [Review](#review)
+- [Review](#review)
 
-    <!-- - [Leave Review](###Leave-Review) -->
+  <!-- - [Leave Review](###Leave-Review) -->
 
-  - [Wallet](#wallet)
+- [Wallet](#wallet)
 
-    <!-- - [Get all Wallets](###Get-all-Wallets)
-    - [Get Single Wallet Details](###Get-Single-Wallet-Details)
-    - [Get a Transaction Details](###Get-a-Transaction-Details)
-    - [Get Exchange Rate](###Get-Exchange-Rate) -->
+  <!-- - [Get all Wallets](###Get-all-Wallets)
+  - [Get Single Wallet Details](###Get-Single-Wallet-Details)
+  - [Get a Transaction Details](###Get-a-Transaction-Details)
+  - [Get Exchange Rate](###Get-Exchange-Rate) -->
 
-  - [Collections](#collections)
-    <!-- - [Create Connection](###Create-Connection)
-    - [Get all Connections](###Get-all-Connections)
-    - [Get Details of a connection](###Get-Details-of-a-connection) -->
+- [Collections](#collections)
+  <!-- - [Create Connection](###Create-Connection)
+  - [Get all Connections](###Get-all-Connections)
+  - [Get Details of a connection](###Get-Details-of-a-connection) -->
 
 ## Installation
 
@@ -669,7 +669,7 @@ type filterDto =
     } & ICollectionDto)
   | any;
 
- type FindCollectionDto = {
+type FindCollectionDto = {
   page: number;
   pages: number;
   total: number;
