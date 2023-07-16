@@ -1,5 +1,4 @@
 import { PaktConnector } from "src/connector";
-import { API_PATHS } from "src/utils/constants";
 import { ErrorUtils, ResponseDto } from "src/utils/response";
 import Container, { Service } from "typedi";
 import { AddReviewDto, ReviewModuleType } from "./review.dto";
@@ -21,7 +20,7 @@ export class ReviewModule implements ReviewModuleType {
     const credentials = { ...payload };
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<void> = await this.connector.post({
-        path: API_PATHS.ADD_REVIEW,
+        path: "",
         body: credentials,
       });
       return response.data;
