@@ -14,45 +14,17 @@ PAKT SDK is a modern software development kit, built for NodeJs.
 
 - [Authentication](#authentication)
 
-  <!-- - [Registration](###Registration)
-  - [Login](###Login)
-  - [Verify Account](###Verify-Account)
-  - [Resend Verification Link](###Resend-Verification-Link)
-  - [Reset Password](###Reset-Password) -->
-
 - [Account](#account)
-
-  <!-- - [Update User Info](###Update-User-Info)
-  - [Change Password](###Change-Password)
-  - [Two Factor Authentication](###Two-Factor-Authentication)
-  - [Activate Two-factor authentication](###Activate-Two-factor-authentication)
-  - [Deactivate Two-factor authentication](###Deactivate-Two-factor-authentication) -->
 
 - [Notification](#notification)
 
-  <!-- - [Mark all Notifications as read](###Mark-all-Notifications-as-read)
-  - [Mark a notification as read](###Mark-a-notification-as-read)
-  - [Get All Notifications](###Get-All-Notifications) -->
-
 - [Upload](#upload)
-
-  <!-- - [Upload a File](###Upload-a-File) -->
 
 - [Review](#review)
 
-  <!-- - [Leave Review](###Leave-Review) -->
-
 - [Wallet](#wallet)
 
-  <!-- - [Get all Wallets](###Get-all-Wallets)
-  - [Get Single Wallet Details](###Get-Single-Wallet-Details)
-  - [Get a Transaction Details](###Get-a-Transaction-Details)
-  - [Get Exchange Rate](###Get-Exchange-Rate) -->
-
 - [Collections](#collections)
-  <!-- - [Create Connection](###Create-Connection)
-  - [Get all Connections](###Get-all-Connections)
-  - [Get Details of a connection](###Get-Details-of-a-connection) -->
 
 ## Installation
 
@@ -63,8 +35,6 @@ To install PAKT SDK, simply
 `yarn add pakt-sdk`
 
 > :warning: Ensure you are registered on www.pakt.world, with a paid and activated chainsite.
-
-<!-- # Usage -->
 
 ## Initialization
 
