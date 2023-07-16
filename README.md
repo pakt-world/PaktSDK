@@ -653,7 +653,7 @@ type CreateCollectionDto = {
 };
 
 export const createCollection = async (payload: CreateCollectionDto) => {
-  const create: ICollectionDto = await sdkInit.connection.create(payload);
+  const create: ICollectionDto = await sdkInit.collection.create(payload);
 };
 ```
 
