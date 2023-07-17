@@ -1,7 +1,7 @@
 import { ResponseDto } from "src/utils/response";
 
 export interface AddReviewDto {
-  jobId: string;
+  collectionId: string;
   rating: number;
   review: string;
 }
