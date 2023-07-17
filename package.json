@@ -1,12 +1,13 @@
 {
   "name": "pakt-sdk",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Pakt SDK",
   "files": [
     "dist/"
   ],
   "main": "./dist/src/main.js",
   "types": "./dist/src/main.d.ts",
+  "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "npx ts-node ./examples/src/index.ts",

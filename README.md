@@ -436,15 +436,11 @@ Models for Wallet & Transaction are typed like so:
 interface IWalletDto {
   owner: UserAccountDto;
   amount: number;
-  ledger: number;
   lock: number;
-  lockedUsd: number;
   usdValue: number;
   usdRate: number;
   spendable: number;
   address: string;
-  addressC: string;
-  addressX: string;
   coin: string;
   walletId: string;
   walletData: string;
@@ -582,8 +578,6 @@ interface ICollectionDto {
   latePenaltyFee?: string;
   failureFee?: string;
   encodeKey?: string;
-  avaxPrivateKey?: string;
-  avaxAddress?: string;
   paymentCoin?: string;
   isPrivate?: boolean;
   paymentAddress?: string;
