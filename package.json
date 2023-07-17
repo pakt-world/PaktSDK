@@ -1,6 +1,6 @@
 {
   "name": "pakt-sdk",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Pakt SDK",
   "files": [
     "dist/"
