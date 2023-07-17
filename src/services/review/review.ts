@@ -1,4 +1,5 @@
 import { PaktConnector } from "src/connector";
+import { API_PATHS } from "src/utils";
 import { ErrorUtils, ResponseDto } from "src/utils/response";
 import Container, { Service } from "typedi";
 import { AddReviewDto, ReviewModuleType } from "./review.dto";
@@ -17,11 +18,11 @@ export class ReviewModule implements ReviewModuleType {
     this.connector = Container.of(this.id).get(PaktConnector);
   }
   addReview(payload: AddReviewDto): Promise<ResponseDto<void>> {
-    const credentials = { ...payload };
+    const reviewPayload = { ...payload };
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<void> = await this.connector.post({
-        path: "",
-        body: credentials,
+        path: API_PATHS.ADD_REVIEW,
+        body: reviewPayload,
       });
       return response.data;
     });

@@ -52,8 +52,6 @@ export interface IWalletDto {
   usdRate: number;
   spendable: number;
   address: string;
-  addressC: string;
-  addressX: string;
   coin: string;
   walletId: string;
   walletData: string;
