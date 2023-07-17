@@ -45,7 +45,7 @@ export const API_PATHS = {
 
   // File Upload
   FILE_UPLOAD: "/upload/",
-  
+
   // Review
-  // ADD_REVIEW: "/job/review",
+  ADD_REVIEW: "/reviews/",
 };
