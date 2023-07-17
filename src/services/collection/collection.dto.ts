@@ -49,8 +49,6 @@ export interface ICollectionDto {
   latePenaltyFee?: string;
   failureFee?: string;
   encodeKey?: string;
-  avaxPrivateKey?: string;
-  avaxAddress?: string;
   paymentCoin?: string;
   isPrivate?: boolean;
   paymentAddress?: string;
