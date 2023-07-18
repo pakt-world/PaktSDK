@@ -407,7 +407,7 @@ Users can leave a review via the PAKT SDK.
 ```typescript
 export const addReview = async () => {
   interface AddReviewDto {
-    jobId: string;
+    collectionId: string;
     rating: number;
     review: string;
   }
@@ -621,6 +621,28 @@ export const createCollection = async (payload: CreateCollectionDto) => {
 };
 ```
 
+### Create Many Collections
+
+```typescript
+type CreateManyCollectionDto = {
+  type: string;
+  parent: string;
+  collections: {
+    name: string;
+    description: string;
+    isPrivate: boolean;
+    category?: string;
+    paymentFee?: string;
+    deliveryDate?: string;
+    skills?: string[];
+    attachments?: string[];
+  }[];
+};
+export const createManyCollection = async (payload: CreateManyCollectionDto) => {
+  const create: ICollectionDto = await sdkInit.collection.createMany(payload);
+};
+```
+
 ### Get all Collections
 
 Get all Collections corresponding to an optional filter, else return ALL collection
@@ -643,6 +665,26 @@ type FindCollectionDto = {
 
 export const getAllCollections = async (filter?: filterDto) => {
   const collections: FindCollectionDto = await sdkInit.collections.getAll(filter);
+};
+```
+
+### Get a collection by id
+
+Get a collection by id
+
+```typescript
+export const getACollection = async (id: string) => {
+  const collections: ICollectionDto = await sdkInit.collections.getById(id);
+};
+```
+
+### Get COllections by types
+
+Get Collections by types
+
+```typescript
+export const getACollection = async (filter: filterDto) => {
+  const collections: FindCollectionDto = await sdkInit.collections.getTypes(filter);
 };
 ```
 
