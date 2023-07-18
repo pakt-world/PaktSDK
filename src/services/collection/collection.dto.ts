@@ -137,7 +137,7 @@ export type cancelJobDto = {
 
 export interface CollectionModuleType {
   getAll(filter?: filterDto): Promise<ResponseDto<FindCollectionDto>>;
-  getById(id: string, filter?: object): Promise<ResponseDto<ICollectionDto>>;
+  getById(id: string): Promise<ResponseDto<ICollectionDto>>;
   getTypes(filter?: filterDto): Promise<ResponseDto<FindCollectionTypeDto>>;
   create(payload: CreateCollectionDto): Promise<ResponseDto<ICollectionDto>>;
   createMany(payload: CreateManyCollectionDto): Promise<ResponseDto<ICollectionDto[]>>;
