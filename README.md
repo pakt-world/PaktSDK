@@ -3,6 +3,7 @@
 # PAKT
 [![Npm package version](https://badgen.net/npm/v/pakt-sdk)](https://www.npmjs.com/package/pakt-sdk)
 [![Npm package monthly downloads](https://badgen.net/npm/dt/pakt-sdk)](https://npmjs.ccom/package/pakt-sdk)
+[![Latest release](https://badgen.net/github/release/pakt-world/PaktSDK)](https://github.com/pakt-world/PaktSDK/releases)
 [![Npm package license](https://badgen.net/npm/license/pakt-sdk)](https://npmjs.com/package/pakt-sdk)
 
 
