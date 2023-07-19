@@ -1,3 +1,4 @@
+import { CHARACTERS } from "src/utils/constants";
 import { Container, Service } from "typedi";
 import { PaktConfig } from "../utils/config";
 import { AUTH_TOKEN, PAKT_CONFIG, TEMP_TOKEN } from "../utils/token";
@@ -7,6 +8,8 @@ import { CollectionModule, CollectionModuleType } from "./collection/collection"
 import { NotificationModule, NotificationModuleType } from "./notification";
 import { UploadModule, UploadModuleType } from "./upload/upload";
 import { WalletModule, WalletModuleType } from "./wallet/wallet";
+import { WithdrawalModule } from "./withdrawal/withdrawal";
+import { WithdrawalModuleType } from "./withdrawal/withdrawal.dto";
 
 @Service({ transient: true })
 class PaktSDK<T> {
@@ -16,6 +19,7 @@ class PaktSDK<T> {
   notifications: NotificationModuleType;
   file: UploadModuleType;
   wallet: WalletModuleType;
+  withdrawal: WithdrawalModuleType;
 
   constructor(private readonly id: string) {
     this.auth = Container.of(id).get(AuthenticationModule);
@@ -24,6 +28,7 @@ class PaktSDK<T> {
     this.notifications = Container.of(id).get(NotificationModule);
     this.file = Container.of(id).get(UploadModule);
     this.wallet = Container.of(id).get(WalletModule);
+    this.withdrawal = Container.of(id).get(WithdrawalModule);
   }
   /**
    * Initialize Pakt SDK. This method must be called before any other method.
@@ -46,7 +51,7 @@ class PaktSDK<T> {
    * @param config
    */
   private static generateRandomString() {
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const characters = CHARACTERS;
     let result = "";
     for (let i = 0; i < 60; i++) {
       result += characters.charAt(Math.floor(Math.random() * characters.length));
