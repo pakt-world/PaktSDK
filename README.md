@@ -4,7 +4,6 @@
 [![Npm package version](https://badgen.net/npm/v/pakt-sdk)](https://www.npmjs.com/package/pakt-sdk)
 [![Npm package monthly downloads](https://badgen.net/npm/dm/pakt-sdk)](https://npmjs.ccom/package/pakt-sdk)
 
-//[![Twitter](https://img.shields.io/twitter/follow/PaktWorld?style=social)](https://twitter.com/PaktWorld)
 
 PAKT SDK is a modern software development kit, built for NodeJs.
 
