@@ -37,14 +37,7 @@ export interface ICollectionDto {
   status?: string;
   inviteAccepted?: boolean;
   isPrivate?: boolean;
-  paymentAddress?: string;
-  payoutResponse?: string;
-  feePayoutResponse?: string;
-  paymentWebHook?: string;
-  webHookAmount?: string;
   emailToken?: string;
-  deliveryDate?: string;
-  completedDate?: string;
   rating?: string; //TODO:: addd IRatingDto
   recipientRating?: string; //TODO:: addd IRatingDto
   score?: number;
@@ -65,7 +58,6 @@ export type CreateCollectionDto = {
   category?: string;
   description: string;
   isPrivate: boolean;
-  paymentFee?: string;
   deliveryDate?: string;
   tags?: string[];
   attachments?: string[];
@@ -79,7 +71,6 @@ export type CreateManyCollectionDto = {
     description: string;
     isPrivate: boolean;
     category?: string;
-    paymentFee?: string;
     deliveryDate?: string;
     tags?: string[];
     attachments?: string[];
