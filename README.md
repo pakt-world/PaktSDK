@@ -628,8 +628,6 @@ interface ICollectionDto {
   status?: string;
   inviteAccepted?: boolean;
   isPrivate?: boolean;
-  paymentAddress?: string;
-  feePayoutResponse?: string;
   rating?: string;
   recipientRating?: string;
   score?: number;

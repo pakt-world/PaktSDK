@@ -37,7 +37,6 @@ export interface ICollectionDto {
   status?: string;
   inviteAccepted?: boolean;
   isPrivate?: boolean;
-  paymentAddress?: string;
   emailToken?: string;
   rating?: string; //TODO:: addd IRatingDto
   recipientRating?: string; //TODO:: addd IRatingDto
