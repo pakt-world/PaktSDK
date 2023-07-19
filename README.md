@@ -24,6 +24,8 @@ PAKT SDK is a modern software development kit, built for NodeJs.
 
 - [Wallet](#wallet)
 
+- [Withdrawal](#withdrawal)
+
 - [Collections](#collections)
 
 ## Installation
@@ -526,6 +528,64 @@ export const exchangeRate = async () => {
 
 ---
 
+## Withdrawal
+
+With the PAKT SDK, users can make withdrawals, as well as fetch list withdrawals history
+
+- Make withdrawal
+- Fetch withdrawal history
+
+### Create Withdrawal
+
+Execute a withdrawal
+
+```typescript
+interface CreateWithdrawal {
+  coin: string;
+  amount: number;
+  password: string;
+  address: string;
+}
+
+interface IWithdrawalDto {
+  owner: string | IUser;
+  txId: string | ITransactionDto;
+  chainTxId: string;
+  coin: string;
+  address: string;
+  amount: number;
+  usdValue: number;
+  usdRate: number;
+  status: string;
+}
+export const create = async ({ payload }: { payload: CreateWithdrawal }) => {
+  const withdrawal: IWithdrawalDto = await sdkInit.withdraw.createWithdrawal(payload);
+};
+```
+
+### Fetch Withdrawals
+
+Fetch withdrawals for a user
+
+```typescript
+interface FilterWithdrawalDto {
+  page: number;
+  limit: number;
+  owner: string;
+}
+
+interface FindWithdrawalsDto {
+  page: number;
+  pages: number;
+  total: number;
+  data: IWithdrawalDto[];
+}
+
+export const fetch = async ({ filter }: { filter: FilterWithdrawalDto }) => {
+  const withdrawals: FindWithdrawalsDto = await sdkInit.withdraw.fetchWithdrawal(filter);
+};
+```
+
 ## Collections
 
 With the PAKT SDK, users can
@@ -558,13 +618,13 @@ interface ICollectionDto {
   collections?: ICollectionDto[] | string[];
   stage?: number;
   image?: IUploadDto;
-  invite?: string; //TODO:: addd ICOllectionInviteDto
-  invites?: string[]; //TODO:: addd ICOllectionInviteDto
-  applications?: string[]; //TODO:: addd IApplicationDto
-  wallet?: string; //TODO:: addd IWalletDto
+  invite?: string;
+  invites?: string[];
+  applications?: string[];
+  wallet?: string;
   isFreelance?: boolean;
   skillsData?: string[];
-  skills?: string[]; //TODO:: addd ICategoryDto
+  skills?: string[];
   attachments?: IAttachmentDto[];
   attachmentData?: string[];
   status?: string;
@@ -588,8 +648,8 @@ interface ICollectionDto {
   emailToken?: string;
   deliveryDate?: string;
   completedDate?: string;
-  rating?: string; //TODO:: addd IRatingDto
-  recipientRating?: string; //TODO:: addd IRatingDto
+  rating?: string;
+  recipientRating?: string;
   recipientCompletedJob?: boolean;
   score?: number;
   progress?: number;

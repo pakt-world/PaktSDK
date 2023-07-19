@@ -1,5 +1,8 @@
 // Please note that some of these endpoints can be enabled or disabled according to policy settings on your Chainsite dashboard. Ensure the endpoint you want to utilize has its policy settings enabled.
 
+export const CHARACTERS =
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
 export const API_PATHS = {
   API_VERSION: "/v1",
   // Authentication endpoints
@@ -48,4 +51,8 @@ export const API_PATHS = {
 
   // Review
   ADD_REVIEW: "/reviews/",
+
+  //Withdrawal
+  CREATE_WITHDRAWAL: "/withdrawals/",
+  FETCH_WITHDRAWALS: "/withdrawals/",
 };
