@@ -67,7 +67,7 @@ export type CreateCollectionDto = {
   isPrivate: boolean;
   paymentFee?: string;
   deliveryDate?: string;
-  skills?: string[];
+  tags?: string[];
   attachments?: string[];
 };
 
@@ -81,13 +81,13 @@ export type CreateManyCollectionDto = {
     category?: string;
     paymentFee?: string;
     deliveryDate?: string;
-    skills?: string[];
+    tags?: string[];
     attachments?: string[];
   }[];
 };
 
 export type assignCollectionDto = {
-  jobId: string;
+  collectionId: string;
   talentId: string;
 };
 
