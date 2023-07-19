@@ -24,7 +24,6 @@ export interface ICollectionDto {
   type: string;
   build?: string;
   category?: string;
-  equity?: string;
   parent?: ICollectionDto | string;
   collections?: ICollectionDto[] | string[];
   stage?: number;
@@ -33,23 +32,10 @@ export interface ICollectionDto {
   invites?: string[]; //TODO:: addd ICOllectionInviteDto
   applications?: string[]; //TODO:: addd IApplicationDto
   wallet?: string; //TODO:: addd IWalletDto
-  isFreelance?: boolean;
-  skillsData?: string[];
-  skills?: string[]; //TODO:: addd ICategoryDto
   attachments?: IAttachmentDto[];
   attachmentData?: string[];
   status?: string;
   inviteAccepted?: boolean;
-  payoutStatus?: string;
-  paymentStatus?: string;
-  feePayoutStatus?: string;
-  escrowPaid?: boolean;
-  paymentFee?: number;
-  earlyBonus?: string;
-  latePenaltyFee?: string;
-  failureFee?: string;
-  encodeKey?: string;
-  paymentCoin?: string;
   isPrivate?: boolean;
   paymentAddress?: string;
   payoutResponse?: string;
@@ -61,7 +47,6 @@ export interface ICollectionDto {
   completedDate?: string;
   rating?: string; //TODO:: addd IRatingDto
   recipientRating?: string; //TODO:: addd IRatingDto
-  recipientCompletedJob?: boolean;
   score?: number;
   progress?: number;
   isDeleted?: boolean;
@@ -69,7 +54,6 @@ export interface ICollectionDto {
   expectedAmount?: string;
   usdExpectedAmount?: string;
   usdExpectedFee?: string;
-  feePercentage?: string;
   rate?: string;
   cancellationReason?: string;
   completed?: boolean;
@@ -83,7 +67,7 @@ export type CreateCollectionDto = {
   isPrivate: boolean;
   paymentFee?: string;
   deliveryDate?: string;
-  skills?: string[];
+  tags?: string[];
   attachments?: string[];
 };
 
@@ -97,13 +81,13 @@ export type CreateManyCollectionDto = {
     category?: string;
     paymentFee?: string;
     deliveryDate?: string;
-    skills?: string[];
+    tags?: string[];
     attachments?: string[];
   }[];
 };
 
 export type assignCollectionDto = {
-  jobId: string;
+  collectionId: string;
   talentId: string;
 };
 
