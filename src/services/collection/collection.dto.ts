@@ -39,12 +39,7 @@ export interface ICollectionDto {
   isPrivate?: boolean;
   paymentAddress?: string;
   payoutResponse?: string;
-  feePayoutResponse?: string;
-  paymentWebHook?: string;
-  webHookAmount?: string;
   emailToken?: string;
-  deliveryDate?: string;
-  completedDate?: string;
   rating?: string; //TODO:: addd IRatingDto
   recipientRating?: string; //TODO:: addd IRatingDto
   score?: number;
