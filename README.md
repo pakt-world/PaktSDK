@@ -522,10 +522,7 @@ Get the exchange rate of available coins, the prevailing cryptocurrency & platfo
 
 ```typescript
 export const exchangeRate = async () => {
-  interface IWalletExchangeDto {
-    avax: number;
-  }
-  const rate: IWalletExchangeDto = await sdkInit.wallet.getExchange();
+  const rate = await sdkInit.wallet.getExchange();
 };
 ```
 
@@ -715,7 +712,7 @@ export const getACollection = async (id: string) => {
 };
 ```
 
-### Get COllections by types
+### Get Collections by types
 
 Get Collections by types
 
