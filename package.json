@@ -29,7 +29,7 @@
     "name": "PAKT",
     "email": "joshuaa@pakt.com"
   },
-  "license": "MIT",
+  "license": "BSD-3",
   "bugs": {
     "url": "https://github.com/pakt-world/PaktSDK/issues"
   },
