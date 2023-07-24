@@ -20,6 +20,7 @@
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,
     "declaration": false,
     "typeRoots": ["node_modules/@types", "./src/types", "./types.d.ts"],
+    "experimentalDecorators": true
   },
   "plugins": [
     {

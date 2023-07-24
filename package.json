@@ -1,9 +1,9 @@
 {
   "name": "pakt-sdk",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Pakt SDK",
   "files": [
-    "dist/"
+    "dist/*"
   ],
   "main": "./dist/src/main.js",
   "types": "./dist/src/main.d.ts",
