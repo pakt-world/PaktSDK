@@ -12,7 +12,7 @@ import { WithdrawalModule } from "./withdrawal/withdrawal";
 import { WithdrawalModuleType } from "./withdrawal/withdrawal.dto";
 
 @Service({ transient: true })
-class PaktSDK<T> {
+class PaktSDK {
   auth: AuthenticationModuleType;
   collection: CollectionModuleType;
   account: AccountModuleType;
@@ -35,7 +35,7 @@ class PaktSDK<T> {
    * Default configuration is used if no configuration is provided.
    * @param config
    */
-  public static async init<T>(config: PaktConfig): Promise<PaktSDK<T>> {
+  public static async init(config: PaktConfig): Promise<PaktSDK> {
     const defaultConfig: PaktConfig = {
       ...config,
     };
@@ -44,7 +44,7 @@ class PaktSDK<T> {
     Container.of(id).set(PAKT_CONFIG, defaultConfig);
     Container.of(id).set(AUTH_TOKEN, "");
     Container.of(id).set(TEMP_TOKEN, "");
-    return new PaktSDK<T>(id);
+    return new PaktSDK(id);
   }
   /**
    * Generate Random String. This method is used to generate random strings.
