@@ -1,4 +1,4 @@
-import { ResponseDto } from "src/utils/response";
+import { ResponseDto } from "../../utils/response";
 import { ICollectionDto } from "../collection/collection.dto";
 
 export interface ICollectionBookmarkDto {
@@ -21,10 +21,10 @@ export type createBookMarkDto = {
 };
 
 export type filterDto =
-  | ({
-    page?: string;
-    limit?: string;
-  })
+  | {
+      page?: string;
+      limit?: string;
+    }
   | any;
 
 export interface BookMarkModuleType {

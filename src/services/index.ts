@@ -1,6 +1,6 @@
-import { CHARACTERS } from "src/utils/constants";
 import { Container, Service } from "typedi";
 import { PaktConfig } from "../utils/config";
+import { CHARACTERS } from "../utils/constants";
 import { AUTH_TOKEN, PAKT_CONFIG, TEMP_TOKEN } from "../utils/token";
 import { AccountModule, AccountModuleType } from "./account/account";
 import { AuthenticationModule, AuthenticationModuleType } from "./auth";
@@ -21,7 +21,7 @@ class PaktSDK {
   wallet: WalletModuleType;
   withdrawal: WithdrawalModuleType;
 
-  constructor(private readonly id: string) {
+  constructor(id: string) {
     this.auth = Container.of(id).get(AuthenticationModule);
     this.collection = Container.of(id).get(CollectionModule);
     this.account = Container.of(id).get(AccountModule);
