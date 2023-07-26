@@ -98,7 +98,7 @@ export type FindCollectionTypeDto = {
   data: ICollectionTypeDto[];
 };
 
-export type filterDto =
+export type filterCollectionDto =
   | ({
       page?: string;
       limit?: string;
@@ -111,9 +111,9 @@ export type cancelJobDto = {
 };
 
 export interface CollectionModuleType {
-  getAll(filter?: filterDto): Promise<ResponseDto<FindCollectionDto>>;
+  getAll(filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionDto>>;
   getById(id: string): Promise<ResponseDto<ICollectionDto>>;
-  getTypes(filter?: filterDto): Promise<ResponseDto<FindCollectionTypeDto>>;
+  getTypes(filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionTypeDto>>;
   create(payload: CreateCollectionDto): Promise<ResponseDto<ICollectionDto>>;
   createMany(payload: CreateManyCollectionDto): Promise<ResponseDto<ICollectionDto[]>>;
 }

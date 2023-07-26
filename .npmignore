@@ -1,8 +1,10 @@
 # Dependency directories
 node_modules/
 
-dist
+#dist
 
 examples/
 
 ./PAKT_SDK.png
+
+.vscode

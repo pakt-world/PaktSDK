@@ -1,60 +1,67 @@
-import { Container, Service } from 'typedi'
-import { CreateCollectionDto, CreateManyCollectionDto, FindCollectionDto, FindCollectionTypeDto, ICollectionDto, cancelJobDto, filterDto } from "./collection.dto";
+import { Container, Service } from "typedi";
+import { PaktConnector } from "../../connector";
 import { API_PATHS } from "../../utils/constants";
-import { PaktConnector } from '../../connector';
-import { ErrorUtils, ResponseDto, parseUrlWithQUery } from '../../utils/response';
+import { ErrorUtils, ResponseDto, parseUrlWithQUery } from "../../utils/response";
+import {
+  CreateCollectionDto,
+  CreateManyCollectionDto,
+  FindCollectionDto,
+  FindCollectionTypeDto,
+  ICollectionDto,
+  filterCollectionDto,
+} from "./collection.dto";
 
 // Export all Types to Service
 export * from "./collection.dto";
 
 @Service({
   factory: (data: { id: string }) => {
-    return new CollectionModule(data.id)
+    return new CollectionModule(data.id);
   },
   transient: true,
 })
 export class CollectionModule {
-  private id: string
-  private connector: PaktConnector
+  private id: string;
+  private connector: PaktConnector;
   constructor(id: string) {
     this.id = id;
-    this.connector = Container.of(this.id).get(PaktConnector)
+    this.connector = Container.of(this.id).get(PaktConnector);
   }
 
   /**
    * findall. This method finds all logged User's Jobs both created and assigned.
    * @param filter filterDto
    */
-  async getAll(filter?: filterDto): Promise<ResponseDto<FindCollectionDto>> {
+  async getAll(filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionDto>> {
     return ErrorUtils.tryFail(async () => {
       const fetchUrl = parseUrlWithQUery(API_PATHS.COLLECTION, filter);
       const response: ResponseDto<FindCollectionDto> = await this.connector.get({ path: fetchUrl });
       return response.data;
-    })
+    });
   }
 
   /**
    * findall. This method finds all logged User's Jobs both created and assigned.
-   * @param filter filterDto
+   * @param filter filterCollectionDto
    */
-  async getById(id: string, filter?: filterDto): Promise<ResponseDto<ICollectionDto>> {
+  async getById(id: string, filter?: filterCollectionDto): Promise<ResponseDto<ICollectionDto>> {
     return ErrorUtils.tryFail(async () => {
       const fetchUrl = parseUrlWithQUery(API_PATHS.COLLECTION + "/" + id, filter);
       const response: ResponseDto<ICollectionDto> = await this.connector.get({ path: fetchUrl });
       return response.data;
-    })
+    });
   }
 
   /**
    * getTypes. This method finds collection types accepted for creating collection
    * @param filter filterDto
    */
-  async getTypes(filter?: filterDto): Promise<ResponseDto<FindCollectionTypeDto>> {
+  async getTypes(filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionTypeDto>> {
     return ErrorUtils.tryFail(async () => {
       const fetchUrl = parseUrlWithQUery(API_PATHS.COLLECTION_TYPE, filter);
       const response: ResponseDto<FindCollectionTypeDto> = await this.connector.get({ path: fetchUrl });
       return response.data;
-    })
+    });
   }
 
   /**
@@ -64,9 +71,12 @@ export class CollectionModule {
   async create(payload: CreateCollectionDto): Promise<ResponseDto<ICollectionDto>> {
     return ErrorUtils.tryFail(async () => {
       const credentials = { ...payload };
-      const response: ResponseDto<ICollectionDto> = await this.connector.post({ path: API_PATHS.COLLECTION, body: credentials });
+      const response: ResponseDto<ICollectionDto> = await this.connector.post({
+        path: API_PATHS.COLLECTION,
+        body: credentials,
+      });
       return response.data;
-    })
+    });
   }
 
   /**
@@ -76,8 +86,11 @@ export class CollectionModule {
   async createMany(payload: CreateManyCollectionDto): Promise<ResponseDto<ICollectionDto[]>> {
     return ErrorUtils.tryFail(async () => {
       const credentials = { ...payload };
-      const response: ResponseDto<ICollectionDto[]> = await this.connector.post({ path: API_PATHS.COLLECTION, body: credentials });
+      const response: ResponseDto<ICollectionDto[]> = await this.connector.post({
+        path: API_PATHS.COLLECTION,
+        body: credentials,
+      });
       return response.data;
-    })
-  }  
+    });
+  }
 }
