@@ -1,4 +1,4 @@
-import { ResponseDto } from "src/utils/response";
+import { ResponseDto } from "../../utils/response";
 
 enum INotificationType {
   NEW_PROJECT = "new_project",

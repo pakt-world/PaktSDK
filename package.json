@@ -1,12 +1,12 @@
 {
   "name": "pakt-sdk",
-  "version": "0.1.4",
-  "description": "Pakt SDK",
+  "version": "0.1.5",
+  "description": "The PAKT SDK is an advanced software development kit, purpose-built for web applications, that empowers developers to construct innovative products on the PAKT Operating System.",
   "files": [
-    "dist/"
+    "src/*"
   ],
-  "main": "./dist/src/main.js",
-  "types": "./dist/src/main.d.ts",
+  "main": "src/main.ts",
+  "types": "src/index.ts",
   "private": false,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -14,7 +14,8 @@
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
     "build": "rimraf ./build && tsc",
-    "server": "node build/usage/registration.js"
+    "server": "node build/usage/registration.js",
+    "sd": "tsc --experimentalDecorators --resolveJsonModule ./src/services/index.ts"
   },
   "repository": {
     "type": "git",

@@ -1,0 +1,6 @@
+{
+  "js/ts.implicitProjectConfig.experimentalDecorators": true,
+  "javascript.implicitProjectConfig.experimentalDecorators": true,
+  "typescript.implicitProjectConfig.experimentalDecorators": true,
+  "typescript.tsdk": "node_modules/typescript/lib"
+}
