@@ -1,4 +1,4 @@
-import { ResponseDto } from "src/utils/response";
+import { ResponseDto } from "../../utils/response";
 
 export interface AddReviewDto {
   collectionId: string;
