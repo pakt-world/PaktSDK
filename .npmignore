@@ -4,3 +4,5 @@ node_modules/
 dist
 
 examples/
+
+./PAKT_SDK.png
