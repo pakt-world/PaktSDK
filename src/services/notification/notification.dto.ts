@@ -55,7 +55,7 @@ export type FindNotificationDto = {
   notification: INotificationDto[];
 };
 
-export type filterDto =
+export type filterNotificationDto =
   | ({
       page?: string;
       limit?: string;
@@ -63,7 +63,7 @@ export type filterDto =
   | any;
 
 export interface NotificationModuleType {
-  getAll(filter?: filterDto): Promise<ResponseDto<FindNotificationDto>>;
-  markOneAsRead(id: string, filter?: filterDto): Promise<ResponseDto<void>>;
+  getAll(filter?: filterNotificationDto): Promise<ResponseDto<FindNotificationDto>>;
+  markOneAsRead(id: string, filter?: filterNotificationDto): Promise<ResponseDto<void>>;
   markAll(): Promise<ResponseDto<void>>;
 }

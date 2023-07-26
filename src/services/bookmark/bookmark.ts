@@ -1,49 +1,49 @@
-import { Container, Service } from 'typedi'
-import { FindCollectionBookMarkDto, ICollectionBookmarkDto, createBookMarkDto } from "./bookmark.dto";
+import { Container, Service } from "typedi";
+import { PaktConnector } from "../../connector";
 import { API_PATHS } from "../../utils/constants";
-import { PaktConnector } from '../../connector';
-import { ErrorUtils, ResponseDto, parseUrlWithQUery } from '../../utils/response';
-import { filterDto } from '../notification';
+import { ErrorUtils, ResponseDto, parseUrlWithQUery } from "../../utils/response";
+import { filterNotificationDto } from "../notification";
+import { FindCollectionBookMarkDto, ICollectionBookmarkDto, createBookMarkDto } from "./bookmark.dto";
 
 // Export all Types to Service
 export * from "./bookmark.dto";
 
 @Service({
   factory: (data: { id: string }) => {
-    return new BookMarkModule(data.id)
+    return new BookMarkModule(data.id);
   },
   transient: true,
 })
 export class BookMarkModule {
-  private id: string
-  private connector: PaktConnector
+  private id: string;
+  private connector: PaktConnector;
   constructor(id: string) {
     this.id = id;
-    this.connector = Container.of(this.id).get(PaktConnector)
+    this.connector = Container.of(this.id).get(PaktConnector);
   }
 
   /**
    * findall. This method finds all logged User's Bookmark collections.
-   * @param filter filterDto
+   * @param filter filterNotificationDto
    */
-  async getAll(filter?: filterDto): Promise<ResponseDto<FindCollectionBookMarkDto>> {
+  async getAll(filter?: filterNotificationDto): Promise<ResponseDto<FindCollectionBookMarkDto>> {
     return ErrorUtils.tryFail(async () => {
       const fetchUrl = parseUrlWithQUery(API_PATHS.BOOKMARK, filter);
       const response: ResponseDto<FindCollectionBookMarkDto> = await this.connector.get({ path: fetchUrl });
       return response.data;
-    })
+    });
   }
 
   /**
    * findall. This method finds bookmarked collection by id.
-   * @param filter filterDto
+   * @param filter filterNotificationDto
    */
-  async getById(id: string, filter?: filterDto): Promise<ResponseDto<ICollectionBookmarkDto>> {
+  async getById(id: string, filter?: filterNotificationDto): Promise<ResponseDto<ICollectionBookmarkDto>> {
     return ErrorUtils.tryFail(async () => {
       const fetchUrl = parseUrlWithQUery(API_PATHS.BOOKMARK + "/" + id, filter);
       const response: ResponseDto<ICollectionBookmarkDto> = await this.connector.get({ path: fetchUrl });
       return response.data;
-    })
+    });
   }
 
   /**
@@ -53,9 +53,12 @@ export class BookMarkModule {
   async create(payload: createBookMarkDto): Promise<ResponseDto<ICollectionBookmarkDto>> {
     return ErrorUtils.tryFail(async () => {
       const credentials = { ...payload };
-      const response: ResponseDto<ICollectionBookmarkDto> = await this.connector.post({ path: API_PATHS.BOOKMARK, body: credentials });
+      const response: ResponseDto<ICollectionBookmarkDto> = await this.connector.post({
+        path: API_PATHS.BOOKMARK,
+        body: credentials,
+      });
       return response.data;
-    })
+    });
   }
 
   /**
@@ -64,9 +67,10 @@ export class BookMarkModule {
    */
   async delete(id: string): Promise<ResponseDto<ICollectionBookmarkDto>> {
     return ErrorUtils.tryFail(async () => {
-      const response: ResponseDto<ICollectionBookmarkDto> = await this.connector.delete({ path: API_PATHS.BOOKMARK + "/" + id });
+      const response: ResponseDto<ICollectionBookmarkDto> = await this.connector.delete({
+        path: API_PATHS.BOOKMARK + "/" + id,
+      });
       return response.data;
-    })
+    });
   }
-
 }
