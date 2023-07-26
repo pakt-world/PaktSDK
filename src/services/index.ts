@@ -11,8 +11,18 @@ import { WalletModule, WalletModuleType } from "./wallet/wallet";
 import { WithdrawalModule } from "./withdrawal/withdrawal";
 import { WithdrawalModuleType } from "./withdrawal/withdrawal.dto";
 
+export * from "./account";
+export * from "./auth";
+export * from "./bookmark";
+export * from "./collection";
+export * from "./notification";
+export * from "./review";
+export * from "./upload";
+export * from "./wallet";
+export * from "./withdrawal";
+
 @Service({ transient: true })
-class PaktSDK {
+export class PaktSDK {
   auth: AuthenticationModuleType;
   collection: CollectionModuleType;
   account: AccountModuleType;

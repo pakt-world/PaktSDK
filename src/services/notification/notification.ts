@@ -1,8 +1,8 @@
+import { Container, Service } from "typedi";
 import { PaktConnector } from "../../connector";
 import { API_PATHS } from "../../utils/constants";
 import { ErrorUtils, ResponseDto, parseUrlWithQUery } from "../../utils/response";
-import { Container, Service } from "typedi";
-import { FindNotificationDto, NotificationModuleType, filterDto } from "./notification.dto";
+import { FindNotificationDto, NotificationModuleType, filterNotificationDto } from "./notification.dto";
 
 export * from "./notification.dto";
 
@@ -20,7 +20,7 @@ export class NotificationModule implements NotificationModuleType {
     this.connector = Container.of(this.id).get(PaktConnector);
   }
 
-  async getAll(filter?: filterDto): Promise<ResponseDto<FindNotificationDto>> {
+  async getAll(filter?: filterNotificationDto): Promise<ResponseDto<FindNotificationDto>> {
     const fetchUrl = parseUrlWithQUery(API_PATHS.NOTIFICATION_FETCH, filter);
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<FindNotificationDto> = await this.connector.get({
