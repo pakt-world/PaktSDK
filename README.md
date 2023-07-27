@@ -9,9 +9,10 @@
 
 PAKT SDK is a modern software development kit, built for NodeJs.
 
-## Sample Usage
+## Example
 
-Check out a sample project that showcases how the sdk is to be used: [Sample](https://github.com/Jendorski/PAKT-SDK-Sample)
+Explore our example project which effectively demonstrates the practical application of our SDK:
+[Sample Project](https://github.com/Jendorski/PAKT-SDK-Sample)
 
 # Table of Contents
 
