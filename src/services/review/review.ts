@@ -4,6 +4,8 @@ import { ErrorUtils, ResponseDto } from "src/utils/response";
 import Container, { Service } from "typedi";
 import { AddReviewDto, ReviewModuleType } from "./review.dto";
 
+export * from "./review.dto";
+
 @Service({
   factory: (data: { id: string }) => {
     return new ReviewModule(data.id);
