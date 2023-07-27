@@ -10,6 +10,8 @@ import {
   WithdrawalModuleType,
 } from "./withdrawal.dto";
 
+export * from "./withdrawal.dto";
+
 @Service({
   factory: (data: { id: string }) => {
     return new WithdrawalModule(data.id);
