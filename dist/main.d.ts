@@ -54,8 +54,9 @@ interface IUser {
         };
         talent: {
             availability: string;
-            skills: string[];
-            skillIds: any[];
+            tags: string[];
+            tagsIds: any[];
+            tagsCategory: string;
             about?: string;
         };
     };
@@ -167,7 +168,9 @@ type updateUserDto = {
         talent: {
             about: string;
             availability: string;
-            skills: string[];
+            tags: string[];
+            tagsIds: string | any[];
+            tagsCategory: string;
         };
         privateEarnings: boolean;
         privateInvestments: boolean;
@@ -190,7 +193,7 @@ type TwoFAresponse = {
 };
 interface AccountModuleType {
     getUser(): Promise<ResponseDto<fetchAccountDto>>;
-    onboardEndpoint(skillCategory: string, profileImage: string, type: string): Promise<ResponseDto<fetchAccountDto>>;
+    onboardEndpoint(tagCategory: string, profileImage: string, type: string): Promise<ResponseDto<fetchAccountDto>>;
     updateAccount(payload: updateUserDto): Promise<ResponseDto<fetchAccountDto>>;
     changePassword(oldPassword: string, newPassword: string): Promise<ResponseDto<fetchAccountDto>>;
     initate2FA(type: TwoFATypeDto): Promise<ResponseDto<TwoFAresponse>>;
@@ -252,9 +255,9 @@ declare class AccountModule implements AccountModuleType {
 interface UploadedUser {
     profile: {
         talent: {
-            skills: string[];
+            tags: string[];
             availability: string;
-            skillIds: object[];
+            tagsIds: object[];
         };
     };
     _id: string;
@@ -444,7 +447,7 @@ declare enum INotificationType {
 interface NotificationUser {
     profile: {
         talent: {
-            skills: string[];
+            tags: string[];
             availability: string;
             skillIds: object[];
         };
@@ -494,9 +497,9 @@ declare class NotificationModule implements NotificationModuleType {
 interface WalletUser {
     profile: {
         talent: {
-            skills: string[];
+            tags: string[];
             availability: string;
-            skillIds: object[];
+            tagsIds: object[];
         };
     };
     _id: string;
@@ -771,6 +774,7 @@ declare const API_PATHS: {
     NOTIFICATION_MARK_ONE: string;
     ACCOUNT: string;
     ACCOUNT_ONBOARD: string;
+    ACCOUNT_UPDATE: string;
     ACCOUNT_PASSWORD: string;
     ACCOUNT_TWO_INIT: string;
     ACCOUNT_TWO_ACTIVATE: string;
@@ -794,4 +798,4 @@ declare const PAKT_CONFIG: Token<PaktConfig>;
 declare const AUTH_TOKEN: Token<string>;
 declare const TEMP_TOKEN: Token<string>;
 
-export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, CHARACTERS, ChangePasswordDto, CollectionModule, CollectionModuleType, CreateCollectionDto, CreateFileUpload, CreateManyCollectionDto, ErrorUtils, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindNotificationDto, FindTransactionsDto, ICollectionBookmarkDto, ICollectionDto, INotificationDto, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, IUploadDto, IUser, IWalletDto, IWalletExchangeDto, LoginDto, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, RegisterDto, ResendVerifyDto, ResetDto, ResponseDto, ReviewModule, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UploadModule, UploadModuleType, ValidatePasswordToken, WalletModule, WalletModuleType, WithdrawalModule, assignCollectionDto, cancelJobDto, createBookMarkDto, fetchAccountDto, filterCollectionDto, filterDto, filterNotificationDto, parseUrlWithQUery, updateUserDto };
+export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, CHARACTERS, ChangePasswordDto, CollectionModule, CollectionModuleType, CreateCollectionDto, CreateFileUpload, CreateManyCollectionDto, CreateWithdrawal, ErrorUtils, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindNotificationDto, FindTransactionsDto, FindWithdrawalsDto, ICollectionBookmarkDto, ICollectionDto, INotificationDto, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, IUploadDto, IUser, IWalletDto, IWalletExchangeDto, IWithdrawalDto, LoginDto, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, RegisterDto, ResendVerifyDto, ResetDto, ResponseDto, ReviewModule, ReviewModuleType, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UploadModule, UploadModuleType, ValidatePasswordToken, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelJobDto, createBookMarkDto, fetchAccountDto, filterCollectionDto, filterDto, filterNotificationDto, parseUrlWithQUery, updateUserDto };
