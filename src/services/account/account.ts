@@ -62,8 +62,8 @@ export class AccountModule implements AccountModuleType {
   async updateAccount(payload: updateUserDto): Promise<ResponseDto<fetchAccountDto>> {
     return ErrorUtils.tryFail(async () => {
       const body = { ...payload };
-      const response: ResponseDto<fetchAccountDto> = await this.connector.post({
-        path: API_PATHS.ACCOUNT_ONBOARD,
+      const response: ResponseDto<fetchAccountDto> = await this.connector.patch({
+        path: API_PATHS.ACCOUNT_UPDATE,
         body,
       });
       return response.data;
