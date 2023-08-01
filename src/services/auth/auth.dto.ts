@@ -25,11 +25,12 @@ export interface IUser {
     };
     talent: {
       availability: string;
-      skills: string[];
-      skillIds: any[];
+      tags: string[];
+      tagsIds: any[];
+      tagsCategory: string;
       about?: string;
     };
-  }; 
+  };
   socket?: {
     id: string;
     status: string;

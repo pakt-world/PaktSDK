@@ -24,7 +24,7 @@ enum INotificationType {
 interface NotificationUser {
   profile: {
     talent: {
-      skills: string[];
+      tags: string[];
       availability: string;
       skillIds: object[];
     };

@@ -21,7 +21,9 @@ export type updateUserDto = {
     talent: {
       about: string;
       availability: string;
-      skills: string[];
+      tags: string[];
+      tagsIds: string | any[];
+      tagsCategory: string;
     };
     privateEarnings: boolean;
     privateInvestments: boolean;
@@ -47,7 +49,7 @@ export type TwoFAresponse = {
 
 export interface AccountModuleType {
   getUser(): Promise<ResponseDto<fetchAccountDto>>;
-  onboardEndpoint(skillCategory: string, profileImage: string, type: string): Promise<ResponseDto<fetchAccountDto>>;
+  onboardEndpoint(tagCategory: string, profileImage: string, type: string): Promise<ResponseDto<fetchAccountDto>>;
   updateAccount(payload: updateUserDto): Promise<ResponseDto<fetchAccountDto>>;
   changePassword(oldPassword: string, newPassword: string): Promise<ResponseDto<fetchAccountDto>>;
   initate2FA(type: TwoFATypeDto): Promise<ResponseDto<TwoFAresponse>>;

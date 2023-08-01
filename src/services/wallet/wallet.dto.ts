@@ -3,9 +3,9 @@ import { ResponseDto } from "../../utils/response";
 interface WalletUser {
   profile: {
     talent: {
-      skills: string[];
+      tags: string[];
       availability: string;
-      skillIds: object[];
+      tagsIds: object[];
     };
   };
   _id: string;
