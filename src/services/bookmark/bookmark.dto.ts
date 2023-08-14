@@ -20,16 +20,19 @@ export type createBookMarkDto = {
   collection: string;
 };
 
-export type filterDto =
+export type filterBookmarkDto =
   | {
       page?: string;
       limit?: string;
     }
-  | any;
+  | ICollectionBookmarkDto;
 
 export interface BookMarkModuleType {
-  getAll(filter?: filterDto): Promise<ResponseDto<FindCollectionBookMarkDto>>;
-  getById(id: string, filter?: object): Promise<ResponseDto<ICollectionBookmarkDto>>;
+  getAll(filter?: filterBookmarkDto): Promise<ResponseDto<FindCollectionBookMarkDto>>;
+  getById(
+    id: string,
+    filter?: Record<string, any> | ICollectionBookmarkDto,
+  ): Promise<ResponseDto<ICollectionBookmarkDto>>;
   create(payload: createBookMarkDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
   delete(id: string): Promise<ResponseDto<any>>;
 }

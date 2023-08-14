@@ -252,6 +252,76 @@ declare class AccountModule implements AccountModuleType {
     logout(): Promise<ResponseDto<void>>;
 }
 
+declare enum INotificationType {
+    NEW_PROJECT = "new_project",
+    NEW_JOB = "new_job",
+    ASSIGNED_JOB = "assigned_job",
+    NEW_DEPOSIT = "new_deposit",
+    NEW_TRANSFER = "new_transfer",
+    NEW_WITHDRAWAL = "new_withdrawal",
+    INVITE_ACCEPTED = "invite_accepted",
+    INVITE_RECEIVED = "invite_received",
+    INVITE_REJECTED = "invite_rejected",
+    ADMIN_CONFIGURE = "ADMIN_CONFIGURE",
+    USER_REGISTER = "USER_REGISTER",
+    USER_LOGIN = "USER_LOGIN",
+    PROJECT_CREATE = "PROJECT_CREATE",
+    JOB_CREATE = "JOB_CREATE",
+    JOB_ASSIGN = "JOB_ASSIGN",
+    JOB_CANCEL = "JOB_CANCEL",
+    JOB_APPLY = "JOB_APPLY",
+    WALLET_GENERATED = "WALLET_GENERATED"
+}
+interface NotificationUser {
+    profile: {
+        talent: {
+            tags: string[];
+            availability: string;
+            skillIds: object[];
+        };
+    };
+    _id: string;
+    firstName: string;
+    lastName: string;
+    type: string;
+    score: number;
+}
+interface INotificationDto {
+    owner: NotificationUser;
+    title: string;
+    description: string;
+    read: boolean;
+    notifyUser: NotificationUser;
+    data: string;
+    isAdmin: boolean;
+    type: INotificationType;
+}
+type FindNotificationDto = {
+    page: number;
+    pages: number;
+    total: number;
+    limit: number;
+    notification: INotificationDto[];
+};
+type filterNotificationDto = ({
+    page?: string;
+    limit?: string;
+} & INotificationDto) | any;
+interface NotificationModuleType {
+    getAll(filter?: filterNotificationDto): Promise<ResponseDto<FindNotificationDto>>;
+    markOneAsRead(id: string, filter?: filterNotificationDto): Promise<ResponseDto<void>>;
+    markAll(): Promise<ResponseDto<void>>;
+}
+
+declare class NotificationModule implements NotificationModuleType {
+    private id;
+    private connector;
+    constructor(id: string);
+    getAll(filter?: filterNotificationDto): Promise<ResponseDto<FindNotificationDto>>;
+    markAll(): Promise<ResponseDto<void>>;
+    markOneAsRead(id: string): Promise<ResponseDto<void>>;
+}
+
 interface UploadedUser {
     profile: {
         talent: {
@@ -271,7 +341,7 @@ interface CreateFileUpload {
 }
 interface IUploadDto {
     name: string;
-    uploaded_by: UploadedUser;
+    uploaded_by: UploadedUser | string;
     url: string;
     meta: Record<string, any> | undefined;
     status: boolean;
@@ -393,6 +463,60 @@ interface CollectionModuleType {
     createMany(payload: CreateManyCollectionDto): Promise<ResponseDto<ICollectionDto[]>>;
 }
 
+interface ICollectionBookmarkDto {
+    _id?: string;
+    owner: string;
+    data: ICollectionDto | string;
+    active: boolean;
+    isDeleted?: boolean;
+}
+type FindCollectionBookMarkDto = {
+    page: number;
+    pages: number;
+    total: number;
+    limit: number;
+    data: ICollectionBookmarkDto[];
+};
+type createBookMarkDto = {
+    collection: string;
+};
+type filterDto = {
+    page?: string;
+    limit?: string;
+} | any;
+interface BookMarkModuleType {
+    getAll(filter?: filterDto): Promise<ResponseDto<FindCollectionBookMarkDto>>;
+    getById(id: string, filter?: object): Promise<ResponseDto<ICollectionBookmarkDto>>;
+    create(payload: createBookMarkDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
+    delete(id: string): Promise<ResponseDto<any>>;
+}
+
+declare class BookMarkModule {
+    private id;
+    private connector;
+    constructor(id: string);
+    /**
+     * findall. This method finds all logged User's Bookmark collections.
+     * @param filter filterNotificationDto
+     */
+    getAll(filter?: filterNotificationDto): Promise<ResponseDto<FindCollectionBookMarkDto>>;
+    /**
+     * findall. This method finds bookmarked collection by id.
+     * @param filter filterNotificationDto
+     */
+    getById(id: string, filter?: filterNotificationDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
+    /**
+     * create. This method creates a new collection bookmark.
+     * @param payload CreateJobDto
+     */
+    create(payload: createBookMarkDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
+    /**
+     * delete. This method deleted a collection bookmark.
+     * @param payload CreateJobDto
+     */
+    delete(id: string): Promise<ResponseDto<ICollectionBookmarkDto>>;
+}
+
 declare class CollectionModule {
     private id;
     private connector;
@@ -424,74 +548,20 @@ declare class CollectionModule {
     createMany(payload: CreateManyCollectionDto): Promise<ResponseDto<ICollectionDto[]>>;
 }
 
-declare enum INotificationType {
-    NEW_PROJECT = "new_project",
-    NEW_JOB = "new_job",
-    ASSIGNED_JOB = "assigned_job",
-    NEW_DEPOSIT = "new_deposit",
-    NEW_TRANSFER = "new_transfer",
-    NEW_WITHDRAWAL = "new_withdrawal",
-    INVITE_ACCEPTED = "invite_accepted",
-    INVITE_RECEIVED = "invite_received",
-    INVITE_REJECTED = "invite_rejected",
-    ADMIN_CONFIGURE = "ADMIN_CONFIGURE",
-    USER_REGISTER = "USER_REGISTER",
-    USER_LOGIN = "USER_LOGIN",
-    PROJECT_CREATE = "PROJECT_CREATE",
-    JOB_CREATE = "JOB_CREATE",
-    JOB_ASSIGN = "JOB_ASSIGN",
-    JOB_CANCEL = "JOB_CANCEL",
-    JOB_APPLY = "JOB_APPLY",
-    WALLET_GENERATED = "WALLET_GENERATED"
+interface AddReviewDto {
+    collectionId: string;
+    rating: number;
+    review: string;
 }
-interface NotificationUser {
-    profile: {
-        talent: {
-            tags: string[];
-            availability: string;
-            skillIds: object[];
-        };
-    };
-    _id: string;
-    firstName: string;
-    lastName: string;
-    type: string;
-    score: number;
-}
-interface INotificationDto {
-    owner: NotificationUser;
-    title: string;
-    description: string;
-    read: boolean;
-    notifyUser: NotificationUser;
-    data: string;
-    isAdmin: boolean;
-    type: INotificationType;
-}
-type FindNotificationDto = {
-    page: number;
-    pages: number;
-    total: number;
-    limit: number;
-    notification: INotificationDto[];
-};
-type filterNotificationDto = ({
-    page?: string;
-    limit?: string;
-} & INotificationDto) | any;
-interface NotificationModuleType {
-    getAll(filter?: filterNotificationDto): Promise<ResponseDto<FindNotificationDto>>;
-    markOneAsRead(id: string, filter?: filterNotificationDto): Promise<ResponseDto<void>>;
-    markAll(): Promise<ResponseDto<void>>;
+interface ReviewModuleType {
+    addReview(payload: AddReviewDto): Promise<ResponseDto<void>>;
 }
 
-declare class NotificationModule implements NotificationModuleType {
+declare class ReviewModule implements ReviewModuleType {
     private id;
     private connector;
     constructor(id: string);
-    getAll(filter?: filterNotificationDto): Promise<ResponseDto<FindNotificationDto>>;
-    markAll(): Promise<ResponseDto<void>>;
-    markOneAsRead(id: string): Promise<ResponseDto<void>>;
+    addReview(payload: AddReviewDto): Promise<ResponseDto<void>>;
 }
 
 interface WalletUser {
@@ -655,76 +725,6 @@ interface WithdrawalModuleType {
     fetchWithdrawal(filter: FilterWithdrawal): Promise<ResponseDto<FindWithdrawalsDto>>;
 }
 
-interface ICollectionBookmarkDto {
-    _id?: string;
-    owner: string;
-    data: ICollectionDto | string;
-    active: boolean;
-    isDeleted?: boolean;
-}
-type FindCollectionBookMarkDto = {
-    page: number;
-    pages: number;
-    total: number;
-    limit: number;
-    data: ICollectionBookmarkDto[];
-};
-type createBookMarkDto = {
-    collection: string;
-};
-type filterDto = {
-    page?: string;
-    limit?: string;
-} | any;
-interface BookMarkModuleType {
-    getAll(filter?: filterDto): Promise<ResponseDto<FindCollectionBookMarkDto>>;
-    getById(id: string, filter?: object): Promise<ResponseDto<ICollectionBookmarkDto>>;
-    create(payload: createBookMarkDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
-    delete(id: string): Promise<ResponseDto<any>>;
-}
-
-declare class BookMarkModule {
-    private id;
-    private connector;
-    constructor(id: string);
-    /**
-     * findall. This method finds all logged User's Bookmark collections.
-     * @param filter filterNotificationDto
-     */
-    getAll(filter?: filterNotificationDto): Promise<ResponseDto<FindCollectionBookMarkDto>>;
-    /**
-     * findall. This method finds bookmarked collection by id.
-     * @param filter filterNotificationDto
-     */
-    getById(id: string, filter?: filterNotificationDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
-    /**
-     * create. This method creates a new collection bookmark.
-     * @param payload CreateJobDto
-     */
-    create(payload: createBookMarkDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
-    /**
-     * delete. This method deleted a collection bookmark.
-     * @param payload CreateJobDto
-     */
-    delete(id: string): Promise<ResponseDto<ICollectionBookmarkDto>>;
-}
-
-interface AddReviewDto {
-    collectionId: string;
-    rating: number;
-    review: string;
-}
-interface ReviewModuleType {
-    addReview(payload: AddReviewDto): Promise<ResponseDto<void>>;
-}
-
-declare class ReviewModule implements ReviewModuleType {
-    private id;
-    private connector;
-    constructor(id: string);
-    addReview(payload: AddReviewDto): Promise<ResponseDto<void>>;
-}
-
 declare class WithdrawalModule implements WithdrawalModuleType {
     private id;
     private connector;
@@ -735,12 +735,14 @@ declare class WithdrawalModule implements WithdrawalModuleType {
 
 declare class PaktSDK {
     auth: AuthenticationModuleType;
+    bookmark: BookMarkModuleType;
     collection: CollectionModuleType;
     account: AccountModuleType;
     notifications: NotificationModuleType;
     file: UploadModuleType;
     wallet: WalletModuleType;
     withdrawal: WithdrawalModuleType;
+    review: ReviewModuleType;
     constructor(id: string);
     /**
      * Initialize Pakt SDK. This method must be called before any other method.

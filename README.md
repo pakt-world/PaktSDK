@@ -36,6 +36,8 @@ Explore our example project which effectively demonstrates the practical applica
 
 - [Collections](#collections)
 
+- [Bookmarks](#bookmarks)
+
 ## Installation
 
 To install PAKT SDK, simply
@@ -392,7 +394,7 @@ With the PAKT SDK, users can:
 ```typescript
 interface IUploadDto {
   name: string;
-  uploaded_by: UploadedUser;
+  uploaded_by: UploadedUser | string;
   url: string;
   meta: Record<string, any> | undefined;
   status: boolean;
@@ -732,5 +734,67 @@ export const getACollection = async (filter: filterDto) => {
 ```typescript
 export const getASingleCollection = async (id: string, filter?: filterDto) => {
   const collection: ICollectionDto = await sdkInit.collection.getById(id, filter);
+};
+```
+
+## Bookmarks
+
+### Create Bookmark
+
+```typescript
+type createBookMarkDto = {
+  collection: string;
+};
+interface ICollectionBookmarkDto {
+  _id?: string;
+  owner: string; //TODO :: add IUserDto
+  data: ICollectionDto | string;
+  active: boolean;
+  isDeleted?: boolean;
+}
+export const createBookmark = async (collection: string) => {
+  const payload: createBookMarkDto = {
+    collection,
+  };
+
+  const create: ICollectionBookmarkDto = await sdkInit.bookmark.create();
+};
+```
+
+### Get Bookmarks
+
+```typescript
+type filterBookmarkDto = {
+      page?: string;
+      limit?: string;
+    }
+  | ICollectionBookmarkDto;
+
+  interface FindCollectionBookMarkDto = {
+  page: number;
+  pages: number;
+  total: number;
+  limit: number;
+  data: ICollectionBookmarkDto[];
+};
+
+  export const getBookmarks = async (filter?: filterBookmarkDto) => {
+    const bookmarks: FindCollectionBookMarkDto = await sdkInit.bookmark.getAll(filter);
+  };
+```
+
+### Get a bookmark
+
+```typescript
+export const getABookmark = async (id: string, filter?: Record<string, any> | ICollectionBookmarkDto) => {
+  const aBookmark: ICollectionBookmarkDto = await sdkInit.bookmark.getById(id, filter);
+};
+```
+
+### Delete a bookmark
+
+```typescript
+export const deleteABookmark = async (id: string) => {
+  const resp: any = await sdkInit.bookmark.delete(id);
 };
 ```

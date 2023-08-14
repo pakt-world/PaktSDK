@@ -21,7 +21,7 @@ export interface CreateFileUpload {
 
 export interface IUploadDto {
   name: string;
-  uploaded_by: UploadedUser;
+  uploaded_by: UploadedUser | string;
   url: string;
   meta: Record<string, any> | undefined;
   status: boolean;
