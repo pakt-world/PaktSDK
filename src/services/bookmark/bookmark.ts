@@ -2,8 +2,12 @@ import { Container, Service } from "typedi";
 import { PaktConnector } from "../../connector";
 import { API_PATHS } from "../../utils/constants";
 import { ErrorUtils, ResponseDto, parseUrlWithQUery } from "../../utils/response";
-import { filterNotificationDto } from "../notification";
-import { FindCollectionBookMarkDto, ICollectionBookmarkDto, createBookMarkDto } from "./bookmark.dto";
+import {
+  FindCollectionBookMarkDto,
+  ICollectionBookmarkDto,
+  createBookMarkDto,
+  filterBookmarkDto,
+} from "./bookmark.dto";
 
 // Export all Types to Service
 export * from "./bookmark.dto";
@@ -26,7 +30,7 @@ export class BookMarkModule {
    * findall. This method finds all logged User's Bookmark collections.
    * @param filter filterNotificationDto
    */
-  async getAll(filter?: filterNotificationDto): Promise<ResponseDto<FindCollectionBookMarkDto>> {
+  async getAll(filter?: filterBookmarkDto): Promise<ResponseDto<FindCollectionBookMarkDto>> {
     return ErrorUtils.tryFail(async () => {
       const fetchUrl = parseUrlWithQUery(API_PATHS.BOOKMARK, filter);
       const response: ResponseDto<FindCollectionBookMarkDto> = await this.connector.get({ path: fetchUrl });
@@ -36,9 +40,12 @@ export class BookMarkModule {
 
   /**
    * findall. This method finds bookmarked collection by id.
-   * @param filter filterNotificationDto
+   * @param filter Record<string, any>
    */
-  async getById(id: string, filter?: filterNotificationDto): Promise<ResponseDto<ICollectionBookmarkDto>> {
+  async getById(
+    id: string,
+    filter?: Record<string, any> | ICollectionBookmarkDto,
+  ): Promise<ResponseDto<ICollectionBookmarkDto>> {
     return ErrorUtils.tryFail(async () => {
       const fetchUrl = parseUrlWithQUery(API_PATHS.BOOKMARK + "/" + id, filter);
       const response: ResponseDto<ICollectionBookmarkDto> = await this.connector.get({ path: fetchUrl });
