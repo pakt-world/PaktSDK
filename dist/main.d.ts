@@ -252,76 +252,6 @@ declare class AccountModule implements AccountModuleType {
     logout(): Promise<ResponseDto<void>>;
 }
 
-declare enum INotificationType {
-    NEW_PROJECT = "new_project",
-    NEW_JOB = "new_job",
-    ASSIGNED_JOB = "assigned_job",
-    NEW_DEPOSIT = "new_deposit",
-    NEW_TRANSFER = "new_transfer",
-    NEW_WITHDRAWAL = "new_withdrawal",
-    INVITE_ACCEPTED = "invite_accepted",
-    INVITE_RECEIVED = "invite_received",
-    INVITE_REJECTED = "invite_rejected",
-    ADMIN_CONFIGURE = "ADMIN_CONFIGURE",
-    USER_REGISTER = "USER_REGISTER",
-    USER_LOGIN = "USER_LOGIN",
-    PROJECT_CREATE = "PROJECT_CREATE",
-    JOB_CREATE = "JOB_CREATE",
-    JOB_ASSIGN = "JOB_ASSIGN",
-    JOB_CANCEL = "JOB_CANCEL",
-    JOB_APPLY = "JOB_APPLY",
-    WALLET_GENERATED = "WALLET_GENERATED"
-}
-interface NotificationUser {
-    profile: {
-        talent: {
-            tags: string[];
-            availability: string;
-            skillIds: object[];
-        };
-    };
-    _id: string;
-    firstName: string;
-    lastName: string;
-    type: string;
-    score: number;
-}
-interface INotificationDto {
-    owner: NotificationUser;
-    title: string;
-    description: string;
-    read: boolean;
-    notifyUser: NotificationUser;
-    data: string;
-    isAdmin: boolean;
-    type: INotificationType;
-}
-type FindNotificationDto = {
-    page: number;
-    pages: number;
-    total: number;
-    limit: number;
-    notification: INotificationDto[];
-};
-type filterNotificationDto = ({
-    page?: string;
-    limit?: string;
-} & INotificationDto) | any;
-interface NotificationModuleType {
-    getAll(filter?: filterNotificationDto): Promise<ResponseDto<FindNotificationDto>>;
-    markOneAsRead(id: string, filter?: filterNotificationDto): Promise<ResponseDto<void>>;
-    markAll(): Promise<ResponseDto<void>>;
-}
-
-declare class NotificationModule implements NotificationModuleType {
-    private id;
-    private connector;
-    constructor(id: string);
-    getAll(filter?: filterNotificationDto): Promise<ResponseDto<FindNotificationDto>>;
-    markAll(): Promise<ResponseDto<void>>;
-    markOneAsRead(id: string): Promise<ResponseDto<void>>;
-}
-
 interface UploadedUser {
     profile: {
         talent: {
@@ -480,13 +410,13 @@ type FindCollectionBookMarkDto = {
 type createBookMarkDto = {
     collection: string;
 };
-type filterDto = {
+type filterBookmarkDto = {
     page?: string;
     limit?: string;
-} | any;
+} | ICollectionBookmarkDto;
 interface BookMarkModuleType {
-    getAll(filter?: filterDto): Promise<ResponseDto<FindCollectionBookMarkDto>>;
-    getById(id: string, filter?: object): Promise<ResponseDto<ICollectionBookmarkDto>>;
+    getAll(filter?: filterBookmarkDto): Promise<ResponseDto<FindCollectionBookMarkDto>>;
+    getById(id: string, filter?: Record<string, any> | ICollectionBookmarkDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
     create(payload: createBookMarkDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
     delete(id: string): Promise<ResponseDto<any>>;
 }
@@ -499,12 +429,12 @@ declare class BookMarkModule {
      * findall. This method finds all logged User's Bookmark collections.
      * @param filter filterNotificationDto
      */
-    getAll(filter?: filterNotificationDto): Promise<ResponseDto<FindCollectionBookMarkDto>>;
+    getAll(filter?: filterBookmarkDto): Promise<ResponseDto<FindCollectionBookMarkDto>>;
     /**
      * findall. This method finds bookmarked collection by id.
-     * @param filter filterNotificationDto
+     * @param filter Record<string, any>
      */
-    getById(id: string, filter?: filterNotificationDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
+    getById(id: string, filter?: Record<string, any> | ICollectionBookmarkDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
     /**
      * create. This method creates a new collection bookmark.
      * @param payload CreateJobDto
@@ -546,6 +476,76 @@ declare class CollectionModule {
      * @param filter CreateManyCollectionDto
      */
     createMany(payload: CreateManyCollectionDto): Promise<ResponseDto<ICollectionDto[]>>;
+}
+
+declare enum INotificationType {
+    NEW_PROJECT = "new_project",
+    NEW_JOB = "new_job",
+    ASSIGNED_JOB = "assigned_job",
+    NEW_DEPOSIT = "new_deposit",
+    NEW_TRANSFER = "new_transfer",
+    NEW_WITHDRAWAL = "new_withdrawal",
+    INVITE_ACCEPTED = "invite_accepted",
+    INVITE_RECEIVED = "invite_received",
+    INVITE_REJECTED = "invite_rejected",
+    ADMIN_CONFIGURE = "ADMIN_CONFIGURE",
+    USER_REGISTER = "USER_REGISTER",
+    USER_LOGIN = "USER_LOGIN",
+    PROJECT_CREATE = "PROJECT_CREATE",
+    JOB_CREATE = "JOB_CREATE",
+    JOB_ASSIGN = "JOB_ASSIGN",
+    JOB_CANCEL = "JOB_CANCEL",
+    JOB_APPLY = "JOB_APPLY",
+    WALLET_GENERATED = "WALLET_GENERATED"
+}
+interface NotificationUser {
+    profile: {
+        talent: {
+            tags: string[];
+            availability: string;
+            skillIds: object[];
+        };
+    };
+    _id: string;
+    firstName: string;
+    lastName: string;
+    type: string;
+    score: number;
+}
+interface INotificationDto {
+    owner: NotificationUser;
+    title: string;
+    description: string;
+    read: boolean;
+    notifyUser: NotificationUser;
+    data: string;
+    isAdmin: boolean;
+    type: INotificationType;
+}
+type FindNotificationDto = {
+    page: number;
+    pages: number;
+    total: number;
+    limit: number;
+    notification: INotificationDto[];
+};
+type filterNotificationDto = ({
+    page?: string;
+    limit?: string;
+} & INotificationDto) | any;
+interface NotificationModuleType {
+    getAll(filter?: filterNotificationDto): Promise<ResponseDto<FindNotificationDto>>;
+    markOneAsRead(id: string, filter?: filterNotificationDto): Promise<ResponseDto<void>>;
+    markAll(): Promise<ResponseDto<void>>;
+}
+
+declare class NotificationModule implements NotificationModuleType {
+    private id;
+    private connector;
+    constructor(id: string);
+    getAll(filter?: filterNotificationDto): Promise<ResponseDto<FindNotificationDto>>;
+    markAll(): Promise<ResponseDto<void>>;
+    markOneAsRead(id: string): Promise<ResponseDto<void>>;
 }
 
 interface AddReviewDto {
@@ -800,4 +800,4 @@ declare const PAKT_CONFIG: Token<PaktConfig>;
 declare const AUTH_TOKEN: Token<string>;
 declare const TEMP_TOKEN: Token<string>;
 
-export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, CHARACTERS, ChangePasswordDto, CollectionModule, CollectionModuleType, CreateCollectionDto, CreateFileUpload, CreateManyCollectionDto, CreateWithdrawal, ErrorUtils, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindNotificationDto, FindTransactionsDto, FindWithdrawalsDto, ICollectionBookmarkDto, ICollectionDto, INotificationDto, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, IUploadDto, IUser, IWalletDto, IWalletExchangeDto, IWithdrawalDto, LoginDto, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, RegisterDto, ResendVerifyDto, ResetDto, ResponseDto, ReviewModule, ReviewModuleType, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UploadModule, UploadModuleType, ValidatePasswordToken, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelJobDto, createBookMarkDto, fetchAccountDto, filterCollectionDto, filterDto, filterNotificationDto, parseUrlWithQUery, updateUserDto };
+export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, CHARACTERS, ChangePasswordDto, CollectionModule, CollectionModuleType, CreateCollectionDto, CreateFileUpload, CreateManyCollectionDto, CreateWithdrawal, ErrorUtils, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindNotificationDto, FindTransactionsDto, FindWithdrawalsDto, ICollectionBookmarkDto, ICollectionDto, INotificationDto, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, IUploadDto, IUser, IWalletDto, IWalletExchangeDto, IWithdrawalDto, LoginDto, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, RegisterDto, ResendVerifyDto, ResetDto, ResponseDto, ReviewModule, ReviewModuleType, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UploadModule, UploadModuleType, ValidatePasswordToken, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelJobDto, createBookMarkDto, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, parseUrlWithQUery, updateUserDto };
