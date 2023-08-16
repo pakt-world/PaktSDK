@@ -9,6 +9,7 @@ import { CollectionModule, CollectionModuleType } from "./collection/collection"
 import { NotificationModule, NotificationModuleType } from "./notification";
 import { ReviewModule, ReviewModuleType } from "./review";
 import { UploadModule, UploadModuleType } from "./upload/upload";
+import { UserVerificationModule, UserVerificationModuleType } from "./userVerification";
 import { WalletModule, WalletModuleType } from "./wallet/wallet";
 import { WithdrawalModule } from "./withdrawal/withdrawal";
 import { WithdrawalModuleType } from "./withdrawal/withdrawal.dto";
@@ -20,6 +21,7 @@ export * from "./collection";
 export * from "./notification";
 export * from "./review";
 export * from "./upload";
+export * from "./userVerification";
 export * from "./wallet";
 export * from "./withdrawal";
 
@@ -34,6 +36,7 @@ export class PaktSDK {
   wallet: WalletModuleType;
   withdrawal: WithdrawalModuleType;
   review: ReviewModuleType;
+  userVerification: UserVerificationModuleType;
 
   constructor(id: string) {
     this.auth = Container.of(id).get(AuthenticationModule);
@@ -45,6 +48,7 @@ export class PaktSDK {
     this.withdrawal = Container.of(id).get(WithdrawalModule);
     this.review = Container.of(id).get(ReviewModule);
     this.bookmark = Container.of(id).get(BookMarkModule);
+    this.userVerification = Container.of(id).get(UserVerificationModule);
   }
   /**
    * Initialize Pakt SDK. This method must be called before any other method.
