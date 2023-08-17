@@ -38,6 +38,8 @@ Explore our example project which effectively demonstrates the practical applica
 
 - [Bookmarks](#bookmarks)
 
+- [Verification](#verification)
+
 ## Installation
 
 To install PAKT SDK, simply
@@ -796,5 +798,108 @@ export const getABookmark = async (id: string, filter?: Record<string, any> | IC
 ```typescript
 export const deleteABookmark = async (id: string) => {
   const resp: any = await sdkInit.bookmark.delete(id);
+};
+```
+
+## Verification
+
+To carry out certain activities, user have to undergo the Know-Your-Customer process.
+
+### Create Session
+
+Begin a Verification Session.
+For the list of `expectedISOCountries`, check the sdk.
+For the list of `VerificationDocumentTypes`, check the sdk.
+
+```typescript
+//The payload is needed and described thusly:
+interface ICreateSessionPayload {
+  firstName: string;
+  lastName: string;
+  gender: "M" | "F";
+  country: expectedISOCountries;
+  fullAddress: string;
+  documentType: VerificationDocumentTypes;
+  documentNumber: string;
+  dateOfBirth: string;
+}
+
+interface CreateSessionResponse {
+  status: string;
+  verification: {
+    id: string;
+    url: string;
+    vendorData: string;
+    host: string;
+    status: IVerificationStatus;
+    sessionToken: string;
+  };
+}
+
+//Again note that the response is wrapped around ResponseDto.
+//This is removed for brevity.
+export const createSession = async (payload: ICreateSessionPayload) => {
+  const session: CreateSessionResponse = await sdkInit.verification.createSession(payload);
+};
+```
+
+### Send Session Media
+
+Use this feature to send documents image for the verification.
+
+The payload is represented as `ISendSessionMedia`. the `file` is the image.
+Take note of the `context`.
+If the `context` is `face`, then the image should be the user's image snapshot
+If the `context` is `document-front`, then the image would be the front-facing snapshot of the document to be sent.
+If the `context` is `document-back`, then the image would be the back-facing snapshot of the document to be sent.
+
+```typescript
+interface ISendSessionMedia {
+  context: "face" | "document-front" | "document-back";
+  file: object;
+}
+
+interface SendSessionMediaResponse {
+  status: string;
+  image: {
+    context: "face" | "document-front" | "document-back";
+    id: string;
+    name: string;
+    timestamp: null;
+    size: number;
+    mimetype: string;
+    url: string;
+  };
+}
+
+export const sendSessionMedia = async (payload: ISendSessionMedia) => {
+  const media: SendSessionMediaResponse = await sdkInit.verification.sendSessionMedia(payload);
+};
+```
+
+### Get Session Attempts
+
+Retrieve the total sessions the user has initiated.
+
+```typescript
+interface SessionAttempts {
+  status: "success";
+  verifications: IVerification[];
+}
+export const getSessionAttempts = async () => {
+  const media: SessionAttempts = await sdkInit.verification.getSessionAttempts();
+};
+```
+
+### Get User Verification
+
+While a user can initiate several sessions, the user can also have different verification as per the submitted documents, meaning, a user can initiate a session, then upon validation of the documents submitted in the session, get the feedback that the documents are declined.
+
+Then initiate another session, where they send documents that are now verified.
+This feature allows the user to see the list of verifications and the status: approved, declined etc.
+
+```typescript
+export const getUserVerifications = async () => {
+  const verifications: IVerification[] = await sdkInit.verification.getUserVerifications();
 };
 ```
