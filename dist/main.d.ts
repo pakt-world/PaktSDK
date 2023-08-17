@@ -564,6 +564,134 @@ declare class ReviewModule implements ReviewModuleType {
     addReview(payload: AddReviewDto): Promise<ResponseDto<void>>;
 }
 
+declare const CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+declare const API_PATHS: {
+    API_VERSION: string;
+    LOGIN: string;
+    REGISTER: string;
+    ACCOUNT_VERIFY: string;
+    RESEND_VERIFY_LINK: string;
+    VALIDATE_PASSWORD_TOKEN: string;
+    RESET_PASSWORD: string;
+    CHANGE_PASSWORD: string;
+    COLLECTION: string;
+    COLLECTION_TYPE: string;
+    COLLECTION_MANY: string;
+    BOOKMARK: string;
+    NOTIFICATION_FETCH: string;
+    NOTIFICATION_MARK_ALL: string;
+    NOTIFICATION_MARK_ONE: string;
+    ACCOUNT: string;
+    ACCOUNT_ONBOARD: string;
+    ACCOUNT_UPDATE: string;
+    ACCOUNT_PASSWORD: string;
+    ACCOUNT_TWO_INIT: string;
+    ACCOUNT_TWO_ACTIVATE: string;
+    ACCOUNT_TWO_DEACTIVATE: string;
+    ACCOUNT_LOGOUT: string;
+    WALLET_TRANSACTIONS: string;
+    A_WALLET_TRANSACTION: string;
+    WALLET_EXCHANGE: string;
+    WALLET_DATA: string;
+    WALLET_STATS: string;
+    WALLET_AGGREGATE_STATS: string;
+    WALLETS: string;
+    SINGLE_WALLET: string;
+    FILE_UPLOAD: string;
+    ADD_REVIEW: string;
+    CREATE_WITHDRAWAL: string;
+    FETCH_WITHDRAWALS: string;
+    CREATE_SESSION: string;
+    SEND_SESSION_MEDIA: string;
+    SESSION_ATTEMPTS: string;
+    USER_VERIFICATION: string;
+    DELETE_SESSION: string;
+};
+type expectedISOCountries = "AW" | "AF" | "AO" | "AI" | "AX" | "AL" | "AD" | "AE" | "AR" | "AM" | "AS" | "AG" | "AU" | "AT" | "AZ" | "BI" | "BE" | "BJ" | "BF" | "BD" | "BG" | "BH" | "BS" | "BA" | "BL" | "BY" | "BZ" | "BM" | "BO" | "BR" | "BB" | "BN" | "BT" | "BW" | "CF" | "CA" | "CC" | "CH" | "CL" | "CN" | "CI" | "CM" | "CD" | "CD" | "CG" | "CK" | "CO" | "KM" | "CI" | "CV" | "CR" | "CU" | "CW" | "CX" | "KY" | "CY" | "CZ" | "DE" | "DJ" | "DM" | "DK" | "DO" | "DO" | "DO" | "DZ" | "EC" | "EG" | "ER" | "EH" | "ES" | "EE" | "ET" | "FI" | "FJ" | "FK" | "FR" | "FO" | "FM" | "GA" | "GB" | "GE" | "GG" | "GH" | "GI" | "GN" | "GP" | "GM" | "GW" | "GQ" | "GR" | "GD" | "GL" | "GT" | "GF" | "GU" | "GY" | "HK" | "HN" | "HR" | "HT" | "HU" | "ID" | "IM" | "IN" | "IO" | "IE" | "IR" | "IQ" | "IS" | "IL" | "IT" | "JM" | "JE" | "JO" | "JP" | "KZ" | "KZ" | "KE" | "KG" | "KH" | "KI" | "KN" | "KR" | "XK" | "KW" | "LA" | "LB" | "LR" | "LY" | "LC" | "LI" | "LK" | "LS" | "LT" | "LU" | "LV" | "MO" | "MF" | "MA" | "MC" | "MD" | "MG" | "MV" | "MX" | "MH" | "MK" | "ML" | "MT" | "MM" | "ME" | "MN" | "MP" | "MZ" | "MR" | "MS" | "MQ" | "MU" | "MW" | "MY" | "YT" | "NA" | "NC" | "NE" | "NF" | "NG" | "NI" | "NU" | "NL" | "NO" | "NP" | "NR" | "NZ" | "OM" | "PK" | "PA" | "PN" | "PE" | "PH" | "PW" | "PG" | "PL" | "PR" | "PR" | "KP" | "PT" | "PY" | "PS" | "PF" | "QA" | "RE" | "RO" | "RU" | "RW" | "SA" | "SD" | "SN" | "SG" | "GS" | "SJ" | "SB" | "SL" | "SV" | "SM" | "SO" | "PM" | "RS" | "SS" | "ST" | "SR" | "SK" | "SI" | "SE" | "SZ" | "SX" | "SC" | "SY" | "TC" | "TD" | "TG" | "TH" | "TJ" | "TK" | "TM" | "TL" | "TO" | "TT" | "TN" | "TR" | "TV" | "TW" | "TZ" | "UG" | "UA" | "UY" | "US" | "UZ" | "VA" | "VA" | "VC" | "VE" | "VG" | "VI" | "VN" | "VU" | "WF" | "WS" | "YE" | "ZA" | "ZM" | "ZW";
+
+declare const PAKT_CONFIG: Token<PaktConfig>;
+declare const AUTH_TOKEN: Token<string>;
+declare const TEMP_TOKEN: Token<string>;
+
+type VerificationDocumentTypes = "PASSPORT" | "ID_CARD" | "RESIDENCE_PERMIT" | "DRIVERS_LICENSE" | "VISA" | "OTHER";
+interface ICreateSessionPayload {
+    firstName: string;
+    lastName: string;
+    gender: "M" | "F";
+    country: expectedISOCountries;
+    fullAddress: string;
+    documentType: VerificationDocumentTypes;
+    documentNumber: string;
+    dateOfBirth: string;
+}
+interface ISendSessionMedia {
+    context: "face" | "document-front" | "document-back";
+    file: object;
+}
+interface IVerification {
+    owner: string;
+    sessionID?: string;
+    sessionToken?: string;
+    verificationID?: string;
+    providerCreatedTime?: string;
+    type?: string;
+    status?: IVerificationStatus;
+    verificationMetaData?: Record<string, any>;
+    country?: string;
+    documentType?: string;
+    documentValidFrom?: string;
+    documentValidUntil?: string;
+    providerReason?: string;
+    providerReasonCode?: number;
+    mediaId?: string;
+    mediaMimeType?: string;
+    mediaUrl?: string;
+}
+type IVerificationStatus = "created" | "approved" | "resubmission_requested" | "declined" | "expired" | "abandoned" | "submitted" | "review";
+interface CreateSessionResponse {
+    status: string;
+    verification: {
+        id: string;
+        url: string;
+        vendorData: string;
+        host: string;
+        status: IVerificationStatus;
+        sessionToken: string;
+    };
+}
+interface SendSessionMediaResponse {
+    status: string;
+    image: {
+        context: "face" | "document-front" | "document-back";
+        id: string;
+        name: string;
+        timestamp: null;
+        size: number;
+        mimetype: string;
+        url: string;
+    };
+}
+interface SessionAttempts {
+    status: "success";
+    verifications: IVerification[];
+}
+interface UserVerificationModuleType {
+    createSession(payload: ICreateSessionPayload): Promise<ResponseDto<CreateSessionResponse>>;
+    sendSessionMedia(payload: ISendSessionMedia): Promise<ResponseDto<SendSessionMediaResponse>>;
+    getSessionAttempts(): Promise<ResponseDto<SessionAttempts>>;
+    getUserVerifications(): Promise<ResponseDto<IVerification[]>>;
+}
+
+declare class UserVerificationModule implements UserVerificationModuleType {
+    private id;
+    private connector;
+    constructor(id: string);
+    createSession(payload: ICreateSessionPayload): Promise<ResponseDto<CreateSessionResponse>>;
+    sendSessionMedia(payload: ISendSessionMedia): Promise<ResponseDto<SendSessionMediaResponse>>;
+    getSessionAttempts(): Promise<ResponseDto<SessionAttempts>>;
+    getUserVerifications(): Promise<ResponseDto<IVerification[]>>;
+}
+
 interface WalletUser {
     profile: {
         talent: {
@@ -743,6 +871,7 @@ declare class PaktSDK {
     wallet: WalletModuleType;
     withdrawal: WithdrawalModuleType;
     review: ReviewModuleType;
+    userVerification: UserVerificationModuleType;
     constructor(id: string);
     /**
      * Initialize Pakt SDK. This method must be called before any other method.
@@ -757,47 +886,4 @@ declare class PaktSDK {
     private static generateRandomString;
 }
 
-declare const CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-declare const API_PATHS: {
-    API_VERSION: string;
-    LOGIN: string;
-    REGISTER: string;
-    ACCOUNT_VERIFY: string;
-    RESEND_VERIFY_LINK: string;
-    VALIDATE_PASSWORD_TOKEN: string;
-    RESET_PASSWORD: string;
-    CHANGE_PASSWORD: string;
-    COLLECTION: string;
-    COLLECTION_TYPE: string;
-    COLLECTION_MANY: string;
-    BOOKMARK: string;
-    NOTIFICATION_FETCH: string;
-    NOTIFICATION_MARK_ALL: string;
-    NOTIFICATION_MARK_ONE: string;
-    ACCOUNT: string;
-    ACCOUNT_ONBOARD: string;
-    ACCOUNT_UPDATE: string;
-    ACCOUNT_PASSWORD: string;
-    ACCOUNT_TWO_INIT: string;
-    ACCOUNT_TWO_ACTIVATE: string;
-    ACCOUNT_TWO_DEACTIVATE: string;
-    ACCOUNT_LOGOUT: string;
-    WALLET_TRANSACTIONS: string;
-    A_WALLET_TRANSACTION: string;
-    WALLET_EXCHANGE: string;
-    WALLET_DATA: string;
-    WALLET_STATS: string;
-    WALLET_AGGREGATE_STATS: string;
-    WALLETS: string;
-    SINGLE_WALLET: string;
-    FILE_UPLOAD: string;
-    ADD_REVIEW: string;
-    CREATE_WITHDRAWAL: string;
-    FETCH_WITHDRAWALS: string;
-};
-
-declare const PAKT_CONFIG: Token<PaktConfig>;
-declare const AUTH_TOKEN: Token<string>;
-declare const TEMP_TOKEN: Token<string>;
-
-export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, CHARACTERS, ChangePasswordDto, CollectionModule, CollectionModuleType, CreateCollectionDto, CreateFileUpload, CreateManyCollectionDto, CreateWithdrawal, ErrorUtils, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindNotificationDto, FindTransactionsDto, FindWithdrawalsDto, ICollectionBookmarkDto, ICollectionDto, INotificationDto, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, IUploadDto, IUser, IWalletDto, IWalletExchangeDto, IWithdrawalDto, LoginDto, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, RegisterDto, ResendVerifyDto, ResetDto, ResponseDto, ReviewModule, ReviewModuleType, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UploadModule, UploadModuleType, ValidatePasswordToken, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelJobDto, createBookMarkDto, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, parseUrlWithQUery, updateUserDto };
+export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, CHARACTERS, ChangePasswordDto, CollectionModule, CollectionModuleType, CreateCollectionDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, ErrorUtils, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindNotificationDto, FindTransactionsDto, FindWithdrawalsDto, ICollectionBookmarkDto, ICollectionDto, ICreateSessionPayload, INotificationDto, ISendSessionMedia, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, IUploadDto, IUser, IVerification, IVerificationStatus, IWalletDto, IWalletExchangeDto, IWithdrawalDto, LoginDto, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, RegisterDto, ResendVerifyDto, ResetDto, ResponseDto, ReviewModule, ReviewModuleType, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, VerificationDocumentTypes, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelJobDto, createBookMarkDto, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, parseUrlWithQUery, updateUserDto };
