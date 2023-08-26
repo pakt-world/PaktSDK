@@ -567,6 +567,21 @@ declare class CollectionModule {
     createMany(payload: CreateManyCollectionDto): Promise<ResponseDto<ICollectionDto[]>>;
 }
 
+type IConnectionKeys = "tags" | "tagCount" | "afroScore";
+type IConnectionFilterDecider = "greater_than" | "less_than" | "equal_to" | "contains" | "between";
+interface IConnectionFilter {
+    owner: string;
+    event: string;
+    key: IConnectionKeys;
+    value: any;
+    decider: IConnectionFilterDecider;
+}
+interface ConnectionFilterModuleType {
+    create(payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>>;
+    update(payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>>;
+    getForAUser(): Promise<ResponseDto<IConnectionFilter>>;
+}
+
 declare enum INotificationType {
     NEW_PROJECT = "new_project",
     NEW_JOB = "new_job",
@@ -893,6 +908,15 @@ interface WithdrawalModuleType {
     fetchWithdrawal(filter: FilterWithdrawal): Promise<ResponseDto<FindWithdrawalsDto>>;
 }
 
+declare class ConnectionFilterModule implements ConnectionFilterModuleType {
+    private id;
+    private connector;
+    constructor(id: string);
+    create(payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>>;
+    update(payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>>;
+    getForAUser(): Promise<ResponseDto<IConnectionFilter>>;
+}
+
 declare class WithdrawalModule implements WithdrawalModuleType {
     private id;
     private connector;
@@ -913,6 +937,7 @@ declare class PaktSDK {
     review: ReviewModuleType;
     userVerification: UserVerificationModuleType;
     chat: ChatModuleType;
+    connectionFilter: ConnectionFilterModuleType;
     constructor(id: string);
     /**
      * Initialize Pakt SDK. This method must be called before any other method.
@@ -927,4 +952,4 @@ declare class PaktSDK {
     private static generateRandomString;
 }
 
-export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, CHARACTERS, ChangePasswordDto, ChatModule, ChatModuleType, CollectionModule, CollectionModuleType, CreateCollectionDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, ErrorUtils, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindNotificationDto, FindTransactionsDto, FindWithdrawalsDto, IChatConversation, IChatMessage, ICollectionBookmarkDto, ICollectionDto, ICreateSessionPayload, IFile, INotificationDto, ISendSessionMedia, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, IUploadDto, IUser, IVerification, IVerificationStatus, IWalletDto, IWalletExchangeDto, IWithdrawalDto, LoginDto, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, RegisterDto, ResendVerifyDto, ResetDto, ResponseDto, ReviewModule, ReviewModuleType, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, VerificationDocumentTypes, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelJobDto, createBookMarkDto, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, parseUrlWithQuery, updateUserDto };
+export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, CHARACTERS, ChangePasswordDto, ChatModule, ChatModuleType, CollectionModule, CollectionModuleType, ConnectionFilterModule, CreateCollectionDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, ErrorUtils, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindNotificationDto, FindTransactionsDto, FindWithdrawalsDto, IChatConversation, IChatMessage, ICollectionBookmarkDto, ICollectionDto, ICreateSessionPayload, IFile, INotificationDto, ISendSessionMedia, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, IUploadDto, IUser, IVerification, IVerificationStatus, IWalletDto, IWalletExchangeDto, IWithdrawalDto, LoginDto, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, RegisterDto, ResendVerifyDto, ResetDto, ResponseDto, ReviewModule, ReviewModuleType, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, VerificationDocumentTypes, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelJobDto, createBookMarkDto, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, parseUrlWithQuery, updateUserDto };

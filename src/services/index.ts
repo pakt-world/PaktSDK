@@ -7,6 +7,8 @@ import { AuthenticationModule, AuthenticationModuleType } from "./auth";
 import { BookMarkModule, BookMarkModuleType } from "./bookmark";
 import { ChatModule, ChatModuleType } from "./chat";
 import { CollectionModule, CollectionModuleType } from "./collection/collection";
+import { ConnectionFilterModule } from "./connectionFilter";
+import { ConnectionFilterModuleType } from "./connectionFilter/connectionFilter.dto";
 import { NotificationModule, NotificationModuleType } from "./notification";
 import { ReviewModule, ReviewModuleType } from "./review";
 import { UploadModule, UploadModuleType } from "./upload/upload";
@@ -20,6 +22,7 @@ export * from "./auth";
 export * from "./bookmark";
 export * from "./chat";
 export * from "./collection";
+export * from "./connectionFilter";
 export * from "./notification";
 export * from "./review";
 export * from "./upload";
@@ -40,6 +43,7 @@ export class PaktSDK {
   review: ReviewModuleType;
   userVerification: UserVerificationModuleType;
   chat: ChatModuleType;
+  connectionFilter: ConnectionFilterModuleType;
 
   constructor(id: string) {
     this.auth = Container.of(id).get(AuthenticationModule);
@@ -53,6 +57,7 @@ export class PaktSDK {
     this.bookmark = Container.of(id).get(BookMarkModule);
     this.userVerification = Container.of(id).get(UserVerificationModule);
     this.chat = Container.of(id).get(ChatModule);
+    this.connectionFilter = Container.of(id).get(ConnectionFilterModule);
   }
   /**
    * Initialize Pakt SDK. This method must be called before any other method.
