@@ -1,7 +1,7 @@
 import { Container, Service } from "typedi";
 import { PaktConnector } from "../../connector";
 import { API_PATHS } from "../../utils/constants";
-import { ErrorUtils, ResponseDto, parseUrlWithQUery } from "../../utils/response";
+import { ErrorUtils, ResponseDto, parseUrlWithQuery } from "../../utils/response";
 import { FindNotificationDto, NotificationModuleType, filterNotificationDto } from "./notification.dto";
 
 export * from "./notification.dto";
@@ -21,7 +21,7 @@ export class NotificationModule implements NotificationModuleType {
   }
 
   async getAll(filter?: filterNotificationDto): Promise<ResponseDto<FindNotificationDto>> {
-    const fetchUrl = parseUrlWithQUery(API_PATHS.NOTIFICATION_FETCH, filter);
+    const fetchUrl = parseUrlWithQuery(API_PATHS.NOTIFICATION_FETCH, filter);
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<FindNotificationDto> = await this.connector.get({
         path: fetchUrl,
@@ -40,7 +40,7 @@ export class NotificationModule implements NotificationModuleType {
   }
 
   async markOneAsRead(id: string): Promise<ResponseDto<void>> {
-    const fetchUrl = parseUrlWithQUery(API_PATHS.NOTIFICATION_MARK_ONE + "/" + id, null);
+    const fetchUrl = parseUrlWithQuery(API_PATHS.NOTIFICATION_MARK_ONE + "/" + id, null);
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<void> = await this.connector.post({
         path: fetchUrl,
