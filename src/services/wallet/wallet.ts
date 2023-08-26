@@ -1,7 +1,7 @@
+import Container, { Service } from "typedi";
 import { PaktConnector } from "../../connector";
 import { API_PATHS } from "../../utils/constants";
-import { ErrorUtils, ResponseDto, parseUrlWithQUery } from "../../utils/response";
-import Container, { Service } from "typedi";
+import { ErrorUtils, ResponseDto, parseUrlWithQuery } from "../../utils/response";
 import {
   AggTxns,
   FindTransactionsDto,
@@ -38,7 +38,7 @@ export class WalletModule implements WalletModuleType {
     });
   }
   getATransaction(id: string): Promise<ResponseDto<ITransactionDto>> {
-    const fetchUrl = parseUrlWithQUery(API_PATHS.A_WALLET_TRANSACTION + "/" + id, null);
+    const fetchUrl = parseUrlWithQuery(API_PATHS.A_WALLET_TRANSACTION + "/" + id, null);
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<ITransactionDto> = await this.connector.get({
         path: fetchUrl,
@@ -79,7 +79,7 @@ export class WalletModule implements WalletModuleType {
     });
   }
   getSingleWallet(coin: string): Promise<ResponseDto<IWalletDto>> {
-    const fetchUrl = parseUrlWithQUery(API_PATHS.SINGLE_WALLET + "/" + coin, null);
+    const fetchUrl = parseUrlWithQuery(API_PATHS.SINGLE_WALLET + "/" + coin, null);
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<IWalletDto> = await this.connector.get({
         path: fetchUrl,

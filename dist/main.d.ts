@@ -27,7 +27,7 @@ declare const ErrorUtils: {
     toErrorWithMessage: (maybeError: unknown) => ErrorWithMessage;
     isErrorWithMessage(e: unknown): e is ErrorWithMessage;
 };
-declare const parseUrlWithQUery: (url: string, filter: object | any) => string;
+declare const parseUrlWithQuery: (url: string, filter: object | any) => string;
 
 interface IUser {
     _id: string;
@@ -447,6 +447,95 @@ declare class BookMarkModule {
     delete(id: string): Promise<ResponseDto<ICollectionBookmarkDto>>;
 }
 
+declare const CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+declare const API_PATHS: {
+    API_VERSION: string;
+    LOGIN: string;
+    REGISTER: string;
+    ACCOUNT_VERIFY: string;
+    RESEND_VERIFY_LINK: string;
+    VALIDATE_PASSWORD_TOKEN: string;
+    RESET_PASSWORD: string;
+    CHANGE_PASSWORD: string;
+    COLLECTION: string;
+    COLLECTION_TYPE: string;
+    COLLECTION_MANY: string;
+    BOOKMARK: string;
+    NOTIFICATION_FETCH: string;
+    NOTIFICATION_MARK_ALL: string;
+    NOTIFICATION_MARK_ONE: string;
+    ACCOUNT: string;
+    ACCOUNT_ONBOARD: string;
+    ACCOUNT_UPDATE: string;
+    ACCOUNT_PASSWORD: string;
+    ACCOUNT_TWO_INIT: string;
+    ACCOUNT_TWO_ACTIVATE: string;
+    ACCOUNT_TWO_DEACTIVATE: string;
+    ACCOUNT_LOGOUT: string;
+    WALLET_TRANSACTIONS: string;
+    A_WALLET_TRANSACTION: string;
+    WALLET_EXCHANGE: string;
+    WALLET_DATA: string;
+    WALLET_STATS: string;
+    WALLET_AGGREGATE_STATS: string;
+    WALLETS: string;
+    SINGLE_WALLET: string;
+    FILE_UPLOAD: string;
+    ADD_REVIEW: string;
+    CREATE_WITHDRAWAL: string;
+    FETCH_WITHDRAWALS: string;
+    CREATE_SESSION: string;
+    SEND_SESSION_MEDIA: string;
+    SESSION_ATTEMPTS: string;
+    USER_VERIFICATION: string;
+    DELETE_SESSION: string;
+    GET_USER_MESSAGES: string;
+    CREATE_CONNECTION_FILTER: string;
+    GET_CONNECTION_FILTER: string;
+    UPDATE_CONNECTION_FILTER: string;
+};
+type expectedISOCountries = "AW" | "AF" | "AO" | "AI" | "AX" | "AL" | "AD" | "AE" | "AR" | "AM" | "AS" | "AG" | "AU" | "AT" | "AZ" | "BI" | "BE" | "BJ" | "BF" | "BD" | "BG" | "BH" | "BS" | "BA" | "BL" | "BY" | "BZ" | "BM" | "BO" | "BR" | "BB" | "BN" | "BT" | "BW" | "CF" | "CA" | "CC" | "CH" | "CL" | "CN" | "CI" | "CM" | "CD" | "CD" | "CG" | "CK" | "CO" | "KM" | "CI" | "CV" | "CR" | "CU" | "CW" | "CX" | "KY" | "CY" | "CZ" | "DE" | "DJ" | "DM" | "DK" | "DO" | "DO" | "DO" | "DZ" | "EC" | "EG" | "ER" | "EH" | "ES" | "EE" | "ET" | "FI" | "FJ" | "FK" | "FR" | "FO" | "FM" | "GA" | "GB" | "GE" | "GG" | "GH" | "GI" | "GN" | "GP" | "GM" | "GW" | "GQ" | "GR" | "GD" | "GL" | "GT" | "GF" | "GU" | "GY" | "HK" | "HN" | "HR" | "HT" | "HU" | "ID" | "IM" | "IN" | "IO" | "IE" | "IR" | "IQ" | "IS" | "IL" | "IT" | "JM" | "JE" | "JO" | "JP" | "KZ" | "KZ" | "KE" | "KG" | "KH" | "KI" | "KN" | "KR" | "XK" | "KW" | "LA" | "LB" | "LR" | "LY" | "LC" | "LI" | "LK" | "LS" | "LT" | "LU" | "LV" | "MO" | "MF" | "MA" | "MC" | "MD" | "MG" | "MV" | "MX" | "MH" | "MK" | "ML" | "MT" | "MM" | "ME" | "MN" | "MP" | "MZ" | "MR" | "MS" | "MQ" | "MU" | "MW" | "MY" | "YT" | "NA" | "NC" | "NE" | "NF" | "NG" | "NI" | "NU" | "NL" | "NO" | "NP" | "NR" | "NZ" | "OM" | "PK" | "PA" | "PN" | "PE" | "PH" | "PW" | "PG" | "PL" | "PR" | "PR" | "KP" | "PT" | "PY" | "PS" | "PF" | "QA" | "RE" | "RO" | "RU" | "RW" | "SA" | "SD" | "SN" | "SG" | "GS" | "SJ" | "SB" | "SL" | "SV" | "SM" | "SO" | "PM" | "RS" | "SS" | "ST" | "SR" | "SK" | "SI" | "SE" | "SZ" | "SX" | "SC" | "SY" | "TC" | "TD" | "TG" | "TH" | "TJ" | "TK" | "TM" | "TL" | "TO" | "TT" | "TN" | "TR" | "TV" | "TW" | "TZ" | "UG" | "UA" | "UY" | "US" | "UZ" | "VA" | "VA" | "VC" | "VE" | "VG" | "VI" | "VN" | "VU" | "WF" | "WS" | "YE" | "ZA" | "ZM" | "ZW";
+
+declare const PAKT_CONFIG: Token<PaktConfig>;
+declare const AUTH_TOKEN: Token<string>;
+declare const TEMP_TOKEN: Token<string>;
+
+interface IChatMessage {
+    user: IUser | string;
+    type: string;
+    conversation: IChatConversation | string;
+    mediaId: IFile | string;
+    content: string;
+    quotedContent: string;
+    quotedContentId: IChatMessage | string;
+    mediaType?: string;
+    seen?: string;
+}
+interface IChatConversation {
+    type: string;
+    recipients: IUser[] | string[];
+    messages: IChatMessage[] | string[];
+}
+interface IFile {
+    name: string;
+    uploaded_by: IUser | string;
+    url: string;
+    meta: object;
+    status: boolean;
+    isDeleted: boolean;
+    deletedAt?: string;
+}
+interface ChatModuleType {
+    getUserMessages(): Promise<ResponseDto<IChatConversation[]>>;
+}
+
+declare class ChatModule implements ChatModuleType {
+    private id;
+    private connector;
+    constructor(id: string);
+    getUserMessages(): Promise<ResponseDto<IChatConversation[]>>;
+}
+
 declare class CollectionModule {
     private id;
     private connector;
@@ -476,6 +565,21 @@ declare class CollectionModule {
      * @param filter CreateManyCollectionDto
      */
     createMany(payload: CreateManyCollectionDto): Promise<ResponseDto<ICollectionDto[]>>;
+}
+
+type IConnectionKeys = "tags" | "tagCount" | "afroScore";
+type IConnectionFilterDecider = "greater_than" | "less_than" | "equal_to" | "contains" | "between";
+interface IConnectionFilter {
+    owner: string;
+    event: string;
+    key: IConnectionKeys;
+    value: any;
+    decider: IConnectionFilterDecider;
+}
+interface ConnectionFilterModuleType {
+    create(payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>>;
+    update(payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>>;
+    getForAUser(): Promise<ResponseDto<IConnectionFilter>>;
 }
 
 declare enum INotificationType {
@@ -563,55 +667,6 @@ declare class ReviewModule implements ReviewModuleType {
     constructor(id: string);
     addReview(payload: AddReviewDto): Promise<ResponseDto<void>>;
 }
-
-declare const CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-declare const API_PATHS: {
-    API_VERSION: string;
-    LOGIN: string;
-    REGISTER: string;
-    ACCOUNT_VERIFY: string;
-    RESEND_VERIFY_LINK: string;
-    VALIDATE_PASSWORD_TOKEN: string;
-    RESET_PASSWORD: string;
-    CHANGE_PASSWORD: string;
-    COLLECTION: string;
-    COLLECTION_TYPE: string;
-    COLLECTION_MANY: string;
-    BOOKMARK: string;
-    NOTIFICATION_FETCH: string;
-    NOTIFICATION_MARK_ALL: string;
-    NOTIFICATION_MARK_ONE: string;
-    ACCOUNT: string;
-    ACCOUNT_ONBOARD: string;
-    ACCOUNT_UPDATE: string;
-    ACCOUNT_PASSWORD: string;
-    ACCOUNT_TWO_INIT: string;
-    ACCOUNT_TWO_ACTIVATE: string;
-    ACCOUNT_TWO_DEACTIVATE: string;
-    ACCOUNT_LOGOUT: string;
-    WALLET_TRANSACTIONS: string;
-    A_WALLET_TRANSACTION: string;
-    WALLET_EXCHANGE: string;
-    WALLET_DATA: string;
-    WALLET_STATS: string;
-    WALLET_AGGREGATE_STATS: string;
-    WALLETS: string;
-    SINGLE_WALLET: string;
-    FILE_UPLOAD: string;
-    ADD_REVIEW: string;
-    CREATE_WITHDRAWAL: string;
-    FETCH_WITHDRAWALS: string;
-    CREATE_SESSION: string;
-    SEND_SESSION_MEDIA: string;
-    SESSION_ATTEMPTS: string;
-    USER_VERIFICATION: string;
-    DELETE_SESSION: string;
-};
-type expectedISOCountries = "AW" | "AF" | "AO" | "AI" | "AX" | "AL" | "AD" | "AE" | "AR" | "AM" | "AS" | "AG" | "AU" | "AT" | "AZ" | "BI" | "BE" | "BJ" | "BF" | "BD" | "BG" | "BH" | "BS" | "BA" | "BL" | "BY" | "BZ" | "BM" | "BO" | "BR" | "BB" | "BN" | "BT" | "BW" | "CF" | "CA" | "CC" | "CH" | "CL" | "CN" | "CI" | "CM" | "CD" | "CD" | "CG" | "CK" | "CO" | "KM" | "CI" | "CV" | "CR" | "CU" | "CW" | "CX" | "KY" | "CY" | "CZ" | "DE" | "DJ" | "DM" | "DK" | "DO" | "DO" | "DO" | "DZ" | "EC" | "EG" | "ER" | "EH" | "ES" | "EE" | "ET" | "FI" | "FJ" | "FK" | "FR" | "FO" | "FM" | "GA" | "GB" | "GE" | "GG" | "GH" | "GI" | "GN" | "GP" | "GM" | "GW" | "GQ" | "GR" | "GD" | "GL" | "GT" | "GF" | "GU" | "GY" | "HK" | "HN" | "HR" | "HT" | "HU" | "ID" | "IM" | "IN" | "IO" | "IE" | "IR" | "IQ" | "IS" | "IL" | "IT" | "JM" | "JE" | "JO" | "JP" | "KZ" | "KZ" | "KE" | "KG" | "KH" | "KI" | "KN" | "KR" | "XK" | "KW" | "LA" | "LB" | "LR" | "LY" | "LC" | "LI" | "LK" | "LS" | "LT" | "LU" | "LV" | "MO" | "MF" | "MA" | "MC" | "MD" | "MG" | "MV" | "MX" | "MH" | "MK" | "ML" | "MT" | "MM" | "ME" | "MN" | "MP" | "MZ" | "MR" | "MS" | "MQ" | "MU" | "MW" | "MY" | "YT" | "NA" | "NC" | "NE" | "NF" | "NG" | "NI" | "NU" | "NL" | "NO" | "NP" | "NR" | "NZ" | "OM" | "PK" | "PA" | "PN" | "PE" | "PH" | "PW" | "PG" | "PL" | "PR" | "PR" | "KP" | "PT" | "PY" | "PS" | "PF" | "QA" | "RE" | "RO" | "RU" | "RW" | "SA" | "SD" | "SN" | "SG" | "GS" | "SJ" | "SB" | "SL" | "SV" | "SM" | "SO" | "PM" | "RS" | "SS" | "ST" | "SR" | "SK" | "SI" | "SE" | "SZ" | "SX" | "SC" | "SY" | "TC" | "TD" | "TG" | "TH" | "TJ" | "TK" | "TM" | "TL" | "TO" | "TT" | "TN" | "TR" | "TV" | "TW" | "TZ" | "UG" | "UA" | "UY" | "US" | "UZ" | "VA" | "VA" | "VC" | "VE" | "VG" | "VI" | "VN" | "VU" | "WF" | "WS" | "YE" | "ZA" | "ZM" | "ZW";
-
-declare const PAKT_CONFIG: Token<PaktConfig>;
-declare const AUTH_TOKEN: Token<string>;
-declare const TEMP_TOKEN: Token<string>;
 
 type VerificationDocumentTypes = "PASSPORT" | "ID_CARD" | "RESIDENCE_PERMIT" | "DRIVERS_LICENSE" | "VISA" | "OTHER";
 interface ICreateSessionPayload {
@@ -853,6 +908,15 @@ interface WithdrawalModuleType {
     fetchWithdrawal(filter: FilterWithdrawal): Promise<ResponseDto<FindWithdrawalsDto>>;
 }
 
+declare class ConnectionFilterModule implements ConnectionFilterModuleType {
+    private id;
+    private connector;
+    constructor(id: string);
+    create(payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>>;
+    update(payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>>;
+    getForAUser(): Promise<ResponseDto<IConnectionFilter>>;
+}
+
 declare class WithdrawalModule implements WithdrawalModuleType {
     private id;
     private connector;
@@ -872,6 +936,8 @@ declare class PaktSDK {
     withdrawal: WithdrawalModuleType;
     review: ReviewModuleType;
     userVerification: UserVerificationModuleType;
+    chat: ChatModuleType;
+    connectionFilter: ConnectionFilterModuleType;
     constructor(id: string);
     /**
      * Initialize Pakt SDK. This method must be called before any other method.
@@ -886,4 +952,4 @@ declare class PaktSDK {
     private static generateRandomString;
 }
 
-export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, CHARACTERS, ChangePasswordDto, CollectionModule, CollectionModuleType, CreateCollectionDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, ErrorUtils, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindNotificationDto, FindTransactionsDto, FindWithdrawalsDto, ICollectionBookmarkDto, ICollectionDto, ICreateSessionPayload, INotificationDto, ISendSessionMedia, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, IUploadDto, IUser, IVerification, IVerificationStatus, IWalletDto, IWalletExchangeDto, IWithdrawalDto, LoginDto, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, RegisterDto, ResendVerifyDto, ResetDto, ResponseDto, ReviewModule, ReviewModuleType, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, VerificationDocumentTypes, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelJobDto, createBookMarkDto, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, parseUrlWithQUery, updateUserDto };
+export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, CHARACTERS, ChangePasswordDto, ChatModule, ChatModuleType, CollectionModule, CollectionModuleType, ConnectionFilterModule, CreateCollectionDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, ErrorUtils, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindNotificationDto, FindTransactionsDto, FindWithdrawalsDto, IChatConversation, IChatMessage, ICollectionBookmarkDto, ICollectionDto, ICreateSessionPayload, IFile, INotificationDto, ISendSessionMedia, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, IUploadDto, IUser, IVerification, IVerificationStatus, IWalletDto, IWalletExchangeDto, IWithdrawalDto, LoginDto, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, RegisterDto, ResendVerifyDto, ResetDto, ResponseDto, ReviewModule, ReviewModuleType, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, VerificationDocumentTypes, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelJobDto, createBookMarkDto, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, parseUrlWithQuery, updateUserDto };

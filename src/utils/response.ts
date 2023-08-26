@@ -79,7 +79,7 @@ export const ErrorUtils = {
   },
 };
 
-export const parseUrlWithQUery = (url: string, filter: object | any) => {
+export const parseUrlWithQuery = (url: string, filter: object | any) => {
   let querys = "?";
   Object.keys(filter).map((key) => {
     querys = querys + `${key}=${filter[key]}&`;

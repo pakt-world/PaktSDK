@@ -1,7 +1,7 @@
 import { Container, Service } from "typedi";
 import { PaktConnector } from "../../connector";
 import { API_PATHS } from "../../utils/constants";
-import { ErrorUtils, ResponseDto, parseUrlWithQUery } from "../../utils/response";
+import { ErrorUtils, ResponseDto, parseUrlWithQuery } from "../../utils/response";
 import {
   FindCollectionBookMarkDto,
   ICollectionBookmarkDto,
@@ -32,7 +32,7 @@ export class BookMarkModule {
    */
   async getAll(filter?: filterBookmarkDto): Promise<ResponseDto<FindCollectionBookMarkDto>> {
     return ErrorUtils.tryFail(async () => {
-      const fetchUrl = parseUrlWithQUery(API_PATHS.BOOKMARK, filter);
+      const fetchUrl = parseUrlWithQuery(API_PATHS.BOOKMARK, filter);
       const response: ResponseDto<FindCollectionBookMarkDto> = await this.connector.get({ path: fetchUrl });
       return response.data;
     });
@@ -47,7 +47,7 @@ export class BookMarkModule {
     filter?: Record<string, any> | ICollectionBookmarkDto,
   ): Promise<ResponseDto<ICollectionBookmarkDto>> {
     return ErrorUtils.tryFail(async () => {
-      const fetchUrl = parseUrlWithQUery(API_PATHS.BOOKMARK + "/" + id, filter);
+      const fetchUrl = parseUrlWithQuery(API_PATHS.BOOKMARK + "/" + id, filter);
       const response: ResponseDto<ICollectionBookmarkDto> = await this.connector.get({ path: fetchUrl });
       return response.data;
     });
