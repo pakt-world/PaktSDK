@@ -1,7 +1,7 @@
 import { Container, Service } from "typedi";
 import { PaktConnector } from "../../connector";
 import { API_PATHS } from "../../utils/constants";
-import { ErrorUtils, ResponseDto, parseUrlWithQUery } from "../../utils/response";
+import { ErrorUtils, ResponseDto, parseUrlWithQuery } from "../../utils/response";
 import {
   CreateCollectionDto,
   CreateManyCollectionDto,
@@ -34,7 +34,7 @@ export class CollectionModule {
    */
   async getAll(filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionDto>> {
     return ErrorUtils.tryFail(async () => {
-      const fetchUrl = parseUrlWithQUery(API_PATHS.COLLECTION, filter);
+      const fetchUrl = parseUrlWithQuery(API_PATHS.COLLECTION, filter);
       const response: ResponseDto<FindCollectionDto> = await this.connector.get({ path: fetchUrl });
       return response.data;
     });
@@ -46,7 +46,7 @@ export class CollectionModule {
    */
   async getById(id: string, filter?: filterCollectionDto): Promise<ResponseDto<ICollectionDto>> {
     return ErrorUtils.tryFail(async () => {
-      const fetchUrl = parseUrlWithQUery(API_PATHS.COLLECTION + "/" + id, filter);
+      const fetchUrl = parseUrlWithQuery(API_PATHS.COLLECTION + "/" + id, filter);
       const response: ResponseDto<ICollectionDto> = await this.connector.get({ path: fetchUrl });
       return response.data;
     });
@@ -58,7 +58,7 @@ export class CollectionModule {
    */
   async getTypes(filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionTypeDto>> {
     return ErrorUtils.tryFail(async () => {
-      const fetchUrl = parseUrlWithQUery(API_PATHS.COLLECTION_TYPE, filter);
+      const fetchUrl = parseUrlWithQuery(API_PATHS.COLLECTION_TYPE, filter);
       const response: ResponseDto<FindCollectionTypeDto> = await this.connector.get({ path: fetchUrl });
       return response.data;
     });

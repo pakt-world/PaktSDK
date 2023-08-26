@@ -1,7 +1,7 @@
 import Container, { Service } from "typedi";
 import { PaktConnector } from "../../connector";
 import { API_PATHS } from "../../utils/constants";
-import { ErrorUtils, ResponseDto, parseUrlWithQUery } from "../../utils/response";
+import { ErrorUtils, ResponseDto, parseUrlWithQuery } from "../../utils/response";
 import {
   CreateWithdrawal,
   FilterWithdrawal,
@@ -38,7 +38,7 @@ export class WithdrawalModule implements WithdrawalModuleType {
   }
 
   fetchWithdrawal(filter: FilterWithdrawal): Promise<ResponseDto<FindWithdrawalsDto>> {
-    const fetchUrl = parseUrlWithQUery(API_PATHS.FETCH_WITHDRAWALS, filter);
+    const fetchUrl = parseUrlWithQuery(API_PATHS.FETCH_WITHDRAWALS, filter);
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<FindWithdrawalsDto> = await this.connector.get({
         path: fetchUrl,

@@ -1,6 +1,6 @@
 import Container, { Service } from "typedi";
 import { PaktConnector } from "../../connector/connector";
-import { API_PATHS, ErrorUtils, ResponseDto, parseUrlWithQUery } from "../../utils";
+import { API_PATHS, ErrorUtils, ResponseDto, parseUrlWithQuery } from "../../utils";
 import {
   CreateSessionResponse,
   ICreateSessionPayload,
@@ -51,7 +51,7 @@ export class UserVerificationModule implements UserVerificationModuleType {
   }
 
   getSessionAttempts(): Promise<ResponseDto<SessionAttempts>> {
-    const fetchUrl = parseUrlWithQUery(API_PATHS.SESSION_ATTEMPTS, null);
+    const fetchUrl = parseUrlWithQuery(API_PATHS.SESSION_ATTEMPTS, null);
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<SessionAttempts> = await this.connector.get({
         path: fetchUrl,
@@ -61,7 +61,7 @@ export class UserVerificationModule implements UserVerificationModuleType {
   }
 
   getUserVerifications(): Promise<ResponseDto<IVerification[]>> {
-    const fetchUrl = parseUrlWithQUery(API_PATHS.USER_VERIFICATION, null);
+    const fetchUrl = parseUrlWithQuery(API_PATHS.USER_VERIFICATION, null);
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<IVerification[]> = await this.connector.get({
         path: fetchUrl,

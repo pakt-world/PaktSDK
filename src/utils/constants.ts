@@ -63,6 +63,14 @@ export const API_PATHS = {
   SESSION_ATTEMPTS: "/user-verification/veriff/session/attempts",
   USER_VERIFICATION: "/user-verification/user",
   DELETE_SESSION: "/user-verification/veriff/session/delete",
+
+  //Chat
+  GET_USER_MESSAGES: "/chat/",
+
+  //Connection Filter
+  CREATE_CONNECTION_FILTER: "/conn-filter/",
+  GET_CONNECTION_FILTER: "/conn-filter/user",
+  UPDATE_CONNECTION_FILTER: "/conn-filter/",
 };
 
 export type expectedISOCountries =
