@@ -79,10 +79,9 @@ export class WalletModule implements WalletModuleType {
     });
   }
   getSingleWallet(coin: string): Promise<ResponseDto<IWalletDto>> {
-    const fetchUrl = parseUrlWithQuery(API_PATHS.SINGLE_WALLET + "/" + coin, null);
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<IWalletDto> = await this.connector.get({
-        path: fetchUrl,
+        path: API_PATHS.SINGLE_WALLET + "/" + coin,
       });
       return response.data;
     });
