@@ -1,7 +1,9 @@
 import Container, { Service } from "typedi";
 import { PaktConnector } from "../../connector";
-import { API_PATHS, ErrorUtils, ResponseDto, parseUrlWithQuery } from "../../utils";
+import { API_PATHS, ErrorUtils, ResponseDto, Status } from "../../utils";
 import { ConnectionFilterModuleType, IConnectionFilter } from "./connectionFilter.dto";
+
+export * from "./connectionFilter.dto";
 
 @Service({
   factory: (data: { id: string }) => {
@@ -25,6 +27,8 @@ export class ConnectionFilterModule implements ConnectionFilterModuleType {
         path: API_PATHS.CREATE_CONNECTION_FILTER,
         body: requestBody,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
@@ -36,16 +40,19 @@ export class ConnectionFilterModule implements ConnectionFilterModuleType {
         path: API_PATHS.UPDATE_CONNECTION_FILTER,
         body: requestBody,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
 
   getForAUser(): Promise<ResponseDto<IConnectionFilter>> {
-    const fetchUrl = parseUrlWithQuery(API_PATHS.GET_CONNECTION_FILTER, null);
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<IConnectionFilter> = await this.connector.get({
-        path: fetchUrl,
+        path: API_PATHS.GET_CONNECTION_FILTER,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }

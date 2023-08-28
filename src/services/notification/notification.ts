@@ -40,10 +40,9 @@ export class NotificationModule implements NotificationModuleType {
   }
 
   async markOneAsRead(id: string): Promise<ResponseDto<void>> {
-    const fetchUrl = parseUrlWithQuery(API_PATHS.NOTIFICATION_MARK_ONE + "/" + id, null);
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<void> = await this.connector.post({
-        path: fetchUrl,
+        path: API_PATHS.NOTIFICATION_MARK_ONE + "/" + id,
       });
       return response.data;
     });
