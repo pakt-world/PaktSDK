@@ -8,6 +8,8 @@ export interface ResponseDto<T> {
   status: Status;
   message?: string;
   code?: string;
+  statusCode?: number;
+  validation?: Record<string, any>;
 }
 
 type ErrorWithMessage = {

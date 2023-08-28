@@ -40,6 +40,8 @@ Explore our example project which effectively demonstrates the practical applica
 
 - [Verification](#verification)
 
+- [Connection Filter](#connection-filter)
+
 ## Installation
 
 To install PAKT SDK, simply
@@ -901,5 +903,46 @@ This feature allows the user to see the list of verifications and the status: ap
 ```typescript
 export const getUserVerifications = async () => {
   const verifications: IVerification[] = await sdkInit.verification.getUserVerifications();
+};
+```
+
+## Connection Filter
+
+Connection Filters are preferences set by the user to help determine who can interact with them, whether via chat or create a task, assign a task etc.
+
+### Create Connection Filter
+
+To create the connection filter, the user's id is needed, this can be gotten from the login response.
+
+```typescript
+interface IConnectionFilter {
+  event: string;
+  key: IConnectionKeys;
+  value: any;
+  decider: IConnectionFilterDecider;
+}
+
+export const createConnection = async (payload: IConnectionFilter) => {
+  const connectionFilter: IConnectionFilter = await sdkInit.connection.create(payload);
+};
+```
+
+### Get Connection Filter
+
+The PAKT SDK allows the user to fetch their preferences.
+
+```typescript
+export const getConnectionFilterForUser = async () => {
+  const connectionFilter: IConnectionFilter = await sdkInit.connection.getForAUser();
+};
+```
+
+### Update Connection Filter
+
+Users can change their preferences at any point.
+
+```typescript
+export const updateConnectionFilter = async (payload: IConnectionFilter) => {
+  const updatedConnection: IConnectionFilter = await sdkInit.connection.update(payload);
 };
 ```
