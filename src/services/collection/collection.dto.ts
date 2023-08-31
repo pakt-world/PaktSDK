@@ -28,8 +28,8 @@ export interface ICollectionDto {
   collections?: ICollectionDto[] | string[];
   stage?: number;
   image?: IUploadDto;
-  invite?: string; //TODO:: addd ICOllectionInviteDto
-  invites?: string[]; //TODO:: addd ICOllectionInviteDto
+  invite?: string; //TODO:: addd ICollectionInviteDto
+  invites?: string[]; //TODO:: addd ICollectionInviteDto
   applications?: string[]; //TODO:: addd IApplicationDto
   wallet?: string; //TODO:: addd IWalletDto
   attachments?: IAttachmentDto[];
@@ -38,8 +38,8 @@ export interface ICollectionDto {
   inviteAccepted?: boolean;
   isPrivate?: boolean;
   emailToken?: string;
-  rating?: string; //TODO:: addd IRatingDto
-  recipientRating?: string; //TODO:: addd IRatingDto
+  rating?: string; //TODO:: add IRatingDto
+  recipientRating?: string; //TODO:: add IRatingDto
   score?: number;
   progress?: number;
   isDeleted?: boolean;
