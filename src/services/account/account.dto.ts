@@ -53,7 +53,7 @@ export interface AccountModuleType {
   updateAccount(payload: updateUserDto): Promise<ResponseDto<fetchAccountDto>>;
   changePassword(oldPassword: string, newPassword: string): Promise<ResponseDto<fetchAccountDto>>;
   initate2FA(type: TwoFATypeDto): Promise<ResponseDto<TwoFAresponse>>;
-  active2FA(code: string): Promise<ResponseDto<void>>;
-  deactive2FA(code: string): Promise<ResponseDto<void>>;
+  activate2FA(code: string): Promise<ResponseDto<void>>;
+  deactivate2FA(code: string): Promise<ResponseDto<void>>;
   logout(): Promise<ResponseDto<void>>;
 }
