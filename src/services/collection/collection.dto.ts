@@ -105,9 +105,24 @@ export type filterCollectionDto =
     } & ICollectionDto)
   | any;
 
-export type cancelJobDto = {
+export type cancelCollectionDto = {
   reason: string;
   paymentPercentage: number;
+};
+
+export type UpdateCollectionDto = {
+  type: string;
+  name: string;
+  description: string;
+  isPrivate: boolean;
+  category?: string | undefined;
+  paymentFee?: number | undefined;
+  deliveryDate?: string | undefined;
+  tags?: string[] | undefined;
+  deliverables?: string[] | undefined;
+  invites?: string[] | undefined;
+  parent?: string;
+  image?: string;
 };
 
 export interface CollectionModuleType {
@@ -116,4 +131,5 @@ export interface CollectionModuleType {
   getTypes(filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionTypeDto>>;
   create(payload: CreateCollectionDto): Promise<ResponseDto<ICollectionDto>>;
   createMany(payload: CreateManyCollectionDto): Promise<ResponseDto<ICollectionDto[]>>;
+  updateCollection(id: string, payload: UpdateCollectionDto): Promise<ResponseDto<{}>>;
 }

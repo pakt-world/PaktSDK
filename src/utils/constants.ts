@@ -18,6 +18,7 @@ export const API_PATHS = {
   COLLECTION: "/collection",
   COLLECTION_TYPE: "/collection-type",
   COLLECTION_MANY: "/collection/many",
+  COLLECTION_UPDATE: "/collection/update",
 
   // Bookmark endpoints
   BOOKMARK: "/bookmark",
@@ -71,6 +72,13 @@ export const API_PATHS = {
   CREATE_CONNECTION_FILTER: "/conn-filter/",
   GET_CONNECTION_FILTER: "/conn-filter/user",
   UPDATE_CONNECTION_FILTER: "/conn-filter/",
+
+  //Invite
+  SEND_INVITE: "/invite/",
+  ACCEPT_INVITE: "/invite",
+  DECLINE_INVITE: "/invite",
+  VIEW_ALL_INVITE: "/invite/",
+  VIEW_A_INVITE: "/invite/:id",
 };
 
 export type expectedISOCountries =

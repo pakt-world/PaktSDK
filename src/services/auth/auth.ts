@@ -1,8 +1,8 @@
-import { AUTH_TOKEN, TEMP_TOKEN } from "../../utils/token";
 import { Container, Service } from "typedi";
 import { PaktConnector } from "../../connector";
 import { API_PATHS } from "../../utils/constants";
-import { ErrorUtils, ResponseDto } from "../../utils/response";
+import { ErrorUtils, ResponseDto, Status } from "../../utils/response";
+import { AUTH_TOKEN, TEMP_TOKEN } from "../../utils/token";
 import {
   AccountVerifyDto,
   AuthenticationModuleType,
@@ -39,6 +39,8 @@ export class AuthenticationModule implements AuthenticationModuleType {
     return ErrorUtils.tryFail(async () => {
       const credentials = { email, password };
       const response: ResponseDto<LoginDto> = await this.connector.post({ path: API_PATHS.LOGIN, body: credentials });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       if (response.data.tempToken) {
         Container.of(this.id).set(TEMP_TOKEN, response.data.tempToken.token);
       } else {
@@ -67,6 +69,8 @@ export class AuthenticationModule implements AuthenticationModuleType {
         path: API_PATHS.REGISTER,
         body: credentials,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       if (response.data.tempToken.token) {
         Container.of(this.id).set(TEMP_TOKEN, response.data.tempToken.token);
       }
@@ -82,11 +86,13 @@ export class AuthenticationModule implements AuthenticationModuleType {
   async verifyAccount(tempToken: string, token: string): Promise<ResponseDto<AccountVerifyDto>> {
     return ErrorUtils.tryFail(async () => {
       const credentials = { tempToken, token };
-      const response: AccountVerifyDto = await this.connector.post({
+      const response: ResponseDto<AccountVerifyDto> = await this.connector.post({
         path: API_PATHS.ACCOUNT_VERIFY,
         body: credentials,
       });
-      return response;
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
+      return response.data;
     });
   }
 
@@ -101,6 +107,9 @@ export class AuthenticationModule implements AuthenticationModuleType {
         path: API_PATHS.RESET_PASSWORD,
         body: credentials,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
+
       if (response.data.tempToken) {
         Container.of(this.id).set(TEMP_TOKEN, response.data.tempToken.token);
       }
