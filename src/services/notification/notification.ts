@@ -1,7 +1,7 @@
 import { Container, Service } from "typedi";
 import { PaktConnector } from "../../connector";
 import { API_PATHS } from "../../utils/constants";
-import { ErrorUtils, ResponseDto, parseUrlWithQuery } from "../../utils/response";
+import { ErrorUtils, ResponseDto, Status, parseUrlWithQuery } from "../../utils/response";
 import { FindNotificationDto, NotificationModuleType, filterNotificationDto } from "./notification.dto";
 
 export * from "./notification.dto";
@@ -26,6 +26,8 @@ export class NotificationModule implements NotificationModuleType {
       const response: ResponseDto<FindNotificationDto> = await this.connector.get({
         path: fetchUrl,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
@@ -35,6 +37,8 @@ export class NotificationModule implements NotificationModuleType {
       const response: ResponseDto<void> = await this.connector.post({
         path: API_PATHS.NOTIFICATION_MARK_ALL,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
@@ -44,6 +48,8 @@ export class NotificationModule implements NotificationModuleType {
       const response: ResponseDto<void> = await this.connector.post({
         path: API_PATHS.NOTIFICATION_MARK_ONE + "/" + id,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }

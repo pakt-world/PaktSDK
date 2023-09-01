@@ -1,7 +1,7 @@
 import { Container, Service } from "typedi";
 import { PaktConnector } from "../../connector";
 import { API_PATHS } from "../../utils/constants";
-import { ErrorUtils, ResponseDto } from "../../utils/response";
+import { ErrorUtils, ResponseDto, Status } from "../../utils/response";
 import { AccountModuleType, TwoFATypeDto, TwoFAresponse, fetchAccountDto, updateUserDto } from "./account.dto";
 
 // Export all Types to Service
@@ -28,6 +28,8 @@ export class AccountModule implements AccountModuleType {
   async getUser(): Promise<ResponseDto<fetchAccountDto>> {
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<fetchAccountDto> = await this.connector.get({ path: API_PATHS.ACCOUNT });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
@@ -49,6 +51,8 @@ export class AccountModule implements AccountModuleType {
         path: API_PATHS.ACCOUNT_ONBOARD,
         body,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
@@ -66,6 +70,8 @@ export class AccountModule implements AccountModuleType {
         path: API_PATHS.ACCOUNT_UPDATE,
         body,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
@@ -82,6 +88,8 @@ export class AccountModule implements AccountModuleType {
         path: API_PATHS.ACCOUNT_PASSWORD,
         body,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
@@ -97,6 +105,8 @@ export class AccountModule implements AccountModuleType {
         path: API_PATHS.ACCOUNT_PASSWORD,
         body,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
@@ -105,10 +115,12 @@ export class AccountModule implements AccountModuleType {
    * active2FA.
    * @param code string
    */
-  async active2FA(code: string): Promise<ResponseDto<void>> {
+  async activate2FA(code: string): Promise<ResponseDto<void>> {
     return ErrorUtils.tryFail(async () => {
       const body = { code };
       const response: ResponseDto<void> = await this.connector.post({ path: API_PATHS.ACCOUNT_TWO_ACTIVATE, body });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
@@ -117,10 +129,12 @@ export class AccountModule implements AccountModuleType {
    * active2FA.
    * @param code string
    */
-  async deactive2FA(code: string): Promise<ResponseDto<void>> {
+  async deactivate2FA(code: string): Promise<ResponseDto<void>> {
     return ErrorUtils.tryFail(async () => {
       const body = { code };
       const response: ResponseDto<void> = await this.connector.post({ path: API_PATHS.ACCOUNT_TWO_DEACTIVATE, body });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }

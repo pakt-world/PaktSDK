@@ -1,7 +1,7 @@
 import Container, { Service } from "typedi";
 import { PaktConnector } from "../../connector";
 import { API_PATHS } from "../../utils/constants";
-import { ErrorUtils, ResponseDto, parseUrlWithQuery } from "../../utils/response";
+import { ErrorUtils, ResponseDto, Status, parseUrlWithQuery } from "../../utils/response";
 import {
   CreateWithdrawal,
   FilterWithdrawal,
@@ -43,6 +43,8 @@ export class WithdrawalModule implements WithdrawalModuleType {
       const response: ResponseDto<FindWithdrawalsDto> = await this.connector.get({
         path: fetchUrl,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }

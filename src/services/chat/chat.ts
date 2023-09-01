@@ -1,6 +1,6 @@
 import { PaktConnector } from "src/connector";
 import Container, { Service } from "typedi";
-import { API_PATHS, ErrorUtils, ResponseDto } from "../../utils";
+import { API_PATHS, ErrorUtils, ResponseDto, Status } from "../../utils";
 import { ChatModuleType, IChatConversation } from "./chat.dto";
 
 // Export all Types to Service
@@ -26,6 +26,8 @@ export class ChatModule implements ChatModuleType {
       const response: ResponseDto<IChatConversation[]> = await this.connector.get({
         path: API_PATHS.GET_USER_MESSAGES,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
