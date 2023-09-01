@@ -1,7 +1,7 @@
 import Container, { Service } from "typedi";
 import { PaktConnector } from "../../connector";
 import { API_PATHS } from "../../utils/constants";
-import { ErrorUtils, ResponseDto, parseUrlWithQuery } from "../../utils/response";
+import { ErrorUtils, ResponseDto, Status, parseUrlWithQuery } from "../../utils/response";
 import {
   AggTxns,
   FindTransactionsDto,
@@ -83,6 +83,8 @@ export class WalletModule implements WalletModuleType {
       const response: ResponseDto<IWalletDto> = await this.connector.get({
         path: API_PATHS.SINGLE_WALLET + "/" + coin,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
@@ -92,6 +94,8 @@ export class WalletModule implements WalletModuleType {
       const response: ResponseDto<IWalletExchangeDto> = await this.connector.get({
         path: API_PATHS.WALLET_EXCHANGE,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }

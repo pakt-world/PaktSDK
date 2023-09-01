@@ -383,9 +383,23 @@ type filterCollectionDto = ({
     page?: string;
     limit?: string;
 } & ICollectionDto) | any;
-type cancelJobDto = {
+type cancelCollectionDto = {
     reason: string;
     paymentPercentage: number;
+};
+type UpdateCollectionDto = {
+    type: string;
+    name: string;
+    description: string;
+    isPrivate: boolean;
+    category?: string | undefined;
+    paymentFee?: number | undefined;
+    deliveryDate?: string | undefined;
+    tags?: string[] | undefined;
+    deliverables?: string[] | undefined;
+    invites?: string[] | undefined;
+    parent?: string;
+    image?: string;
 };
 interface CollectionModuleType {
     getAll(filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionDto>>;
@@ -393,6 +407,7 @@ interface CollectionModuleType {
     getTypes(filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionTypeDto>>;
     create(payload: CreateCollectionDto): Promise<ResponseDto<ICollectionDto>>;
     createMany(payload: CreateManyCollectionDto): Promise<ResponseDto<ICollectionDto[]>>;
+    updateCollection(id: string, payload: UpdateCollectionDto): Promise<ResponseDto<{}>>;
 }
 
 interface ICollectionBookmarkDto {
@@ -462,6 +477,7 @@ declare const API_PATHS: {
     COLLECTION: string;
     COLLECTION_TYPE: string;
     COLLECTION_MANY: string;
+    COLLECTION_UPDATE: string;
     BOOKMARK: string;
     NOTIFICATION_FETCH: string;
     NOTIFICATION_MARK_ALL: string;
@@ -495,6 +511,11 @@ declare const API_PATHS: {
     CREATE_CONNECTION_FILTER: string;
     GET_CONNECTION_FILTER: string;
     UPDATE_CONNECTION_FILTER: string;
+    SEND_INVITE: string;
+    ACCEPT_INVITE: string;
+    DECLINE_INVITE: string;
+    VIEW_ALL_INVITE: string;
+    VIEW_A_INVITE: string;
 };
 type expectedISOCountries = "AW" | "AF" | "AO" | "AI" | "AX" | "AL" | "AD" | "AE" | "AR" | "AM" | "AS" | "AG" | "AU" | "AT" | "AZ" | "BI" | "BE" | "BJ" | "BF" | "BD" | "BG" | "BH" | "BS" | "BA" | "BL" | "BY" | "BZ" | "BM" | "BO" | "BR" | "BB" | "BN" | "BT" | "BW" | "CF" | "CA" | "CC" | "CH" | "CL" | "CN" | "CI" | "CM" | "CD" | "CD" | "CG" | "CK" | "CO" | "KM" | "CI" | "CV" | "CR" | "CU" | "CW" | "CX" | "KY" | "CY" | "CZ" | "DE" | "DJ" | "DM" | "DK" | "DO" | "DO" | "DO" | "DZ" | "EC" | "EG" | "ER" | "EH" | "ES" | "EE" | "ET" | "FI" | "FJ" | "FK" | "FR" | "FO" | "FM" | "GA" | "GB" | "GE" | "GG" | "GH" | "GI" | "GN" | "GP" | "GM" | "GW" | "GQ" | "GR" | "GD" | "GL" | "GT" | "GF" | "GU" | "GY" | "HK" | "HN" | "HR" | "HT" | "HU" | "ID" | "IM" | "IN" | "IO" | "IE" | "IR" | "IQ" | "IS" | "IL" | "IT" | "JM" | "JE" | "JO" | "JP" | "KZ" | "KZ" | "KE" | "KG" | "KH" | "KI" | "KN" | "KR" | "XK" | "KW" | "LA" | "LB" | "LR" | "LY" | "LC" | "LI" | "LK" | "LS" | "LT" | "LU" | "LV" | "MO" | "MF" | "MA" | "MC" | "MD" | "MG" | "MV" | "MX" | "MH" | "MK" | "ML" | "MT" | "MM" | "ME" | "MN" | "MP" | "MZ" | "MR" | "MS" | "MQ" | "MU" | "MW" | "MY" | "YT" | "NA" | "NC" | "NE" | "NF" | "NG" | "NI" | "NU" | "NL" | "NO" | "NP" | "NR" | "NZ" | "OM" | "PK" | "PA" | "PN" | "PE" | "PH" | "PW" | "PG" | "PL" | "PR" | "PR" | "KP" | "PT" | "PY" | "PS" | "PF" | "QA" | "RE" | "RO" | "RU" | "RW" | "SA" | "SD" | "SN" | "SG" | "GS" | "SJ" | "SB" | "SL" | "SV" | "SM" | "SO" | "PM" | "RS" | "SS" | "ST" | "SR" | "SK" | "SI" | "SE" | "SZ" | "SX" | "SC" | "SY" | "TC" | "TD" | "TG" | "TH" | "TJ" | "TK" | "TM" | "TL" | "TO" | "TT" | "TN" | "TR" | "TV" | "TW" | "TZ" | "UG" | "UA" | "UY" | "US" | "UZ" | "VA" | "VA" | "VC" | "VE" | "VG" | "VI" | "VN" | "VU" | "WF" | "WS" | "YE" | "ZA" | "ZM" | "ZW";
 
@@ -538,7 +559,7 @@ declare class ChatModule implements ChatModuleType {
     getUserMessages(): Promise<ResponseDto<IChatConversation[]>>;
 }
 
-declare class CollectionModule {
+declare class CollectionModule implements CollectionModuleType {
     private id;
     private connector;
     constructor(id: string);
@@ -567,6 +588,7 @@ declare class CollectionModule {
      * @param filter CreateManyCollectionDto
      */
     createMany(payload: CreateManyCollectionDto): Promise<ResponseDto<ICollectionDto[]>>;
+    updateCollection(id: string, payload: UpdateCollectionDto): Promise<ResponseDto<{}>>;
 }
 
 type IConnectionKeys = "tags" | "tagCount" | "afroScore";
@@ -582,6 +604,50 @@ interface ConnectionFilterModuleType {
     create(payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>>;
     getForAUser(): Promise<ResponseDto<IConnectionFilter>>;
     update(payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>>;
+}
+
+interface IInviteDto {
+    sender: IUser | string;
+    reciever: IUser | string;
+    data: ICollectionDto | string;
+    message: string;
+    description: string;
+    status: string;
+    emailToken: string;
+    acceptedAt?: string;
+}
+interface SendInviteDto {
+    receiver: string;
+    collectionId: string;
+}
+type FilterInviteDto = ({
+    page?: string;
+    limit?: string;
+} & IInviteDto) | any;
+interface FindInvitesDto {
+    data: IInviteDto[];
+    total: number;
+    pages: number;
+    page: number;
+    limit: number;
+}
+interface InviteModuleType {
+    sendInvite(payload: SendInviteDto): Promise<ResponseDto<{}>>;
+    acceptInvite(inviteId: string): Promise<ResponseDto<{}>>;
+    declineInvite(inviteId: string): Promise<ResponseDto<{}>>;
+    getAll(filter?: FilterInviteDto): Promise<ResponseDto<FindInvitesDto>>;
+    getAnInvite(id: string): Promise<ResponseDto<IInviteDto>>;
+}
+
+declare class InviteModule implements InviteModuleType {
+    private id;
+    private connector;
+    constructor(id: string);
+    sendInvite(payload: SendInviteDto): Promise<ResponseDto<{}>>;
+    acceptInvite(inviteId: string): Promise<ResponseDto<{}>>;
+    declineInvite(inviteId: string): Promise<ResponseDto<{}>>;
+    getAll(filter?: FilterInviteDto): Promise<ResponseDto<FindInvitesDto>>;
+    getAnInvite(id: string): Promise<ResponseDto<IInviteDto>>;
 }
 
 declare enum INotificationType {
@@ -940,6 +1006,7 @@ declare class PaktSDK {
     userVerification: UserVerificationModuleType;
     chat: ChatModuleType;
     connectionFilter: ConnectionFilterModuleType;
+    invite: InviteModuleType;
     constructor(id: string);
     /**
      * Initialize Pakt SDK. This method must be called before any other method.
@@ -954,4 +1021,4 @@ declare class PaktSDK {
     private static generateRandomString;
 }
 
-export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, CHARACTERS, ChangePasswordDto, ChatModule, ChatModuleType, CollectionModule, CollectionModuleType, ConnectionFilterModule, ConnectionFilterModuleType, CreateCollectionDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, ErrorUtils, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindNotificationDto, FindTransactionsDto, FindWithdrawalsDto, IChatConversation, IChatMessage, ICollectionBookmarkDto, ICollectionDto, IConnectionEvents, IConnectionFilter, IConnectionFilterDecider, IConnectionKeys, ICreateSessionPayload, IFile, INotificationDto, ISendSessionMedia, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, IUploadDto, IUser, IVerification, IVerificationStatus, IWalletDto, IWalletExchangeDto, IWithdrawalDto, LoginDto, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, RegisterDto, ResendVerifyDto, ResetDto, ResponseDto, ReviewModule, ReviewModuleType, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, VerificationDocumentTypes, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelJobDto, createBookMarkDto, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, parseUrlWithQuery, updateUserDto };
+export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, CHARACTERS, ChangePasswordDto, ChatModule, ChatModuleType, CollectionModule, CollectionModuleType, ConnectionFilterModule, ConnectionFilterModuleType, CreateCollectionDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, ErrorUtils, FilterInviteDto, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindInvitesDto, FindNotificationDto, FindTransactionsDto, FindWithdrawalsDto, IChatConversation, IChatMessage, ICollectionBookmarkDto, ICollectionDto, IConnectionEvents, IConnectionFilter, IConnectionFilterDecider, IConnectionKeys, ICreateSessionPayload, IFile, IInviteDto, INotificationDto, ISendSessionMedia, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, IUploadDto, IUser, IVerification, IVerificationStatus, IWalletDto, IWalletExchangeDto, IWithdrawalDto, InviteModule, InviteModuleType, LoginDto, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, RegisterDto, ResendVerifyDto, ResetDto, ResponseDto, ReviewModule, ReviewModuleType, SendInviteDto, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UpdateCollectionDto, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, VerificationDocumentTypes, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelCollectionDto, createBookMarkDto, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, parseUrlWithQuery, updateUserDto };

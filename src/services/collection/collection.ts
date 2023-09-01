@@ -1,13 +1,15 @@
 import { Container, Service } from "typedi";
 import { PaktConnector } from "../../connector";
 import { API_PATHS } from "../../utils/constants";
-import { ErrorUtils, ResponseDto, parseUrlWithQuery } from "../../utils/response";
+import { ErrorUtils, ResponseDto, Status, parseUrlWithQuery } from "../../utils/response";
 import {
+  CollectionModuleType,
   CreateCollectionDto,
   CreateManyCollectionDto,
   FindCollectionDto,
   FindCollectionTypeDto,
   ICollectionDto,
+  UpdateCollectionDto,
   filterCollectionDto,
 } from "./collection.dto";
 
@@ -20,7 +22,7 @@ export * from "./collection.dto";
   },
   transient: true,
 })
-export class CollectionModule {
+export class CollectionModule implements CollectionModuleType {
   private id: string;
   private connector: PaktConnector;
   constructor(id: string) {
@@ -36,6 +38,8 @@ export class CollectionModule {
     return ErrorUtils.tryFail(async () => {
       const fetchUrl = parseUrlWithQuery(API_PATHS.COLLECTION, filter);
       const response: ResponseDto<FindCollectionDto> = await this.connector.get({ path: fetchUrl });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
@@ -48,6 +52,8 @@ export class CollectionModule {
     return ErrorUtils.tryFail(async () => {
       const fetchUrl = parseUrlWithQuery(API_PATHS.COLLECTION + "/" + id, filter);
       const response: ResponseDto<ICollectionDto> = await this.connector.get({ path: fetchUrl });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
@@ -60,6 +66,8 @@ export class CollectionModule {
     return ErrorUtils.tryFail(async () => {
       const fetchUrl = parseUrlWithQuery(API_PATHS.COLLECTION_TYPE, filter);
       const response: ResponseDto<FindCollectionTypeDto> = await this.connector.get({ path: fetchUrl });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
@@ -75,6 +83,8 @@ export class CollectionModule {
         path: API_PATHS.COLLECTION,
         body: credentials,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
@@ -90,6 +100,22 @@ export class CollectionModule {
         path: API_PATHS.COLLECTION,
         body: credentials,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
+      return response.data;
+    });
+  }
+
+  updateCollection(id: string, payload: UpdateCollectionDto): Promise<ResponseDto<{}>> {
+    return ErrorUtils.tryFail(async () => {
+      const query = parseUrlWithQuery(API_PATHS.COLLECTION_UPDATE, { id });
+      const credentials = { ...payload };
+      const response: ResponseDto<{}> = await this.connector.patch({
+        path: query,
+        body: credentials,
+      });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }

@@ -1,6 +1,6 @@
 import Container, { Service } from "typedi";
 import { PaktConnector } from "../../connector/connector";
-import { API_PATHS, ErrorUtils, ResponseDto, parseUrlWithQuery } from "../../utils";
+import { API_PATHS, ErrorUtils, ResponseDto, Status, parseUrlWithQuery } from "../../utils";
 import {
   CreateSessionResponse,
   ICreateSessionPayload,
@@ -35,6 +35,8 @@ export class UserVerificationModule implements UserVerificationModuleType {
         path: API_PATHS.CREATE_SESSION,
         body: credentials,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
@@ -46,6 +48,8 @@ export class UserVerificationModule implements UserVerificationModuleType {
         path: API_PATHS.SEND_SESSION_MEDIA,
         body: credentials,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
@@ -56,6 +60,8 @@ export class UserVerificationModule implements UserVerificationModuleType {
       const response: ResponseDto<SessionAttempts> = await this.connector.get({
         path: fetchUrl,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
@@ -66,6 +72,8 @@ export class UserVerificationModule implements UserVerificationModuleType {
       const response: ResponseDto<IVerification[]> = await this.connector.get({
         path: fetchUrl,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }

@@ -1,7 +1,7 @@
-import { PaktConnector } from "src/connector";
-import { API_PATHS } from "src/utils";
-import { ErrorUtils, ResponseDto } from "src/utils/response";
 import Container, { Service } from "typedi";
+import { PaktConnector } from "../../connector";
+import { API_PATHS } from "../../utils";
+import { ErrorUtils, ResponseDto, Status } from "../../utils/response";
 import { AddReviewDto, ReviewModuleType } from "./review.dto";
 
 export * from "./review.dto";
@@ -26,6 +26,8 @@ export class ReviewModule implements ReviewModuleType {
         path: API_PATHS.ADD_REVIEW,
         body: reviewPayload,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
