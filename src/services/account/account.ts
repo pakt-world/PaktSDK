@@ -1,8 +1,17 @@
 import { Container, Service } from "typedi";
 import { PaktConnector } from "../../connector";
 import { API_PATHS } from "../../utils/constants";
-import { ErrorUtils, ResponseDto, Status } from "../../utils/response";
-import { AccountModuleType, TwoFATypeDto, TwoFAresponse, fetchAccountDto, updateUserDto } from "./account.dto";
+import { ErrorUtils, ResponseDto, Status, parseUrlWithQuery } from "../../utils/response";
+import { IUser } from "../auth";
+import {
+  AccountModuleType,
+  FilterUserDto,
+  FindUsers,
+  TwoFATypeDto,
+  TwoFAresponse,
+  fetchAccountDto,
+  updateUserDto,
+} from "./account.dto";
 
 // Export all Types to Service
 export * from "./account.dto";
@@ -133,6 +142,35 @@ export class AccountModule implements AccountModuleType {
     return ErrorUtils.tryFail(async () => {
       const body = { code };
       const response: ResponseDto<void> = await this.connector.post({ path: API_PATHS.ACCOUNT_TWO_DEACTIVATE, body });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
+      return response.data;
+    });
+  }
+
+  getAUser(id: string): Promise<ResponseDto<IUser>> {
+    return ErrorUtils.tryFail(async () => {
+      const response: ResponseDto<IUser> = await this.connector.get({ path: `${API_PATHS.ACCOUNT_FETCH_ALL}${id}` });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
+      return response.data;
+    });
+  }
+  getUsers(filter?: FilterUserDto | undefined): Promise<ResponseDto<FindUsers>> {
+    if (filter) {
+      const { tags, type, search, sort, range } = filter;
+      const ranges = range?.join(",");
+      const tagger = tags?.join(",");
+      const query = parseUrlWithQuery(API_PATHS.ACCOUNT_FETCH_ALL, { tags: tagger, range: ranges, type, search, sort });
+      return ErrorUtils.tryFail(async () => {
+        const response: ResponseDto<FindUsers> = await this.connector.get({ path: query });
+        if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+          throw new Error(response.message);
+        return response.data;
+      });
+    }
+    return ErrorUtils.tryFail(async () => {
+      const response: ResponseDto<FindUsers> = await this.connector.get({ path: API_PATHS.ACCOUNT_FETCH_ALL });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
       return response.data;

@@ -47,6 +47,22 @@ export type TwoFAresponse = {
   };
 };
 
+export interface FilterUserDto {
+  sort?: "score" | string;
+  search?: string;
+  tags?: string[];
+  range?: number[];
+  type?: "recipient" | "creator";
+}
+
+export interface FindUsers {
+  pages: number;
+  page: number;
+  total: number;
+  limit: number;
+  data: IUser[];
+}
+
 export interface AccountModuleType {
   getUser(): Promise<ResponseDto<fetchAccountDto>>;
   onboardEndpoint(tagCategory: string, profileImage: string, type: string): Promise<ResponseDto<fetchAccountDto>>;
@@ -55,5 +71,7 @@ export interface AccountModuleType {
   initate2FA(type: TwoFATypeDto): Promise<ResponseDto<TwoFAresponse>>;
   activate2FA(code: string): Promise<ResponseDto<void>>;
   deactivate2FA(code: string): Promise<ResponseDto<void>>;
+  getAUser(id: string): Promise<ResponseDto<IUser>>;
+  getUsers(filter?: FilterUserDto): Promise<ResponseDto<FindUsers>>;
   logout(): Promise<ResponseDto<void>>;
 }
