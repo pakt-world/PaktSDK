@@ -2,13 +2,15 @@ import { ResponseDto } from "../../utils";
 import { IUser } from "../auth/auth.dto";
 import { ICollectionDto } from "../collection/collection.dto";
 
+export type IInviteStatus = "pending" | "accepted" | "rejected";
+
 export interface IInviteDto {
   sender: IUser | string;
   reciever: IUser | string;
   data: ICollectionDto | string;
   message: string;
   description: string;
-  status: string;
+  status: IInviteStatus;
   emailToken: string;
   acceptedAt?: string;
 }

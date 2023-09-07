@@ -36,6 +36,8 @@ export const API_PATHS = {
   ACCOUNT_TWO_INIT: "/account/initiate/2fa",
   ACCOUNT_TWO_ACTIVATE: "/account/activate/2fa",
   ACCOUNT_TWO_DEACTIVATE: "/account/deactivate/2fa",
+  ACCOUNT_FETCH_ALL: "/account/user",
+  ACCOUNT_FETCH_SINGLE: "/account/user/",
   ACCOUNT_LOGOUT: "/account/logout",
 
   // Wallet Endpoints
