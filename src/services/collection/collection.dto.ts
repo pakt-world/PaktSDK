@@ -10,6 +10,8 @@ interface ICollectionTypeDto {
   updateAt?: string;
 }
 
+export type ICollectionStatus = "ongoing" | "pending" | "deleted" | "waiting" | "cancelled" | "completed";
+
 interface IAttachmentDto {
   _id?: string;
   url?: string;
@@ -34,7 +36,7 @@ export interface ICollectionDto {
   wallet?: string; //TODO:: addd IWalletDto
   attachments?: IAttachmentDto[];
   attachmentData?: string[];
-  status?: string;
+  status?: ICollectionStatus;
   inviteAccepted?: boolean;
   isPrivate?: boolean;
   emailToken?: string;
@@ -110,7 +112,7 @@ export type cancelCollectionDto = {
   paymentPercentage: number;
 };
 
-export type UpdateCollectionDto = {
+export interface UpdateCollectionDto {
   type: string;
   name: string;
   description: string;
@@ -123,7 +125,8 @@ export type UpdateCollectionDto = {
   invites?: string[] | undefined;
   parent?: string;
   image?: string;
-};
+  staus?: ICollectionStatus;
+}
 
 export interface CollectionModuleType {
   getAll(filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionDto>>;
