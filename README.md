@@ -42,6 +42,8 @@ Explore our example project which effectively demonstrates the practical applica
 
 - [Connection Filter](#connection-filter)
 
+- [Invite](#invite)
+
 ## Installation
 
 To install PAKT SDK, simply
@@ -225,6 +227,7 @@ With the Pakt SDK, users can:
 - Change Password
 - Setup Two-factor Authentication
 - Activate/Deactivate Two-factor Authentication
+- Search Users
 
 ### Update User Info
 
@@ -320,6 +323,34 @@ export const activateTwoFa = async (code: string) => {
 ```
 
 ---
+
+### Search Users
+
+Search Users based on filter. Filter by the `tags`, `score`. The `range` allows search between `score`,
+Use same feature to get all users.
+
+```typescript
+interface FilterUserDto {
+  sort: "score" | string;
+  search: string;
+  tags: string[];
+  range: number[];
+  type: "recipient" | "creator";
+}
+
+export const searchUsers = async () => {
+  //sample filter
+  const filter: FilterUserDto = {
+    sort: "score",
+    search: "John Doe",
+    tags: ["Node.JS", "Typescript"],
+    rage: [50, 99],
+    type: "recipient",
+  };
+
+  const users: FindUsers = await sdkInit.account.getUsers(filter);
+};
+```
 
 ## Notification
 
@@ -944,5 +975,62 @@ Users can change their preferences at any point.
 ```typescript
 export const updateConnectionFilter = async (payload: IConnectionFilter) => {
   const updatedConnection: IConnectionFilter = await sdkInit.connection.update(payload);
+};
+```
+
+## Invite
+
+On the PAKT SDK, users can make requests to be a part of an event or plan or project.
+A user planning an event or project can therefore send invites to one or more other users who may fit the criteria of said event.
+
+### Send Invite
+
+The receiver is required, as well as the collectionId. The receiver is the id of the user thats the invite is being sent to.
+
+```typescript
+interface SendInviteDto {
+  receiver: string;
+  collectionId: string;
+}
+export const sendInvite = async (payload) => {
+  const response = await sdkInit.invite.sendInvite(payload);
+};
+```
+
+### Accept Invite
+
+User accepts invite, notifications are internally sent to both sender of invite and recipient.
+
+```typescript
+export const acceptInvite = async (inviteId: string) => {
+  const accept = await sdkInit.invite.acceptInvite(inviteId);
+};
+```
+
+### Decline Invite
+
+User declines invite, notifications are internally sent to both sender of invite and recipient.
+
+```typescript
+export const declineInvite = async (inviteId: string) => {
+  const decline = await sdkInit.invite.declineInvite(inviteId);
+};
+```
+
+### Get All Invite
+
+Get Invites, based on a filtered search. Filter by the `sender`, `receiver` and/or the `collectionId`
+
+```typescript
+export const getInvites = async (filter?: FilterInviteDto) => {
+  const invites: FindInvitesDto = await sdkInit.invite.getAll(filter);
+};
+```
+
+### Get An Invite
+
+```typescript
+export const getAnInvite = async (inviteId: string) => {
+  const invite: IInviteDto = await sdkInit.invite.getAnInvite(inviteId);
 };
 ```
