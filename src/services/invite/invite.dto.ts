@@ -17,7 +17,7 @@ export interface IInviteDto {
 
 export interface SendInviteDto {
   receiver: string;
-  collectionId: string;
+  collection: string;
 }
 
 export type FilterInviteDto =
