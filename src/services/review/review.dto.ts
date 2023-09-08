@@ -3,7 +3,7 @@ import { IUser } from "../auth";
 import { ICollectionDto } from "../collection";
 
 export interface AddReviewDto {
-  collectionId: string;
+  collection: string;
   rating: number;
   review: string;
 }
