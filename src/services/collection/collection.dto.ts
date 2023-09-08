@@ -2,7 +2,7 @@ import { ResponseDto } from "../../utils/response";
 import { IUser } from "../auth";
 import { IUploadDto } from "../upload";
 
-interface ICollectionTypeDto {
+export interface ICollectionTypeDto {
   _id: string;
   name: string;
   value: string;
@@ -132,6 +132,7 @@ export interface CollectionModuleType {
   getAll(filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionDto>>;
   getById(id: string): Promise<ResponseDto<ICollectionDto>>;
   getTypes(filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionTypeDto>>;
+  getACollectionType(typeId: string): Promise<ResponseDto<ICollectionTypeDto>>;
   create(payload: CreateCollectionDto): Promise<ResponseDto<ICollectionDto>>;
   createMany(payload: CreateManyCollectionDto): Promise<ResponseDto<ICollectionDto[]>>;
   updateCollection(id: string, payload: UpdateCollectionDto): Promise<ResponseDto<{}>>;
