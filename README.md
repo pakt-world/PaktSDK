@@ -464,6 +464,16 @@ export const addReview = async () => {
 };
 ```
 
+### Get Reviews
+
+Get the list of reviews and ratings, This feature can be filtered
+
+```typescript
+export const getReviews = async (filter?: FilterReviewDto) => {
+  const reviews: FindReviewsDto = await sdkInit.invite.viewAll(filter);
+};
+```
+
 ---
 
 ## Wallet
@@ -628,6 +638,8 @@ export const fetch = async ({ filter }: { filter: FilterWithdrawalDto }) => {
 };
 ```
 
+---
+
 ## Collections
 
 With the PAKT SDK, users can
@@ -772,6 +784,8 @@ export const getASingleCollection = async (id: string, filter?: filterDto) => {
 };
 ```
 
+---
+
 ## Bookmarks
 
 ### Create Bookmark
@@ -833,6 +847,8 @@ export const deleteABookmark = async (id: string) => {
   const resp: any = await sdkInit.bookmark.delete(id);
 };
 ```
+
+---
 
 ## Verification
 
@@ -937,6 +953,8 @@ export const getUserVerifications = async () => {
 };
 ```
 
+---
+
 ## Connection Filter
 
 Connection Filters are preferences set by the user to help determine who can interact with them, whether via chat or create a task, assign a task etc.
@@ -977,6 +995,8 @@ export const updateConnectionFilter = async (payload: IConnectionFilter) => {
   const updatedConnection: IConnectionFilter = await sdkInit.connection.update(payload);
 };
 ```
+
+---
 
 ## Invite
 

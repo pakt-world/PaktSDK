@@ -9,6 +9,7 @@ import {
   FindCollectionDto,
   FindCollectionTypeDto,
   ICollectionDto,
+  ICollectionTypeDto,
   UpdateCollectionDto,
   filterCollectionDto,
 } from "./collection.dto";
@@ -113,6 +114,17 @@ export class CollectionModule implements CollectionModuleType {
       const response: ResponseDto<{}> = await this.connector.patch({
         path: query,
         body: credentials,
+      });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
+      return response.data;
+    });
+  }
+
+  getACollectionType(typeId: string): Promise<ResponseDto<ICollectionTypeDto>> {
+    return ErrorUtils.tryFail(async () => {
+      const response: ResponseDto<ICollectionTypeDto> = await this.connector.get({
+        path: API_PATHS.COLLECTION_TYPE + `/${typeId}`,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
