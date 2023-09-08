@@ -16,7 +16,7 @@ export interface IInviteDto {
 }
 
 export interface SendInviteDto {
-  receiver: string;
+  recipient: string;
   collection: string;
 }
 
