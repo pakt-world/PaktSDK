@@ -747,7 +747,7 @@ declare class NotificationModule implements NotificationModuleType {
 }
 
 interface AddReviewDto {
-    collectionId: string;
+    collection: string;
     rating: number;
     review: string;
 }
