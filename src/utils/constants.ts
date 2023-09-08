@@ -55,6 +55,7 @@ export const API_PATHS = {
 
   // Review
   ADD_REVIEW: "/reviews/",
+  GET_REVIEW: "/reviews/",
 
   //Withdrawal
   CREATE_WITHDRAWAL: "/withdrawals/",
