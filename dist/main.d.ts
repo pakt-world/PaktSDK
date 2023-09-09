@@ -634,7 +634,7 @@ interface ConnectionFilterModuleType {
 type IInviteStatus = "pending" | "accepted" | "rejected";
 interface IInviteDto {
     sender: IUser | string;
-    reciever: IUser | string;
+    receiver: IUser | string;
     data: ICollectionDto | string;
     message: string;
     description: string;
@@ -643,7 +643,7 @@ interface IInviteDto {
     acceptedAt?: string;
 }
 interface SendInviteDto {
-    receiver: string;
+    recipient: string;
     collection: string;
 }
 type FilterInviteDto = ({
