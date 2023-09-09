@@ -6,7 +6,7 @@ export type IInviteStatus = "pending" | "accepted" | "rejected";
 
 export interface IInviteDto {
   sender: IUser | string;
-  reciever: IUser | string;
+  receiver: IUser | string;
   data: ICollectionDto | string;
   message: string;
   description: string;
