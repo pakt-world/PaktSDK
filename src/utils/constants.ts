@@ -39,6 +39,7 @@ export const API_PATHS = {
   ACCOUNT_FETCH_ALL: "/account/user",
   ACCOUNT_FETCH_SINGLE: "/account/user/",
   ACCOUNT_LOGOUT: "/account/logout",
+  ACCOUNT_SEND_EMAIL_TWO_FA: "/account/2fa/email",
 
   // Wallet Endpoints
   WALLET_TRANSACTIONS: "/wallet/transactions",
@@ -81,7 +82,7 @@ export const API_PATHS = {
   ACCEPT_INVITE: "/invite",
   DECLINE_INVITE: "/invite",
   VIEW_ALL_INVITE: "/invite/",
-  VIEW_A_INVITE: "/invite/:id",
+  VIEW_A_INVITE: "/invite/",
 };
 
 export type expectedISOCountries =

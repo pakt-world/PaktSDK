@@ -36,7 +36,7 @@ export type updateUserDto = {
   };
 };
 
-export type TwoFATypeDto = "google_auth" | "email";
+export type TwoFATypeDto = "google_auth" | "email" | "security_answer";
 
 export type TwoFAresponse = {
   type: TwoFATypeDto;
@@ -71,6 +71,7 @@ export interface AccountModuleType {
   initate2FA(type: TwoFATypeDto): Promise<ResponseDto<TwoFAresponse>>;
   activate2FA(code: string): Promise<ResponseDto<void>>;
   deactivate2FA(code: string): Promise<ResponseDto<void>>;
+  sendEmailTwoFA(): Promise<ResponseDto<{}>>;
   getAUser(id: string): Promise<ResponseDto<IUser>>;
   getUsers(filter?: FilterUserDto): Promise<ResponseDto<FindUsers>>;
   logout(): Promise<ResponseDto<void>>;
