@@ -31,6 +31,99 @@ declare const ErrorUtils: {
 };
 declare const parseUrlWithQuery: (url: string, filter: object | any) => string;
 
+declare const CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+declare const API_PATHS: {
+    API_VERSION: string;
+    LOGIN: string;
+    REGISTER: string;
+    ACCOUNT_VERIFY: string;
+    RESEND_VERIFY_LINK: string;
+    VALIDATE_PASSWORD_TOKEN: string;
+    RESET_PASSWORD: string;
+    CHANGE_PASSWORD: string;
+    COLLECTION: string;
+    COLLECTION_TYPE: string;
+    COLLECTION_MANY: string;
+    COLLECTION_UPDATE: string;
+    BOOKMARK: string;
+    NOTIFICATION_FETCH: string;
+    NOTIFICATION_MARK_ALL: string;
+    NOTIFICATION_MARK_ONE: string;
+    ACCOUNT: string;
+    ACCOUNT_ONBOARD: string;
+    ACCOUNT_UPDATE: string;
+    ACCOUNT_PASSWORD: string;
+    ACCOUNT_TWO_INIT: string;
+    ACCOUNT_TWO_ACTIVATE: string;
+    ACCOUNT_TWO_DEACTIVATE: string;
+    ACCOUNT_FETCH_ALL: string;
+    ACCOUNT_FETCH_SINGLE: string;
+    ACCOUNT_LOGOUT: string;
+    ACCOUNT_SEND_EMAIL_TWO_FA: string;
+    WALLET_TRANSACTIONS: string;
+    A_WALLET_TRANSACTION: string;
+    WALLET_EXCHANGE: string;
+    WALLET_DATA: string;
+    WALLET_STATS: string;
+    WALLET_AGGREGATE_STATS: string;
+    WALLETS: string;
+    SINGLE_WALLET: string;
+    FILE_UPLOAD: string;
+    ADD_REVIEW: string;
+    GET_REVIEW: string;
+    CREATE_WITHDRAWAL: string;
+    FETCH_WITHDRAWALS: string;
+    CREATE_SESSION: string;
+    SEND_SESSION_MEDIA: string;
+    SESSION_ATTEMPTS: string;
+    USER_VERIFICATION: string;
+    DELETE_SESSION: string;
+    GET_USER_MESSAGES: string;
+    CREATE_CONNECTION_FILTER: string;
+    GET_CONNECTION_FILTER: string;
+    UPDATE_CONNECTION_FILTER: string;
+    SEND_INVITE: string;
+    ACCEPT_INVITE: string;
+    DECLINE_INVITE: string;
+    VIEW_ALL_INVITE: string;
+    VIEW_A_INVITE: string;
+};
+type expectedISOCountries = "AW" | "AF" | "AO" | "AI" | "AX" | "AL" | "AD" | "AE" | "AR" | "AM" | "AS" | "AG" | "AU" | "AT" | "AZ" | "BI" | "BE" | "BJ" | "BF" | "BD" | "BG" | "BH" | "BS" | "BA" | "BL" | "BY" | "BZ" | "BM" | "BO" | "BR" | "BB" | "BN" | "BT" | "BW" | "CF" | "CA" | "CC" | "CH" | "CL" | "CN" | "CI" | "CM" | "CD" | "CD" | "CG" | "CK" | "CO" | "KM" | "CI" | "CV" | "CR" | "CU" | "CW" | "CX" | "KY" | "CY" | "CZ" | "DE" | "DJ" | "DM" | "DK" | "DO" | "DO" | "DO" | "DZ" | "EC" | "EG" | "ER" | "EH" | "ES" | "EE" | "ET" | "FI" | "FJ" | "FK" | "FR" | "FO" | "FM" | "GA" | "GB" | "GE" | "GG" | "GH" | "GI" | "GN" | "GP" | "GM" | "GW" | "GQ" | "GR" | "GD" | "GL" | "GT" | "GF" | "GU" | "GY" | "HK" | "HN" | "HR" | "HT" | "HU" | "ID" | "IM" | "IN" | "IO" | "IE" | "IR" | "IQ" | "IS" | "IL" | "IT" | "JM" | "JE" | "JO" | "JP" | "KZ" | "KZ" | "KE" | "KG" | "KH" | "KI" | "KN" | "KR" | "XK" | "KW" | "LA" | "LB" | "LR" | "LY" | "LC" | "LI" | "LK" | "LS" | "LT" | "LU" | "LV" | "MO" | "MF" | "MA" | "MC" | "MD" | "MG" | "MV" | "MX" | "MH" | "MK" | "ML" | "MT" | "MM" | "ME" | "MN" | "MP" | "MZ" | "MR" | "MS" | "MQ" | "MU" | "MW" | "MY" | "YT" | "NA" | "NC" | "NE" | "NF" | "NG" | "NI" | "NU" | "NL" | "NO" | "NP" | "NR" | "NZ" | "OM" | "PK" | "PA" | "PN" | "PE" | "PH" | "PW" | "PG" | "PL" | "PR" | "PR" | "KP" | "PT" | "PY" | "PS" | "PF" | "QA" | "RE" | "RO" | "RU" | "RW" | "SA" | "SD" | "SN" | "SG" | "GS" | "SJ" | "SB" | "SL" | "SV" | "SM" | "SO" | "PM" | "RS" | "SS" | "ST" | "SR" | "SK" | "SI" | "SE" | "SZ" | "SX" | "SC" | "SY" | "TC" | "TD" | "TG" | "TH" | "TJ" | "TK" | "TM" | "TL" | "TO" | "TT" | "TN" | "TR" | "TV" | "TW" | "TZ" | "UG" | "UA" | "UY" | "US" | "UZ" | "VA" | "VA" | "VC" | "VE" | "VG" | "VI" | "VN" | "VU" | "WF" | "WS" | "YE" | "ZA" | "ZM" | "ZW";
+
+declare const PAKT_CONFIG: Token<PaktConfig>;
+declare const AUTH_TOKEN: Token<string>;
+declare const TEMP_TOKEN: Token<string>;
+
+interface IChatMessage {
+    user: IUser | string;
+    type: string;
+    conversation: IChatConversation | string;
+    mediaId: IFile | string;
+    content: string;
+    quotedContent: string;
+    quotedContentId: IChatMessage | string;
+    mediaType?: string;
+    seen?: string;
+}
+interface IChatConversation {
+    type: string;
+    recipients: IUser[] | string[];
+    messages: IChatMessage[] | string[];
+}
+interface IFile {
+    name: string;
+    uploaded_by: IUser | string;
+    url: string;
+    meta: object;
+    status: boolean;
+    isDeleted: boolean;
+    deletedAt?: string;
+}
+interface ChatModuleType {
+    getUserMessages(): Promise<ResponseDto<IChatConversation[]>>;
+}
+
+type IUserTwoFaType = "email" | "google_auth" | "security_answer";
 interface IUser {
     _id: string;
     type: string;
@@ -65,7 +158,12 @@ interface IUser {
     socket?: {
         id: string;
         status: string;
-        conversation: string;
+        conversation: IChatConversation;
+    };
+    twoFa?: {
+        status: boolean;
+        type: IUserTwoFaType;
+        securityQuestion?: string;
     };
 }
 type LoginDto = {
@@ -184,7 +282,7 @@ type updateUserDto = {
         website: string;
     };
 };
-type TwoFATypeDto = "google_auth" | "email";
+type TwoFATypeDto = "google_auth" | "email" | "security_answer";
 type TwoFAresponse = {
     type: TwoFATypeDto;
     qrCodeUrl?: string;
@@ -215,6 +313,7 @@ interface AccountModuleType {
     initate2FA(type: TwoFATypeDto): Promise<ResponseDto<TwoFAresponse>>;
     activate2FA(code: string): Promise<ResponseDto<void>>;
     deactivate2FA(code: string): Promise<ResponseDto<void>>;
+    sendEmailTwoFA(): Promise<ResponseDto<{}>>;
     getAUser(id: string): Promise<ResponseDto<IUser>>;
     getUsers(filter?: FilterUserDto): Promise<ResponseDto<FindUsers>>;
     logout(): Promise<ResponseDto<void>>;
@@ -226,7 +325,6 @@ declare class AccountModule implements AccountModuleType {
     constructor(id: string);
     /**
      * getUser.
-     * @param payload CreateJobDto
      */
     getUser(): Promise<ResponseDto<fetchAccountDto>>;
     /**
@@ -264,6 +362,7 @@ declare class AccountModule implements AccountModuleType {
      * @param code string
      */
     deactivate2FA(code: string): Promise<ResponseDto<void>>;
+    sendEmailTwoFA(): Promise<ResponseDto<{}>>;
     getAUser(id: string): Promise<ResponseDto<IUser>>;
     getUsers(filter?: FilterUserDto | undefined): Promise<ResponseDto<FindUsers>>;
     /**
@@ -465,115 +564,24 @@ declare class BookMarkModule {
     constructor(id: string);
     /**
      * findall. This method finds all logged User's Bookmark collections.
-     * @param filter filterNotificationDto
+     * @param filter filterBookmarkDto
      */
     getAll(filter?: filterBookmarkDto): Promise<ResponseDto<FindCollectionBookMarkDto>>;
     /**
      * findall. This method finds bookmarked collection by id.
-     * @param filter Record<string, any>
+     * @param filter Record<string, any> | ICollectionBookmarkDto
      */
     getById(id: string, filter?: Record<string, any> | ICollectionBookmarkDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
     /**
      * create. This method creates a new collection bookmark.
-     * @param payload CreateJobDto
+     * @param payload createBookMarkDto
      */
     create(payload: createBookMarkDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
     /**
      * delete. This method deleted a collection bookmark.
-     * @param payload CreateJobDto
+     * @param payload is, the bookmark id
      */
     delete(id: string): Promise<ResponseDto<ICollectionBookmarkDto>>;
-}
-
-declare const CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-declare const API_PATHS: {
-    API_VERSION: string;
-    LOGIN: string;
-    REGISTER: string;
-    ACCOUNT_VERIFY: string;
-    RESEND_VERIFY_LINK: string;
-    VALIDATE_PASSWORD_TOKEN: string;
-    RESET_PASSWORD: string;
-    CHANGE_PASSWORD: string;
-    COLLECTION: string;
-    COLLECTION_TYPE: string;
-    COLLECTION_MANY: string;
-    COLLECTION_UPDATE: string;
-    BOOKMARK: string;
-    NOTIFICATION_FETCH: string;
-    NOTIFICATION_MARK_ALL: string;
-    NOTIFICATION_MARK_ONE: string;
-    ACCOUNT: string;
-    ACCOUNT_ONBOARD: string;
-    ACCOUNT_UPDATE: string;
-    ACCOUNT_PASSWORD: string;
-    ACCOUNT_TWO_INIT: string;
-    ACCOUNT_TWO_ACTIVATE: string;
-    ACCOUNT_TWO_DEACTIVATE: string;
-    ACCOUNT_FETCH_ALL: string;
-    ACCOUNT_FETCH_SINGLE: string;
-    ACCOUNT_LOGOUT: string;
-    WALLET_TRANSACTIONS: string;
-    A_WALLET_TRANSACTION: string;
-    WALLET_EXCHANGE: string;
-    WALLET_DATA: string;
-    WALLET_STATS: string;
-    WALLET_AGGREGATE_STATS: string;
-    WALLETS: string;
-    SINGLE_WALLET: string;
-    FILE_UPLOAD: string;
-    ADD_REVIEW: string;
-    GET_REVIEW: string;
-    CREATE_WITHDRAWAL: string;
-    FETCH_WITHDRAWALS: string;
-    CREATE_SESSION: string;
-    SEND_SESSION_MEDIA: string;
-    SESSION_ATTEMPTS: string;
-    USER_VERIFICATION: string;
-    DELETE_SESSION: string;
-    GET_USER_MESSAGES: string;
-    CREATE_CONNECTION_FILTER: string;
-    GET_CONNECTION_FILTER: string;
-    UPDATE_CONNECTION_FILTER: string;
-    SEND_INVITE: string;
-    ACCEPT_INVITE: string;
-    DECLINE_INVITE: string;
-    VIEW_ALL_INVITE: string;
-    VIEW_A_INVITE: string;
-};
-type expectedISOCountries = "AW" | "AF" | "AO" | "AI" | "AX" | "AL" | "AD" | "AE" | "AR" | "AM" | "AS" | "AG" | "AU" | "AT" | "AZ" | "BI" | "BE" | "BJ" | "BF" | "BD" | "BG" | "BH" | "BS" | "BA" | "BL" | "BY" | "BZ" | "BM" | "BO" | "BR" | "BB" | "BN" | "BT" | "BW" | "CF" | "CA" | "CC" | "CH" | "CL" | "CN" | "CI" | "CM" | "CD" | "CD" | "CG" | "CK" | "CO" | "KM" | "CI" | "CV" | "CR" | "CU" | "CW" | "CX" | "KY" | "CY" | "CZ" | "DE" | "DJ" | "DM" | "DK" | "DO" | "DO" | "DO" | "DZ" | "EC" | "EG" | "ER" | "EH" | "ES" | "EE" | "ET" | "FI" | "FJ" | "FK" | "FR" | "FO" | "FM" | "GA" | "GB" | "GE" | "GG" | "GH" | "GI" | "GN" | "GP" | "GM" | "GW" | "GQ" | "GR" | "GD" | "GL" | "GT" | "GF" | "GU" | "GY" | "HK" | "HN" | "HR" | "HT" | "HU" | "ID" | "IM" | "IN" | "IO" | "IE" | "IR" | "IQ" | "IS" | "IL" | "IT" | "JM" | "JE" | "JO" | "JP" | "KZ" | "KZ" | "KE" | "KG" | "KH" | "KI" | "KN" | "KR" | "XK" | "KW" | "LA" | "LB" | "LR" | "LY" | "LC" | "LI" | "LK" | "LS" | "LT" | "LU" | "LV" | "MO" | "MF" | "MA" | "MC" | "MD" | "MG" | "MV" | "MX" | "MH" | "MK" | "ML" | "MT" | "MM" | "ME" | "MN" | "MP" | "MZ" | "MR" | "MS" | "MQ" | "MU" | "MW" | "MY" | "YT" | "NA" | "NC" | "NE" | "NF" | "NG" | "NI" | "NU" | "NL" | "NO" | "NP" | "NR" | "NZ" | "OM" | "PK" | "PA" | "PN" | "PE" | "PH" | "PW" | "PG" | "PL" | "PR" | "PR" | "KP" | "PT" | "PY" | "PS" | "PF" | "QA" | "RE" | "RO" | "RU" | "RW" | "SA" | "SD" | "SN" | "SG" | "GS" | "SJ" | "SB" | "SL" | "SV" | "SM" | "SO" | "PM" | "RS" | "SS" | "ST" | "SR" | "SK" | "SI" | "SE" | "SZ" | "SX" | "SC" | "SY" | "TC" | "TD" | "TG" | "TH" | "TJ" | "TK" | "TM" | "TL" | "TO" | "TT" | "TN" | "TR" | "TV" | "TW" | "TZ" | "UG" | "UA" | "UY" | "US" | "UZ" | "VA" | "VA" | "VC" | "VE" | "VG" | "VI" | "VN" | "VU" | "WF" | "WS" | "YE" | "ZA" | "ZM" | "ZW";
-
-declare const PAKT_CONFIG: Token<PaktConfig>;
-declare const AUTH_TOKEN: Token<string>;
-declare const TEMP_TOKEN: Token<string>;
-
-interface IChatMessage {
-    user: IUser | string;
-    type: string;
-    conversation: IChatConversation | string;
-    mediaId: IFile | string;
-    content: string;
-    quotedContent: string;
-    quotedContentId: IChatMessage | string;
-    mediaType?: string;
-    seen?: string;
-}
-interface IChatConversation {
-    type: string;
-    recipients: IUser[] | string[];
-    messages: IChatMessage[] | string[];
-}
-interface IFile {
-    name: string;
-    uploaded_by: IUser | string;
-    url: string;
-    meta: object;
-    status: boolean;
-    isDeleted: boolean;
-    deletedAt?: string;
-}
-interface ChatModuleType {
-    getUserMessages(): Promise<ResponseDto<IChatConversation[]>>;
 }
 
 declare class ChatModule implements ChatModuleType {
@@ -1068,4 +1076,4 @@ declare class PaktSDK {
     private static generateRandomString;
 }
 
-export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, CHARACTERS, ChangePasswordDto, ChatModule, ChatModuleType, CollectionModule, CollectionModuleType, ConnectionFilterModule, ConnectionFilterModuleType, CreateCollectionDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, ErrorUtils, FilterInviteDto, FilterReviewDto, FilterUserDto, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindInvitesDto, FindNotificationDto, FindReviewDto, FindTransactionsDto, FindUsers, FindWithdrawalsDto, IChatConversation, IChatMessage, ICollectionBookmarkDto, ICollectionDto, ICollectionStatus, ICollectionTypeDto, IConnectionEvents, IConnectionFilter, IConnectionFilterDecider, IConnectionKeys, ICreateSessionPayload, IFile, IInviteDto, IInviteStatus, INotificationDto, IReviewDto, ISendSessionMedia, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, IUploadDto, IUser, IVerification, IVerificationStatus, IWalletDto, IWalletExchangeDto, IWithdrawalDto, InviteModule, InviteModuleType, LoginDto, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, RegisterDto, ResendVerifyDto, ResetDto, ResponseDto, ReviewModule, ReviewModuleType, SendInviteDto, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UpdateCollectionDto, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, VerificationDocumentTypes, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelCollectionDto, createBookMarkDto, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, parseUrlWithQuery, updateUserDto };
+export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, CHARACTERS, ChangePasswordDto, ChatModule, ChatModuleType, CollectionModule, CollectionModuleType, ConnectionFilterModule, ConnectionFilterModuleType, CreateCollectionDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, ErrorUtils, FilterInviteDto, FilterReviewDto, FilterUserDto, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindInvitesDto, FindNotificationDto, FindReviewDto, FindTransactionsDto, FindUsers, FindWithdrawalsDto, IChatConversation, IChatMessage, ICollectionBookmarkDto, ICollectionDto, ICollectionStatus, ICollectionTypeDto, IConnectionEvents, IConnectionFilter, IConnectionFilterDecider, IConnectionKeys, ICreateSessionPayload, IFile, IInviteDto, IInviteStatus, INotificationDto, IReviewDto, ISendSessionMedia, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, IUploadDto, IUser, IUserTwoFaType, IVerification, IVerificationStatus, IWalletDto, IWalletExchangeDto, IWithdrawalDto, InviteModule, InviteModuleType, LoginDto, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, RegisterDto, ResendVerifyDto, ResetDto, ResponseDto, ReviewModule, ReviewModuleType, SendInviteDto, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UpdateCollectionDto, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, VerificationDocumentTypes, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelCollectionDto, createBookMarkDto, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, parseUrlWithQuery, updateUserDto };

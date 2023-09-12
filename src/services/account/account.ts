@@ -32,7 +32,6 @@ export class AccountModule implements AccountModuleType {
 
   /**
    * getUser.
-   * @param payload CreateJobDto
    */
   async getUser(): Promise<ResponseDto<fetchAccountDto>> {
     return ErrorUtils.tryFail(async () => {
@@ -148,7 +147,16 @@ export class AccountModule implements AccountModuleType {
     });
   }
 
-  getAUser(id: string): Promise<ResponseDto<IUser>> {
+  async sendEmailTwoFA(): Promise<ResponseDto<{}>> {
+    return ErrorUtils.tryFail(async () => {
+      const response: ResponseDto<{}> = await this.connector.post({ path: API_PATHS.ACCOUNT_SEND_EMAIL_TWO_FA });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
+      return response.data;
+    });
+  }
+
+  async getAUser(id: string): Promise<ResponseDto<IUser>> {
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<IUser> = await this.connector.get({ path: `${API_PATHS.ACCOUNT_FETCH_ALL}${id}` });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
@@ -156,7 +164,7 @@ export class AccountModule implements AccountModuleType {
       return response.data;
     });
   }
-  getUsers(filter?: FilterUserDto | undefined): Promise<ResponseDto<FindUsers>> {
+  async getUsers(filter?: FilterUserDto | undefined): Promise<ResponseDto<FindUsers>> {
     if (filter) {
       const { tags, type, search, sort, range } = filter;
       const ranges = range?.join(",");
