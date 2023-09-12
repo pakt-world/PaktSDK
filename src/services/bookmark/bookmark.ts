@@ -28,7 +28,7 @@ export class BookMarkModule {
 
   /**
    * findall. This method finds all logged User's Bookmark collections.
-   * @param filter filterNotificationDto
+   * @param filter filterBookmarkDto
    */
   async getAll(filter?: filterBookmarkDto): Promise<ResponseDto<FindCollectionBookMarkDto>> {
     return ErrorUtils.tryFail(async () => {
@@ -40,7 +40,7 @@ export class BookMarkModule {
 
   /**
    * findall. This method finds bookmarked collection by id.
-   * @param filter Record<string, any>
+   * @param filter Record<string, any> | ICollectionBookmarkDto
    */
   async getById(
     id: string,
@@ -55,7 +55,7 @@ export class BookMarkModule {
 
   /**
    * create. This method creates a new collection bookmark.
-   * @param payload CreateJobDto
+   * @param payload createBookMarkDto
    */
   async create(payload: createBookMarkDto): Promise<ResponseDto<ICollectionBookmarkDto>> {
     return ErrorUtils.tryFail(async () => {
@@ -70,7 +70,7 @@ export class BookMarkModule {
 
   /**
    * delete. This method deleted a collection bookmark.
-   * @param payload CreateJobDto
+   * @param payload is, the bookmark id
    */
   async delete(id: string): Promise<ResponseDto<ICollectionBookmarkDto>> {
     return ErrorUtils.tryFail(async () => {

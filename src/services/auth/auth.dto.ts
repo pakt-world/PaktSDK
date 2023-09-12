@@ -1,4 +1,7 @@
 import { ResponseDto } from "../../utils/response";
+import { IChatConversation } from "../chat/chat.dto";
+
+export type IUserTwoFaType = "email" | "google_auth" | "security_answer";
 
 export interface IUser {
   _id: string;
@@ -34,7 +37,12 @@ export interface IUser {
   socket?: {
     id: string;
     status: string;
-    conversation: string; // TODO:: Add Conversation Type
+    conversation: IChatConversation;
+  };
+  twoFa?: {
+    status: boolean;
+    type: IUserTwoFaType;
+    securityQuestion?: string;
   };
 }
 
