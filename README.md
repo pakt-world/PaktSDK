@@ -228,6 +228,7 @@ With the Pakt SDK, users can:
 - Setup Two-factor Authentication
 - Activate/Deactivate Two-factor Authentication
 - Search Users
+- Send Email Two FA
 
 ### Update User Info
 
@@ -411,6 +412,16 @@ type FindNotificationDto = {
 
 export const getAll = async (filter?: FilterDto) => {
   const notifications: FindNotificationDto = await sdkInit.notifications.getAll(filter);
+};
+```
+
+### Send Email Two FA
+
+User who has activated the email otp option can recieve the email otp. OTP is sent to their email.
+
+```typescript
+export const sendEmailTwoFa = async () => {
+  const emailTo = await sdkInit.account.sendEmailTwoFA();
 };
 ```
 
