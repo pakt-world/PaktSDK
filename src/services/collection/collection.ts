@@ -37,8 +37,10 @@ export class CollectionModule implements CollectionModuleType {
    */
   async getAll(filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionDto>> {
     return ErrorUtils.tryFail(async () => {
-      const fetchUrl = parseUrlWithQuery(API_PATHS.COLLECTION, filter);
-      const response: ResponseDto<FindCollectionDto> = await this.connector.get({ path: fetchUrl });
+      const theFilter = filter ? filter : {};
+      const fetchUrl = parseUrlWithQuery(API_PATHS.COLLECTION + "/", theFilter);
+      const url = filter ? API_PATHS.COLLECTION : fetchUrl;
+      const response: ResponseDto<FindCollectionDto> = await this.connector.get({ path: url });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
       return response.data;
@@ -49,9 +51,9 @@ export class CollectionModule implements CollectionModuleType {
    * findall. This method finds all logged User's Jobs both created and assigned.
    * @param filter filterCollectionDto
    */
-  async getById(id: string, filter?: filterCollectionDto): Promise<ResponseDto<ICollectionDto>> {
+  async getById(id: string): Promise<ResponseDto<ICollectionDto>> {
     return ErrorUtils.tryFail(async () => {
-      const fetchUrl = parseUrlWithQuery(API_PATHS.COLLECTION + "/" + id, filter);
+      const fetchUrl = API_PATHS.COLLECTION + "/" + id;
       const response: ResponseDto<ICollectionDto> = await this.connector.get({ path: fetchUrl });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);

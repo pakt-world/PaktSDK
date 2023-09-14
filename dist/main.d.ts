@@ -604,7 +604,7 @@ declare class CollectionModule implements CollectionModuleType {
      * findall. This method finds all logged User's Jobs both created and assigned.
      * @param filter filterCollectionDto
      */
-    getById(id: string, filter?: filterCollectionDto): Promise<ResponseDto<ICollectionDto>>;
+    getById(id: string): Promise<ResponseDto<ICollectionDto>>;
     /**
      * getTypes. This method finds collection types accepted for creating collection
      * @param filter filterDto

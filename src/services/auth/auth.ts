@@ -92,6 +92,9 @@ export class AuthenticationModule implements AuthenticationModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
+
+      Container.of(this.id).set(AUTH_TOKEN, response.data.token);
+
       return response.data;
     });
   }

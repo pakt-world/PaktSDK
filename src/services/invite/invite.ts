@@ -47,7 +47,7 @@ export class InviteModule implements InviteModuleType {
 
   declineInvite(inviteId: string): Promise<ResponseDto<{}>> {
     return ErrorUtils.tryFail(async () => {
-      const url = `${API_PATHS.DECLINE_INVITE}/${inviteId}/accept`;
+      const url = `${API_PATHS.DECLINE_INVITE}/${inviteId}/decline`;
       const response: ResponseDto<{}> = await this.connector.post({
         path: url,
       });
