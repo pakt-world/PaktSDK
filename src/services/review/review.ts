@@ -22,9 +22,12 @@ export class ReviewModule implements ReviewModuleType {
 
   viewAll(filter?: FilterReviewDto | undefined): Promise<ResponseDto<FindReviewDto>> {
     return ErrorUtils.tryFail(async () => {
-      const query = parseUrlWithQuery(API_PATHS.GET_REVIEW, filter);
+      const theFilter = filter ? filter : {};
+      const fetchUrl = parseUrlWithQuery(API_PATHS.GET_REVIEW, theFilter);
+      const url = filter ? API_PATHS.GET_REVIEW : fetchUrl;
+
       const response: ResponseDto<FindReviewDto> = await this.connector.get({
-        path: query,
+        path: url,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
