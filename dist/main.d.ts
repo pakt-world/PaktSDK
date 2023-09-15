@@ -755,9 +755,10 @@ declare class NotificationModule implements NotificationModuleType {
 }
 
 interface AddReviewDto {
-    collection: string;
+    collectionId: string;
     rating: number;
     review: string;
+    receiver: string;
 }
 interface FindReviewDto {
     count: number;
@@ -779,7 +780,7 @@ interface IReviewDto {
 interface ReviewModuleType {
     addReview(payload: AddReviewDto): Promise<ResponseDto<void>>;
     viewAll(filter?: FilterReviewDto): Promise<ResponseDto<FindReviewDto>>;
-    viewAReview(inviteId: string): Promise<ResponseDto<IReviewDto>>;
+    viewAReview(reviewId: string): Promise<ResponseDto<IReviewDto>>;
 }
 
 declare class ReviewModule implements ReviewModuleType {
