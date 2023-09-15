@@ -18,7 +18,7 @@ export const API_PATHS = {
   COLLECTION: "/collection",
   COLLECTION_TYPE: "/collection-type",
   COLLECTION_MANY: "/collection/many",
-  COLLECTION_UPDATE: "/collection/update",
+  COLLECTION_UPDATE: "/collection",
 
   // Bookmark endpoints
   BOOKMARK: "/bookmark",
@@ -42,8 +42,8 @@ export const API_PATHS = {
   ACCOUNT_SEND_EMAIL_TWO_FA: "/account/2fa/email",
 
   // Wallet Endpoints
-  WALLET_TRANSACTIONS: "/wallet/transactions",
-  A_WALLET_TRANSACTION: "/wallet/transaction",
+  WALLET_TRANSACTIONS: "/transaction/",
+  A_WALLET_TRANSACTION: "/transaction",
   WALLET_EXCHANGE: "/wallet/exchange",
   WALLET_DATA: "/wallet/data",
   WALLET_STATS: "/wallet/stats",

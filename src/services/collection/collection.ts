@@ -111,7 +111,7 @@ export class CollectionModule implements CollectionModuleType {
 
   updateCollection(id: string, payload: UpdateCollectionDto): Promise<ResponseDto<{}>> {
     return ErrorUtils.tryFail(async () => {
-      const query = parseUrlWithQuery(API_PATHS.COLLECTION_UPDATE, { id });
+      const query = `${API_PATHS.COLLECTION_UPDATE}/${id}`;
       const credentials = { ...payload };
       const response: ResponseDto<{}> = await this.connector.patch({
         path: query,
@@ -125,8 +125,10 @@ export class CollectionModule implements CollectionModuleType {
 
   getACollectionType(typeId: string): Promise<ResponseDto<ICollectionTypeDto>> {
     return ErrorUtils.tryFail(async () => {
+      const fetchUrl = parseUrlWithQuery(`${API_PATHS.COLLECTION_TYPE}/${typeId}`, { id: typeId });
+      console.log({ fetchUrl });
       const response: ResponseDto<ICollectionTypeDto> = await this.connector.get({
-        path: API_PATHS.COLLECTION_TYPE + `/${typeId}`,
+        path: fetchUrl,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);

@@ -1,7 +1,7 @@
 import Container, { Service } from "typedi";
 import { PaktConnector } from "../../connector";
 import { API_PATHS } from "../../utils/constants";
-import { ErrorUtils, ResponseDto, Status, parseUrlWithQuery } from "../../utils/response";
+import { ErrorUtils, ResponseDto, Status } from "../../utils/response";
 import {
   AggTxns,
   FindTransactionsDto,
@@ -34,15 +34,18 @@ export class WalletModule implements WalletModuleType {
       const response: ResponseDto<FindTransactionsDto> = await this.connector.get({
         path: API_PATHS.WALLET_TRANSACTIONS,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
   getATransaction(id: string): Promise<ResponseDto<ITransactionDto>> {
-    const fetchUrl = parseUrlWithQuery(API_PATHS.A_WALLET_TRANSACTION + "/" + id, null);
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<ITransactionDto> = await this.connector.get({
-        path: fetchUrl,
+        path: `${API_PATHS.A_WALLET_TRANSACTION}/${id}`,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
@@ -51,6 +54,8 @@ export class WalletModule implements WalletModuleType {
       const response: ResponseDto<ITransactionStatsDto[]> = await this.connector.get({
         path: API_PATHS.WALLET_STATS,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
@@ -59,6 +64,8 @@ export class WalletModule implements WalletModuleType {
       const response: ResponseDto<AggTxns[]> = await this.connector.get({
         path: API_PATHS.WALLET_AGGREGATE_STATS,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
@@ -67,6 +74,8 @@ export class WalletModule implements WalletModuleType {
       const response: ResponseDto<IWalletDto> = await this.connector.get({
         path: API_PATHS.WALLET_AGGREGATE_STATS,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
@@ -75,6 +84,8 @@ export class WalletModule implements WalletModuleType {
       const response: ResponseDto<IWalletDto[]> = await this.connector.get({
         path: API_PATHS.WALLETS,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
