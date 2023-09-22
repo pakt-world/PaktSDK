@@ -9,6 +9,7 @@ import {
   ChangePasswordDto,
   LoginDto,
   RegisterDto,
+  RegisterPayload,
   ResetDto,
   ValidatePasswordToken,
 } from "./auth.dto";
@@ -57,14 +58,9 @@ export class AuthenticationModule implements AuthenticationModuleType {
    * @param email
    * @param password
    */
-  async register(
-    firstName: string,
-    lastName: string,
-    email: string,
-    password: string,
-  ): Promise<ResponseDto<RegisterDto>> {
+  async register(payload: RegisterPayload): Promise<ResponseDto<RegisterDto>> {
     return ErrorUtils.tryFail(async () => {
-      const credentials = { firstName, lastName, email, password };
+      const credentials = { ...payload };
       const response: ResponseDto<RegisterDto> = await this.connector.post({
         path: API_PATHS.REGISTER,
         body: credentials,

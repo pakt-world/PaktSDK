@@ -128,17 +128,20 @@ export const signUp = async ({
   lastName,
   email,
   password,
+  referral,
 }: {
   firstName: string;
   lastName: string;
   email: string;
   password: string;
+  referral: string;
 }) => {
   const payload: RegisterPaylod = {
     firstName: string,
     lastName: string,
     email: string,
     password: string,
+    referral: string,
   };
 
   type RegisterDto = {
