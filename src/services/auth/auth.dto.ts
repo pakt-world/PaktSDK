@@ -57,13 +57,21 @@ export type LoginDto = {
   };
 } & IUser;
 
-export type RegisterDto = {
+export interface RegisterDto {
   tempToken: {
     token: string;
     token_type: string;
     expiresIn: number;
   };
-};
+}
+
+export interface RegisterPayload {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  referral?: string;
+}
 
 export type AccountVerifyDto = {
   token: string;
@@ -82,7 +90,7 @@ export type ValidatePasswordToken = void;
 
 export interface AuthenticationModuleType {
   login(email: string, password: string): Promise<ResponseDto<LoginDto>>;
-  register(firstName: string, lastName: string, email: string, password: string): Promise<ResponseDto<RegisterDto>>;
+  register(payload: RegisterPayload): Promise<ResponseDto<RegisterDto>>;
   verifyAccount(tempToken: string, token: string): Promise<ResponseDto<AccountVerifyDto>>;
   resendVerifyLink(email: string): Promise<ResponseDto<ResetDto>>;
   resetPassword(email: string): Promise<ResponseDto<ResetDto>>;
