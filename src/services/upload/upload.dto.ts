@@ -28,6 +28,20 @@ export interface IUploadDto {
   deletedAt: Date;
 }
 
+export interface FindUploadDto {
+  count: number;
+  pages: number;
+  data: IUploadDto[];
+}
+
+export type FilterUploadDto =
+  | {
+      page?: string;
+      limit?: string;
+    } & IUploadDto;
+
 export interface UploadModuleType {
   fileUpload(payload: CreateFileUpload): Promise<ResponseDto<IUploadDto>>;
+  getFileUploads(filter?: FilterUploadDto): Promise<ResponseDto<FindUploadDto>>;
+  getAFileUpload(id: string): Promise<ResponseDto<IUploadDto>>;
 }

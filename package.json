@@ -1,6 +1,6 @@
 {
   "name": "pakt-sdk",
-  "version": "0.1.19",
+  "version": "0.1.20",
   "description": "The PAKT SDK is an advanced software development kit, purpose-built for web applications, that empowers developers to construct innovative products on the PAKT Operating System.",
   "files": [
     "./dist/main.js",
