@@ -94,6 +94,6 @@ export interface AuthenticationModuleType {
   verifyAccount(tempToken: string, token: string): Promise<ResponseDto<AccountVerifyDto>>;
   resendVerifyLink(email: string): Promise<ResponseDto<ResetDto>>;
   resetPassword(email: string): Promise<ResponseDto<ResetDto>>;
-  changePassword(token: string, pasword: string): Promise<ResponseDto<ChangePasswordDto>>;
-  validatePasswordToken(token: string): Promise<ResponseDto<ValidatePasswordToken>>;
+  changePassword(token: string, tempToken: string, password: string): Promise<ResponseDto<ChangePasswordDto>>;
+  validatePasswordToken(token: string, tempToken: string): Promise<ResponseDto<ValidatePasswordToken>>;
 }

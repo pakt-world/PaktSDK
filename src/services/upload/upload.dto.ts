@@ -35,10 +35,11 @@ export interface FindUploadDto {
 }
 
 export type FilterUploadDto =
-  | {
+  | ({
       page?: string;
       limit?: string;
-    } & IUploadDto;
+    } & IUploadDto)
+  | any;
 
 export interface UploadModuleType {
   fileUpload(payload: CreateFileUpload): Promise<ResponseDto<IUploadDto>>;

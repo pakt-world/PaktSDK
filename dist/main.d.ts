@@ -209,8 +209,8 @@ interface AuthenticationModuleType {
     verifyAccount(tempToken: string, token: string): Promise<ResponseDto<AccountVerifyDto>>;
     resendVerifyLink(email: string): Promise<ResponseDto<ResetDto>>;
     resetPassword(email: string): Promise<ResponseDto<ResetDto>>;
-    changePassword(token: string, pasword: string): Promise<ResponseDto<ChangePasswordDto>>;
-    validatePasswordToken(token: string): Promise<ResponseDto<ValidatePasswordToken>>;
+    changePassword(token: string, tempToken: string, password: string): Promise<ResponseDto<ChangePasswordDto>>;
+    validatePasswordToken(token: string, tempToken: string): Promise<ResponseDto<ValidatePasswordToken>>;
 }
 
 declare class AuthenticationModule implements AuthenticationModuleType {
@@ -252,8 +252,8 @@ declare class AuthenticationModule implements AuthenticationModuleType {
      * @param token
      * @param password
      */
-    changePassword(token: string, password: string): Promise<ResponseDto<ChangePasswordDto>>;
-    validatePasswordToken(token: string): Promise<ResponseDto<ValidatePasswordToken>>;
+    changePassword(token: string, tempToken: string, password: string): Promise<ResponseDto<ChangePasswordDto>>;
+    validatePasswordToken(token: string, tempToken: string): Promise<ResponseDto<ValidatePasswordToken>>;
 }
 
 type fetchAccountDto = {} & IUser;
@@ -408,10 +408,10 @@ interface FindUploadDto {
     pages: number;
     data: IUploadDto[];
 }
-type FilterUploadDto = {
+type FilterUploadDto = ({
     page?: string;
     limit?: string;
-} & IUploadDto;
+} & IUploadDto) | any;
 interface UploadModuleType {
     fileUpload(payload: CreateFileUpload): Promise<ResponseDto<IUploadDto>>;
     getFileUploads(filter?: FilterUploadDto): Promise<ResponseDto<FindUploadDto>>;
