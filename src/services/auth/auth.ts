@@ -127,6 +127,8 @@ export class AuthenticationModule implements AuthenticationModuleType {
         path: API_PATHS.RESET_PASSWORD,
         body: credentials,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
@@ -136,24 +138,28 @@ export class AuthenticationModule implements AuthenticationModuleType {
    * @param token
    * @param password
    */
-  async changePassword(token: string, password: string): Promise<ResponseDto<ChangePasswordDto>> {
+  async changePassword(token: string, tempToken: string, password: string): Promise<ResponseDto<ChangePasswordDto>> {
     return ErrorUtils.tryFail(async () => {
-      const credentials = { token, password };
+      const credentials = { token, tempToken, password };
       const response: ResponseDto<ChangePasswordDto> = await this.connector.post({
         path: API_PATHS.CHANGE_PASSWORD,
         body: credentials,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
 
-  validatePasswordToken(token: string): Promise<ResponseDto<ValidatePasswordToken>> {
+  validatePasswordToken(token: string, tempToken: string): Promise<ResponseDto<ValidatePasswordToken>> {
     return ErrorUtils.tryFail(async () => {
-      const credentials = { token };
+      const credentials = { token, tempToken };
       const response: ResponseDto<ChangePasswordDto> = await this.connector.post({
-        path: API_PATHS.VALIDATE_PASSWORD_TOKEN,
+        path: `${API_PATHS.VALIDATE_PASSWORD_TOKEN}/${token}`,
         body: credentials,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
