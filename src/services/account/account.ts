@@ -166,10 +166,8 @@ export class AccountModule implements AccountModuleType {
   }
   async getUsers(filter?: FilterUserDto | undefined): Promise<ResponseDto<FindUsers>> {
     if (filter) {
-      const { tags, type, search, sort, range } = filter;
-      const ranges = range?.join(",");
-      const tagger = tags?.join(",");
-      const query = parseUrlWithQuery(API_PATHS.ACCOUNT_FETCH_ALL, { tags: tagger, range: ranges, type, search, sort });
+      const query = parseUrlWithQuery(API_PATHS.ACCOUNT_FETCH_ALL, { ...filter });
+      console.log({ query });
       return ErrorUtils.tryFail(async () => {
         const response: ResponseDto<FindUsers> = await this.connector.get({ path: query });
         if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
