@@ -158,7 +158,7 @@ export class AccountModule implements AccountModuleType {
 
   async getAUser(id: string): Promise<ResponseDto<IUser>> {
     return ErrorUtils.tryFail(async () => {
-      const response: ResponseDto<IUser> = await this.connector.get({ path: `${API_PATHS.ACCOUNT_FETCH_ALL}${id}` });
+      const response: ResponseDto<IUser> = await this.connector.get({ path: `${API_PATHS.ACCOUNT_FETCH_SINGLE}${id}` });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
       return response.data;
