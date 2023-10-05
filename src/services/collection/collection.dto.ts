@@ -113,10 +113,10 @@ export type cancelCollectionDto = {
 };
 
 export interface UpdateCollectionDto {
-  type: string;
-  name: string;
-  description: string;
-  isPrivate: boolean;
+  type?: string;
+  name?: string;
+  description?: string;
+  isPrivate?: boolean;
   category?: string | undefined;
   paymentFee?: number | undefined;
   deliveryDate?: string | undefined;
@@ -136,4 +136,5 @@ export interface CollectionModuleType {
   create(payload: CreateCollectionDto): Promise<ResponseDto<ICollectionDto>>;
   createMany(payload: CreateManyCollectionDto): Promise<ResponseDto<ICollectionDto[]>>;
   updateCollection(id: string, payload: UpdateCollectionDto): Promise<ResponseDto<{}>>;
+  deleteCollection(id: string): Promise<ResponseDto<{}>>;
 }

@@ -83,6 +83,11 @@ export const API_PATHS = {
   DECLINE_INVITE: "/invite",
   VIEW_ALL_INVITE: "/invite/",
   VIEW_A_INVITE: "/invite/",
+
+  //Feeds
+  FEEDS: "/feeds",
+  FEEDS_DISMISS_ONE: "/dismiss",
+  FEEDS_DISMISS_ALL: "/feeds/dismiss/all",
 };
 
 export type expectedISOCountries =
