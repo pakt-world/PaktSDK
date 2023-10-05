@@ -87,6 +87,9 @@ declare const API_PATHS: {
     DECLINE_INVITE: string;
     VIEW_ALL_INVITE: string;
     VIEW_A_INVITE: string;
+    FEEDS: string;
+    FEEDS_DISMISS_ONE: string;
+    FEEDS_DISMISS_ALL: string;
 };
 type expectedISOCountries = "AW" | "AF" | "AO" | "AI" | "AX" | "AL" | "AD" | "AE" | "AR" | "AM" | "AS" | "AG" | "AU" | "AT" | "AZ" | "BI" | "BE" | "BJ" | "BF" | "BD" | "BG" | "BH" | "BS" | "BA" | "BL" | "BY" | "BZ" | "BM" | "BO" | "BR" | "BB" | "BN" | "BT" | "BW" | "CF" | "CA" | "CC" | "CH" | "CL" | "CN" | "CI" | "CM" | "CD" | "CD" | "CG" | "CK" | "CO" | "KM" | "CI" | "CV" | "CR" | "CU" | "CW" | "CX" | "KY" | "CY" | "CZ" | "DE" | "DJ" | "DM" | "DK" | "DO" | "DO" | "DO" | "DZ" | "EC" | "EG" | "ER" | "EH" | "ES" | "EE" | "ET" | "FI" | "FJ" | "FK" | "FR" | "FO" | "FM" | "GA" | "GB" | "GE" | "GG" | "GH" | "GI" | "GN" | "GP" | "GM" | "GW" | "GQ" | "GR" | "GD" | "GL" | "GT" | "GF" | "GU" | "GY" | "HK" | "HN" | "HR" | "HT" | "HU" | "ID" | "IM" | "IN" | "IO" | "IE" | "IR" | "IQ" | "IS" | "IL" | "IT" | "JM" | "JE" | "JO" | "JP" | "KZ" | "KZ" | "KE" | "KG" | "KH" | "KI" | "KN" | "KR" | "XK" | "KW" | "LA" | "LB" | "LR" | "LY" | "LC" | "LI" | "LK" | "LS" | "LT" | "LU" | "LV" | "MO" | "MF" | "MA" | "MC" | "MD" | "MG" | "MV" | "MX" | "MH" | "MK" | "ML" | "MT" | "MM" | "ME" | "MN" | "MP" | "MZ" | "MR" | "MS" | "MQ" | "MU" | "MW" | "MY" | "YT" | "NA" | "NC" | "NE" | "NF" | "NG" | "NI" | "NU" | "NL" | "NO" | "NP" | "NR" | "NZ" | "OM" | "PK" | "PA" | "PN" | "PE" | "PH" | "PW" | "PG" | "PL" | "PR" | "PR" | "KP" | "PT" | "PY" | "PS" | "PF" | "QA" | "RE" | "RO" | "RU" | "RW" | "SA" | "SD" | "SN" | "SG" | "GS" | "SJ" | "SB" | "SL" | "SV" | "SM" | "SO" | "PM" | "RS" | "SS" | "ST" | "SR" | "SK" | "SI" | "SE" | "SZ" | "SX" | "SC" | "SY" | "TC" | "TD" | "TG" | "TH" | "TJ" | "TK" | "TM" | "TL" | "TO" | "TT" | "TN" | "TR" | "TV" | "TW" | "TZ" | "UG" | "UA" | "UY" | "US" | "UZ" | "VA" | "VA" | "VC" | "VE" | "VG" | "VI" | "VN" | "VU" | "WF" | "WS" | "YE" | "ZA" | "ZM" | "ZW";
 
@@ -526,10 +529,10 @@ type cancelCollectionDto = {
     paymentPercentage: number;
 };
 interface UpdateCollectionDto {
-    type: string;
-    name: string;
-    description: string;
-    isPrivate: boolean;
+    type?: string;
+    name?: string;
+    description?: string;
+    isPrivate?: boolean;
     category?: string | undefined;
     paymentFee?: number | undefined;
     deliveryDate?: string | undefined;
@@ -548,6 +551,7 @@ interface CollectionModuleType {
     create(payload: CreateCollectionDto): Promise<ResponseDto<ICollectionDto>>;
     createMany(payload: CreateManyCollectionDto): Promise<ResponseDto<ICollectionDto[]>>;
     updateCollection(id: string, payload: UpdateCollectionDto): Promise<ResponseDto<{}>>;
+    deleteCollection(id: string): Promise<ResponseDto<{}>>;
 }
 
 interface ICollectionBookmarkDto {
@@ -642,6 +646,7 @@ declare class CollectionModule implements CollectionModuleType {
     createMany(payload: CreateManyCollectionDto): Promise<ResponseDto<ICollectionDto[]>>;
     updateCollection(id: string, payload: UpdateCollectionDto): Promise<ResponseDto<{}>>;
     getACollectionType(typeId: string): Promise<ResponseDto<ICollectionTypeDto>>;
+    deleteCollection(collectionId: string): Promise<ResponseDto<{}>>;
 }
 
 type IConnectionKeys = "tags" | "tagCount" | "afroScore";
@@ -657,6 +662,44 @@ interface ConnectionFilterModuleType {
     create(payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>>;
     getForAUser(): Promise<ResponseDto<IConnectionFilter>>;
     update(payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>>;
+}
+
+interface IFeed {
+    creator?: string;
+    owner?: string;
+    owners?: IUser[] | string[];
+    data?: ICollectionDto | string;
+    description: string;
+    title: string;
+    type: string;
+    isPublic?: boolean;
+    closed?: boolean;
+}
+interface CreateFeedDto {
+    title: string;
+    description: string;
+    type: string;
+    data: string;
+    isPublic: boolean;
+    owners?: string[];
+}
+type FilterFeedDto = ({
+    page?: string;
+    limit?: string;
+} & IFeed) | any;
+interface FindFeedDto {
+    data: IFeed[];
+    total: number;
+    pages: number;
+    page: number;
+    limit: number;
+}
+interface FeedModuleType {
+    create(payload: CreateFeedDto): Promise<ResponseDto<{}>>;
+    getAll(filter?: FilterFeedDto): Promise<ResponseDto<FindFeedDto>>;
+    getById(filterId: string): Promise<ResponseDto<IFeed>>;
+    dismissAllFeeds(): Promise<ResponseDto<{}>>;
+    dismissAFeed(filterId: string): Promise<ResponseDto<{}>>;
 }
 
 type IInviteStatus = "pending" | "accepted" | "rejected";
@@ -1061,6 +1104,17 @@ declare class ConnectionFilterModule implements ConnectionFilterModuleType {
     getForAUser(): Promise<ResponseDto<IConnectionFilter>>;
 }
 
+declare class FeedModule implements FeedModuleType {
+    private id;
+    private connector;
+    constructor(id: string);
+    create(payload: CreateFeedDto): Promise<ResponseDto<{}>>;
+    getAll(filter?: FilterFeedDto): Promise<ResponseDto<FindFeedDto>>;
+    getById(filterId: string): Promise<ResponseDto<IFeed>>;
+    dismissAllFeeds(): Promise<ResponseDto<{}>>;
+    dismissAFeed(filterId: string): Promise<ResponseDto<{}>>;
+}
+
 declare class WithdrawalModule implements WithdrawalModuleType {
     private id;
     private connector;
@@ -1083,6 +1137,7 @@ declare class PaktSDK {
     chat: ChatModuleType;
     connectionFilter: ConnectionFilterModuleType;
     invite: InviteModuleType;
+    feed: FeedModuleType;
     constructor(id: string);
     /**
      * Initialize Pakt SDK. This method must be called before any other method.
@@ -1097,4 +1152,4 @@ declare class PaktSDK {
     private static generateRandomString;
 }
 
-export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, CHARACTERS, ChangePasswordDto, ChatModule, ChatModuleType, CollectionModule, CollectionModuleType, ConnectionFilterModule, ConnectionFilterModuleType, CreateCollectionDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, ErrorUtils, FilterInviteDto, FilterReviewDto, FilterUploadDto, FilterUserDto, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindInvitesDto, FindNotificationDto, FindReviewDto, FindTransactionsDto, FindUploadDto, FindUsers, FindWithdrawalsDto, IChatConversation, IChatMessage, ICollectionBookmarkDto, ICollectionDto, ICollectionStatus, ICollectionTypeDto, IConnectionEvents, IConnectionFilter, IConnectionFilterDecider, IConnectionKeys, ICreateSessionPayload, IFile, IInviteDto, IInviteStatus, INotificationDto, IReviewDto, ISendSessionMedia, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, IUploadDto, IUser, IUserTwoFaType, IVerification, IVerificationStatus, IWalletDto, IWalletExchangeDto, IWithdrawalDto, InviteModule, InviteModuleType, LoginDto, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, RegisterDto, RegisterPayload, ResendVerifyDto, ResetDto, ResponseDto, ReviewModule, ReviewModuleType, SendInviteDto, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UpdateCollectionDto, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, VerificationDocumentTypes, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelCollectionDto, createBookMarkDto, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, parseUrlWithQuery, updateUserDto };
+export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, CHARACTERS, ChangePasswordDto, ChatModule, ChatModuleType, CollectionModule, CollectionModuleType, ConnectionFilterModule, ConnectionFilterModuleType, CreateCollectionDto, CreateFeedDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, ErrorUtils, FeedModule, FeedModuleType, FilterFeedDto, FilterInviteDto, FilterReviewDto, FilterUploadDto, FilterUserDto, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindFeedDto, FindInvitesDto, FindNotificationDto, FindReviewDto, FindTransactionsDto, FindUploadDto, FindUsers, FindWithdrawalsDto, IChatConversation, IChatMessage, ICollectionBookmarkDto, ICollectionDto, ICollectionStatus, ICollectionTypeDto, IConnectionEvents, IConnectionFilter, IConnectionFilterDecider, IConnectionKeys, ICreateSessionPayload, IFeed, IFile, IInviteDto, IInviteStatus, INotificationDto, IReviewDto, ISendSessionMedia, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, IUploadDto, IUser, IUserTwoFaType, IVerification, IVerificationStatus, IWalletDto, IWalletExchangeDto, IWithdrawalDto, InviteModule, InviteModuleType, LoginDto, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, RegisterDto, RegisterPayload, ResendVerifyDto, ResetDto, ResponseDto, ReviewModule, ReviewModuleType, SendInviteDto, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UpdateCollectionDto, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, VerificationDocumentTypes, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelCollectionDto, createBookMarkDto, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, parseUrlWithQuery, updateUserDto };
