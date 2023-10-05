@@ -135,4 +135,15 @@ export class CollectionModule implements CollectionModuleType {
       return response.data;
     });
   }
+
+  deleteCollection(collectionId: string): Promise<ResponseDto<{}>> {
+    return ErrorUtils.tryFail(async () => {
+      const response: ResponseDto<ICollectionTypeDto> = await this.connector.get({
+        path: `${API_PATHS.COLLECTION}/${collectionId}`,
+      });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
+      return response.data;
+    });
+  }
 }
