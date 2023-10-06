@@ -11,6 +11,7 @@ import {
   ICollectionDto,
   ICollectionTypeDto,
   UpdateCollectionDto,
+  UpdateManyCollectionsDto,
   filterCollectionDto,
 } from "./collection.dto";
 
@@ -136,10 +137,22 @@ export class CollectionModule implements CollectionModuleType {
     });
   }
 
-  deleteCollection(collectionId: string): Promise<ResponseDto<{}>> {
+  deleteACollection(collectionId: string): Promise<ResponseDto<{}>> {
     return ErrorUtils.tryFail(async () => {
-      const response: ResponseDto<ICollectionTypeDto> = await this.connector.get({
+      const response: ResponseDto<ICollectionTypeDto> = await this.connector.delete({
         path: `${API_PATHS.COLLECTION}/${collectionId}`,
+      });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
+      return response.data;
+    });
+  }
+
+  updateManyCollections(collections: UpdateManyCollectionsDto): Promise<ResponseDto<{}>> {
+    return ErrorUtils.tryFail(async () => {
+      const response: ResponseDto<ICollectionTypeDto> = await this.connector.patch({
+        path: `${API_PATHS.COLLECTION}/many/update`,
+        body: { collections },
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
