@@ -112,20 +112,38 @@ export type cancelCollectionDto = {
   paymentPercentage: number;
 };
 
+//the name & description are required, to update the collection
 export interface UpdateCollectionDto {
   type?: string;
-  name?: string;
-  description?: string;
+  name: string;
+  description: string;
   isPrivate?: boolean;
   category?: string | undefined;
   paymentFee?: number | undefined;
   deliveryDate?: string | undefined;
   tags?: string[] | undefined;
-  deliverables?: string[] | undefined;
-  invites?: string[] | undefined;
   parent?: string;
   image?: string;
-  staus?: ICollectionStatus;
+  status?: ICollectionStatus;
+  attachments?: string[];
+}
+
+export interface UpdateManyCollectionsDto {
+  collections: {
+    id: string;
+    type?: string;
+    name: string;
+    description: string;
+    isPrivate?: boolean;
+    category?: string | undefined;
+    paymentFee?: number | undefined;
+    deliveryDate?: string | undefined;
+    tags?: string[] | undefined;
+    parent?: string;
+    image?: string;
+    status?: ICollectionStatus;
+    attachments?: string[];
+  }[];
 }
 
 export interface CollectionModuleType {
@@ -136,5 +154,6 @@ export interface CollectionModuleType {
   create(payload: CreateCollectionDto): Promise<ResponseDto<ICollectionDto>>;
   createMany(payload: CreateManyCollectionDto): Promise<ResponseDto<ICollectionDto[]>>;
   updateCollection(id: string, payload: UpdateCollectionDto): Promise<ResponseDto<{}>>;
-  deleteCollection(id: string): Promise<ResponseDto<{}>>;
+  deleteACollection(id: string): Promise<ResponseDto<{}>>;
+  updateManyCollections(collections: UpdateManyCollectionsDto): Promise<ResponseDto<{}>>;
 }
