@@ -530,18 +530,34 @@ type cancelCollectionDto = {
 };
 interface UpdateCollectionDto {
     type?: string;
-    name?: string;
-    description?: string;
+    name: string;
+    description: string;
     isPrivate?: boolean;
     category?: string | undefined;
     paymentFee?: number | undefined;
     deliveryDate?: string | undefined;
     tags?: string[] | undefined;
-    deliverables?: string[] | undefined;
-    invites?: string[] | undefined;
     parent?: string;
     image?: string;
-    staus?: ICollectionStatus;
+    status?: ICollectionStatus;
+    attachments?: string[];
+}
+interface UpdateManyCollectionsDto {
+    collections: {
+        id: string;
+        type?: string;
+        name: string;
+        description: string;
+        isPrivate?: boolean;
+        category?: string | undefined;
+        paymentFee?: number | undefined;
+        deliveryDate?: string | undefined;
+        tags?: string[] | undefined;
+        parent?: string;
+        image?: string;
+        status?: ICollectionStatus;
+        attachments?: string[];
+    }[];
 }
 interface CollectionModuleType {
     getAll(filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionDto>>;
@@ -551,7 +567,8 @@ interface CollectionModuleType {
     create(payload: CreateCollectionDto): Promise<ResponseDto<ICollectionDto>>;
     createMany(payload: CreateManyCollectionDto): Promise<ResponseDto<ICollectionDto[]>>;
     updateCollection(id: string, payload: UpdateCollectionDto): Promise<ResponseDto<{}>>;
-    deleteCollection(id: string): Promise<ResponseDto<{}>>;
+    deleteACollection(id: string): Promise<ResponseDto<{}>>;
+    updateManyCollections(collections: UpdateManyCollectionsDto): Promise<ResponseDto<{}>>;
 }
 
 interface ICollectionBookmarkDto {
@@ -646,7 +663,8 @@ declare class CollectionModule implements CollectionModuleType {
     createMany(payload: CreateManyCollectionDto): Promise<ResponseDto<ICollectionDto[]>>;
     updateCollection(id: string, payload: UpdateCollectionDto): Promise<ResponseDto<{}>>;
     getACollectionType(typeId: string): Promise<ResponseDto<ICollectionTypeDto>>;
-    deleteCollection(collectionId: string): Promise<ResponseDto<{}>>;
+    deleteACollection(collectionId: string): Promise<ResponseDto<{}>>;
+    updateManyCollections(collections: UpdateManyCollectionsDto): Promise<ResponseDto<{}>>;
 }
 
 type IConnectionKeys = "tags" | "tagCount" | "afroScore";
@@ -1152,4 +1170,4 @@ declare class PaktSDK {
     private static generateRandomString;
 }
 
-export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, CHARACTERS, ChangePasswordDto, ChatModule, ChatModuleType, CollectionModule, CollectionModuleType, ConnectionFilterModule, ConnectionFilterModuleType, CreateCollectionDto, CreateFeedDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, ErrorUtils, FeedModule, FeedModuleType, FilterFeedDto, FilterInviteDto, FilterReviewDto, FilterUploadDto, FilterUserDto, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindFeedDto, FindInvitesDto, FindNotificationDto, FindReviewDto, FindTransactionsDto, FindUploadDto, FindUsers, FindWithdrawalsDto, IChatConversation, IChatMessage, ICollectionBookmarkDto, ICollectionDto, ICollectionStatus, ICollectionTypeDto, IConnectionEvents, IConnectionFilter, IConnectionFilterDecider, IConnectionKeys, ICreateSessionPayload, IFeed, IFile, IInviteDto, IInviteStatus, INotificationDto, IReviewDto, ISendSessionMedia, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, IUploadDto, IUser, IUserTwoFaType, IVerification, IVerificationStatus, IWalletDto, IWalletExchangeDto, IWithdrawalDto, InviteModule, InviteModuleType, LoginDto, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, RegisterDto, RegisterPayload, ResendVerifyDto, ResetDto, ResponseDto, ReviewModule, ReviewModuleType, SendInviteDto, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UpdateCollectionDto, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, VerificationDocumentTypes, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelCollectionDto, createBookMarkDto, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, parseUrlWithQuery, updateUserDto };
+export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, CHARACTERS, ChangePasswordDto, ChatModule, ChatModuleType, CollectionModule, CollectionModuleType, ConnectionFilterModule, ConnectionFilterModuleType, CreateCollectionDto, CreateFeedDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, ErrorUtils, FeedModule, FeedModuleType, FilterFeedDto, FilterInviteDto, FilterReviewDto, FilterUploadDto, FilterUserDto, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindFeedDto, FindInvitesDto, FindNotificationDto, FindReviewDto, FindTransactionsDto, FindUploadDto, FindUsers, FindWithdrawalsDto, IChatConversation, IChatMessage, ICollectionBookmarkDto, ICollectionDto, ICollectionStatus, ICollectionTypeDto, IConnectionEvents, IConnectionFilter, IConnectionFilterDecider, IConnectionKeys, ICreateSessionPayload, IFeed, IFile, IInviteDto, IInviteStatus, INotificationDto, IReviewDto, ISendSessionMedia, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, IUploadDto, IUser, IUserTwoFaType, IVerification, IVerificationStatus, IWalletDto, IWalletExchangeDto, IWithdrawalDto, InviteModule, InviteModuleType, LoginDto, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, RegisterDto, RegisterPayload, ResendVerifyDto, ResetDto, ResponseDto, ReviewModule, ReviewModuleType, SendInviteDto, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UpdateCollectionDto, UpdateManyCollectionsDto, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, VerificationDocumentTypes, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelCollectionDto, createBookMarkDto, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, parseUrlWithQuery, updateUserDto };
