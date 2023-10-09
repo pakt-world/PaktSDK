@@ -136,6 +136,15 @@ interface IUser {
     score: number;
     profileCompleteness: number;
     profileImage?: {
+        _id?: string;
+        type?: string;
+        size?: string;
+        url: string;
+    };
+    bgImage?: {
+        _id?: string;
+        type?: string;
+        size?: string;
         url: string;
     };
     profile: {
@@ -168,6 +177,7 @@ interface IUser {
         type: IUserTwoFaType;
         securityQuestion?: string;
     };
+    meta?: Record<string, any>;
 }
 type LoginDto = {
     email: string;
@@ -261,36 +271,38 @@ declare class AuthenticationModule implements AuthenticationModuleType {
 
 type fetchAccountDto = {} & IUser;
 type updateUserDto = {
-    userName: string;
-    profileImage: string;
-    profile: {
-        contact: {
-            country: string;
-            state: string;
-            city: string;
-            address: string;
-            phone: string;
+    userName?: string;
+    profileImage?: string;
+    bgImage?: string;
+    profile?: {
+        contact?: {
+            country?: string;
+            state?: string;
+            city?: string;
+            address?: string;
+            phone?: string;
         };
-        bio: {
-            title: string;
-            description: string;
+        bio?: {
+            title?: string;
+            description?: string;
         };
-        talent: {
-            about: string;
-            availability: string;
-            tags: string[];
-            tagsIds: string | any[];
-            tagsCategory: string;
+        talent?: {
+            about?: string;
+            availability?: string;
+            tags?: string[];
+            tagsIds?: string | any[];
+            tagsCategory?: string;
         };
-        privateEarnings: boolean;
-        privateInvestments: boolean;
+        privateEarnings?: boolean;
+        privateInvestments?: boolean;
     };
-    socials: {
-        github: string;
-        twitter: string;
-        linkedin: string;
-        website: string;
+    socials?: {
+        github?: string;
+        twitter?: string;
+        linkedin?: string;
+        website?: string;
     };
+    meta?: Record<string, any>;
 };
 type TwoFATypeDto = "google_auth" | "email" | "security_answer";
 type TwoFAresponse = {
