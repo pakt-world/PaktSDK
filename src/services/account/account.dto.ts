@@ -4,36 +4,38 @@ import { IUser } from "../auth";
 export type fetchAccountDto = {} & IUser;
 
 export type updateUserDto = {
-  userName: string;
-  profileImage: string;
-  profile: {
-    contact: {
-      country: string;
-      state: string;
-      city: string;
-      address: string;
-      phone: string;
+  userName?: string;
+  profileImage?: string;
+  bgImage?: string;
+  profile?: {
+    contact?: {
+      country?: string;
+      state?: string;
+      city?: string;
+      address?: string;
+      phone?: string;
     };
-    bio: {
-      title: string;
-      description: string;
+    bio?: {
+      title?: string;
+      description?: string;
     };
-    talent: {
-      about: string;
-      availability: string;
-      tags: string[];
-      tagsIds: string | any[];
-      tagsCategory: string;
+    talent?: {
+      about?: string;
+      availability?: string;
+      tags?: string[];
+      tagsIds?: string | any[];
+      tagsCategory?: string;
     };
-    privateEarnings: boolean;
-    privateInvestments: boolean;
+    privateEarnings?: boolean;
+    privateInvestments?: boolean;
   };
-  socials: {
-    github: string;
-    twitter: string;
-    linkedin: string;
-    website: string;
+  socials?: {
+    github?: string;
+    twitter?: string;
+    linkedin?: string;
+    website?: string;
   };
+  meta?: Record<string, any>;
 };
 
 export type TwoFATypeDto = "google_auth" | "email" | "security_answer";
