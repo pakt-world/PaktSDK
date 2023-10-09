@@ -12,6 +12,15 @@ export interface IUser {
   score: number;
   profileCompleteness: number;
   profileImage?: {
+    _id?: string;
+    type?: string;
+    size?: string;
+    url: string;
+  };
+  bgImage?: {
+    _id?: string;
+    type?: string;
+    size?: string;
     url: string;
   };
   profile: {
@@ -44,6 +53,7 @@ export interface IUser {
     type: IUserTwoFaType;
     securityQuestion?: string;
   };
+  meta?: Record<string, any>;
 }
 
 export type LoginDto = {
