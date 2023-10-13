@@ -1,5 +1,5 @@
-import { PaktConnector } from "src/connector/connector";
 import { Container, Service } from "typedi";
+import { PaktConnector } from "../../connector/connector";
 import { API_PATHS } from "../../utils/constants";
 import { ErrorUtils, ResponseDto, Status, parseUrlWithQuery } from "../../utils/response";
 import { CreateFeedDto, FeedModuleType, FilterFeedDto, FindFeedDto, IFeed } from "./feed.dto";
