@@ -44,6 +44,8 @@ Explore our example project which effectively demonstrates the practical applica
 
 - [Invite](#invite)
 
+- [Chat](#chat)
+
 ## Installation
 
 To install PAKT SDK, simply
@@ -340,6 +342,8 @@ interface FilterUserDto {
   tags: string[];
   range: number[];
   type: "recipient" | "creator";
+  page?: number;
+  limit?: number;
 }
 
 export const searchUsers = async () => {
@@ -1066,5 +1070,15 @@ export const getInvites = async (filter?: FilterInviteDto) => {
 ```typescript
 export const getAnInvite = async (inviteId: string) => {
   const invite: IInviteDto = await sdkInit.invite.getAnInvite(inviteId);
+};
+```
+
+## Chat
+
+With the PAKT SDK, users can fetch their chat history.
+
+```typescript
+export const fetchMessagesHistory = async () => {
+  const history: IChatConversation = await init.chat.getUserMessages();
 };
 ```
