@@ -1,4 +1,4 @@
-import { ResponseDto } from "src/utils";
+import { ResponseDto } from "../../utils";
 import { expectedISOCountries } from "../../utils/constants";
 
 export type VerificationDocumentTypes =

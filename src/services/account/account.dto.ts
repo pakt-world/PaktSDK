@@ -55,6 +55,8 @@ export interface FilterUserDto {
   tags?: string[];
   range?: number[];
   type?: "recipient" | "creator";
+  page?: number;
+  limit?: number;
 }
 
 export interface FindUsers {

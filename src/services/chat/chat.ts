@@ -1,5 +1,5 @@
-import { PaktConnector } from "src/connector";
 import Container, { Service } from "typedi";
+import { PaktConnector } from "../../connector";
 import { API_PATHS, ErrorUtils, ResponseDto, Status } from "../../utils";
 import { ChatModuleType, IChatConversation } from "./chat.dto";
 
