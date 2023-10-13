@@ -2,6 +2,7 @@ import { ResponseDto } from "../../utils";
 import { IUser } from "../auth/auth.dto";
 
 export interface IChatMessage {
+  _id: string;
   user: IUser | string;
   type: string;
   conversation: IChatConversation | string;
@@ -11,9 +12,11 @@ export interface IChatMessage {
   quotedContentId: IChatMessage | string;
   mediaType?: string;
   seen?: string;
+  readBy?: string[];
 }
 
 export interface IChatConversation {
+  _id: string;
   type: string;
   recipients: IUser[] | string[];
   messages: IChatMessage[] | string[];
