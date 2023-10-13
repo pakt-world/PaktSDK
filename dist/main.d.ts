@@ -98,6 +98,7 @@ declare const AUTH_TOKEN: Token<string>;
 declare const TEMP_TOKEN: Token<string>;
 
 interface IChatMessage {
+    _id: string;
     user: IUser | string;
     type: string;
     conversation: IChatConversation | string;
@@ -107,8 +108,10 @@ interface IChatMessage {
     quotedContentId: IChatMessage | string;
     mediaType?: string;
     seen?: string;
+    readBy?: string[];
 }
 interface IChatConversation {
+    _id: string;
     type: string;
     recipients: IUser[] | string[];
     messages: IChatMessage[] | string[];
@@ -319,6 +322,8 @@ interface FilterUserDto {
     tags?: string[];
     range?: number[];
     type?: "recipient" | "creator";
+    page?: number;
+    limit?: number;
 }
 interface FindUsers {
     pages: number;
