@@ -509,6 +509,7 @@ type CreateCollectionDto = {
     deliveryDate?: string;
     tags?: string[];
     attachments?: string[];
+    meta?: Record<string, any>;
 };
 type CreateManyCollectionDto = {
     type: string;
@@ -521,6 +522,7 @@ type CreateManyCollectionDto = {
         deliveryDate?: string;
         tags?: string[];
         attachments?: string[];
+        meta?: Record<string, any>;
     }[];
 };
 type assignCollectionDto = {
