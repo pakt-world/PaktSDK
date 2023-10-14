@@ -67,6 +67,7 @@ export type CreateCollectionDto = {
   deliveryDate?: string;
   tags?: string[];
   attachments?: string[];
+  meta?: Record<string, any>;
 };
 
 export type CreateManyCollectionDto = {
@@ -80,6 +81,7 @@ export type CreateManyCollectionDto = {
     deliveryDate?: string;
     tags?: string[];
     attachments?: string[];
+    meta?: Record<string, any>;
   }[];
 };
 
