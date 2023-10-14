@@ -42,6 +42,7 @@ export interface ICollectionDto {
   emailToken?: string;
   rating?: string; //TODO:: add IRatingDto
   recipientRating?: string; //TODO:: add IRatingDto
+  ratings?: string[];
   score?: number;
   progress?: number;
   isDeleted?: boolean;
@@ -52,6 +53,9 @@ export interface ICollectionDto {
   rate?: string;
   cancellationReason?: string;
   completed?: boolean;
+  payoutTransactions?: string[];
+  failedPayoutCount?: number;
+  meta?: Record<string, any>;
 }
 
 export type CreateCollectionDto = {
@@ -126,6 +130,7 @@ export interface UpdateCollectionDto {
   image?: string;
   status?: ICollectionStatus;
   attachments?: string[];
+  meta?: Record<string, any>;
 }
 
 export interface UpdateManyCollectionsDto {
@@ -143,6 +148,7 @@ export interface UpdateManyCollectionsDto {
     image?: string;
     status?: ICollectionStatus;
     attachments?: string[];
+    meta?: Record<string, any>;
   }[];
 }
 
