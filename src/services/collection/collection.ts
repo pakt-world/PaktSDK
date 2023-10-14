@@ -38,10 +38,8 @@ export class CollectionModule implements CollectionModuleType {
    */
   async getAll(filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionDto>> {
     return ErrorUtils.tryFail(async () => {
-      const theFilter = filter ? filter : {};
-      const fetchUrl = parseUrlWithQuery(API_PATHS.COLLECTION + "/", theFilter);
-      const url = filter ? API_PATHS.COLLECTION : fetchUrl;
-      const response: ResponseDto<FindCollectionDto> = await this.connector.get({ path: url });
+      const fetchUrl = parseUrlWithQuery(`${API_PATHS.COLLECTION}/`, filter);
+      const response: ResponseDto<FindCollectionDto> = await this.connector.get({ path: fetchUrl });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
       return response.data;
