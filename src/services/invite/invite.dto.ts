@@ -16,7 +16,7 @@ export interface IInviteDto {
   acceptedAt?: string;
   createdAt?: string | Date;
   deletedAt?: string | Date;
-  updateAt?: string | Date;
+  updatedAt?: string | Date;
 }
 
 export interface SendInviteDto {

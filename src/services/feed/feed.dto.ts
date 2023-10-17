@@ -15,7 +15,7 @@ export interface IFeed {
   closed?: boolean;
   createdAt?: string | Date;
   deletedAt?: string | Date;
-  updateAt?: string | Date;
+  updatedAt?: string | Date;
 }
 
 export interface CreateFeedDto {
