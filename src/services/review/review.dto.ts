@@ -32,7 +32,7 @@ export interface IReviewDto {
   rating: number;
   createdAt?: string | Date;
   deletedAt?: string | Date;
-  updateAt?: string | Date;
+  updatedAt?: string | Date;
 }
 
 export interface ReviewModuleType {

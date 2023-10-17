@@ -59,6 +59,7 @@ export interface ICollectionDto {
   meta?: Record<string, any>;
   createdAt?: string | Date;
   deletedAt?: string | Date;
+  updatedAt?: string | Date;
 }
 
 export type CreateCollectionDto = {
