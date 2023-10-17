@@ -23,12 +23,16 @@ export type FilterReviewDto =
   | any;
 
 export interface IReviewDto {
+  _id: string;
   data: ICollectionDto;
   owner: IUser | string;
   receiver: IUser | string;
   type: string;
   review: string;
   rating: number;
+  createdAt?: string | Date;
+  deletedAt?: string | Date;
+  updateAt?: string | Date;
 }
 
 export interface ReviewModuleType {

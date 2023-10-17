@@ -25,7 +25,7 @@ interface NotificationUser {
   profile: {
     talent: {
       tags: string[];
-      availability: string;
+      availability: "busy" | "available" | "working";
       skillIds: object[];
     };
   };
@@ -37,6 +37,7 @@ interface NotificationUser {
 }
 
 export interface INotificationDto {
+  _id: string;
   owner: NotificationUser;
   title: string;
   description: string;
@@ -45,6 +46,9 @@ export interface INotificationDto {
   data: string;
   isAdmin: boolean;
   type: INotificationType;
+  createdAt?: string | Date;
+  deletedAt?: string | Date;
+  updateAt?: string | Date;
 }
 
 export type FindNotificationDto = {

@@ -3,6 +3,7 @@ import { IUser } from "../auth";
 import { ICollectionDto } from "../collection";
 
 export interface IFeed {
+  _id: string;
   creator?: string;
   owner?: string;
   owners?: IUser[] | string[];
@@ -12,6 +13,9 @@ export interface IFeed {
   type: string;
   isPublic?: boolean;
   closed?: boolean;
+  createdAt?: string | Date;
+  deletedAt?: string | Date;
+  updateAt?: string | Date;
 }
 
 export interface CreateFeedDto {

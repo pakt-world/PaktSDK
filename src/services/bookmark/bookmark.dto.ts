@@ -7,6 +7,9 @@ export interface ICollectionBookmarkDto {
   data: ICollectionDto | string;
   active: boolean;
   isDeleted?: boolean;
+  createdAt?: string | Date;
+  deletedAt?: string | Date;
+  updateAt?: string | Date;
 }
 export type FindCollectionBookMarkDto = {
   page: number;

@@ -54,6 +54,9 @@ export interface IUser {
     securityQuestion?: string;
   };
   meta?: Record<string, any>;
+  createdAt?: string | Date;
+  deletedAt?: string | Date;
+  updateAt?: string | Date;
 }
 
 export type LoginDto = {

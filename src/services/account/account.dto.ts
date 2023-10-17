@@ -21,7 +21,7 @@ export type updateUserDto = {
     };
     talent?: {
       about?: string;
-      availability?: string;
+      availability?: "busy" | "available" | "working";
       tags?: string[];
       tagsIds?: string | any[];
       tagsCategory?: string;

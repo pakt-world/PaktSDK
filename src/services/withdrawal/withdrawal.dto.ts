@@ -22,6 +22,7 @@ export type FindWithdrawalsDto = {
 };
 
 interface ITransactionDto {
+  _id: string;
   owner: IUser | string;
   amount: number;
   sender: string;
@@ -35,11 +36,13 @@ interface ITransactionDto {
   method: string;
   status: string;
   data?: string;
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt?: string | Date;
+  deletedAt?: string | Date;
+  updateAt?: string | Date;
 }
 
 export interface IWithdrawalDto {
+  _id: string;
   owner: string | IUser;
   txId: string | ITransactionDto;
   chainTxId: string;
