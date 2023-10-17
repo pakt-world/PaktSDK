@@ -12,6 +12,7 @@ import {
   RegisterPayload,
   ResetDto,
   ValidatePasswordToken,
+  ValidateReferralDto,
 } from "./auth.dto";
 
 // Export all Types to Service
@@ -103,7 +104,7 @@ export class AuthenticationModule implements AuthenticationModuleType {
     return ErrorUtils.tryFail(async () => {
       const credentials = { email };
       const response: ResponseDto<ResetDto> = await this.connector.post({
-        path: API_PATHS.RESET_PASSWORD,
+        path: API_PATHS.RESEND_VERIFY_LINK,
         body: credentials,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
@@ -156,6 +157,19 @@ export class AuthenticationModule implements AuthenticationModuleType {
       const credentials = { token, tempToken };
       const response: ResponseDto<ChangePasswordDto> = await this.connector.post({
         path: `${API_PATHS.VALIDATE_PASSWORD_TOKEN}/${token}`,
+        body: credentials,
+      });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
+      return response.data;
+    });
+  }
+
+  validateReferral(token: string): Promise<ResponseDto<ValidateReferralDto>> {
+    return ErrorUtils.tryFail(async () => {
+      const credentials = { token };
+      const response: ResponseDto<ValidateReferralDto> = await this.connector.post({
+        path: `${API_PATHS.VALIDATE_REFERRAL}`,
         body: credentials,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)

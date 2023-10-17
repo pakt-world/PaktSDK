@@ -39,6 +39,7 @@ export interface InviteModuleType {
   sendInvite(payload: SendInviteDto): Promise<ResponseDto<{}>>;
   acceptInvite(inviteId: string): Promise<ResponseDto<{}>>;
   declineInvite(inviteId: string): Promise<ResponseDto<{}>>;
+  cancelInvite(inviteId: string): Promise<ResponseDto<{}>>;
   getAll(filter?: FilterInviteDto): Promise<ResponseDto<FindInvitesDto>>;
   getAnInvite(id: string): Promise<ResponseDto<IInviteDto>>;
 }
