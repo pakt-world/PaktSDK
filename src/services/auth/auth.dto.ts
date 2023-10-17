@@ -56,7 +56,7 @@ export interface IUser {
   meta?: Record<string, any>;
   createdAt?: string | Date;
   deletedAt?: string | Date;
-  updateAt?: string | Date;
+  updatedAt?: string | Date;
 }
 
 export type LoginDto = {
