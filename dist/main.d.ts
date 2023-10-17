@@ -111,21 +111,30 @@ interface IChatMessage {
     mediaType?: string;
     seen?: string;
     readBy?: string[];
+    createdAt?: string | Date;
+    deletedAt?: string | Date;
+    updateAt?: string | Date;
 }
 interface IChatConversation {
     _id: string;
     type: string;
     recipients: IUser[] | string[];
     messages: IChatMessage[] | string[];
+    createdAt?: string | Date;
+    deletedAt?: string | Date;
+    updateAt?: string | Date;
 }
 interface IFile {
+    _id: string;
     name: string;
     uploaded_by: IUser | string;
     url: string;
     meta: object;
     status: boolean;
     isDeleted: boolean;
-    deletedAt?: string;
+    createdAt?: string | Date;
+    deletedAt?: string | Date;
+    updateAt?: string | Date;
 }
 interface ChatModuleType {
     getUserMessages(): Promise<ResponseDto<IChatConversation[]>>;
@@ -183,6 +192,9 @@ interface IUser {
         securityQuestion?: string;
     };
     meta?: Record<string, any>;
+    createdAt?: string | Date;
+    deletedAt?: string | Date;
+    updateAt?: string | Date;
 }
 type LoginDto = {
     email: string;
@@ -300,7 +312,7 @@ type updateUserDto = {
         };
         talent?: {
             about?: string;
-            availability?: string;
+            availability?: "busy" | "available" | "working";
             tags?: string[];
             tagsIds?: string | any[];
             tagsCategory?: string;
@@ -425,12 +437,15 @@ interface CreateFileUpload {
     file: Object;
 }
 interface IUploadDto {
+    _id: string;
     name: string;
     uploaded_by: UploadedUser | string;
     url: string;
     meta: Record<string, any> | undefined;
     status: boolean;
-    deletedAt: Date;
+    createdAt?: string | Date;
+    deletedAt?: string | Date;
+    updateAt?: string | Date;
 }
 interface FindUploadDto {
     count: number;
@@ -460,8 +475,9 @@ interface ICollectionTypeDto {
     _id: string;
     name: string;
     value: string;
-    createdAt?: string;
-    updateAt?: string;
+    createdAt?: string | Date;
+    deletedAt?: string | Date;
+    updateAt?: string | Date;
 }
 type ICollectionStatus = "ongoing" | "pending" | "deleted" | "waiting" | "cancelled" | "completed";
 interface IAttachmentDto {
@@ -508,6 +524,8 @@ interface ICollectionDto {
     payoutTransactions?: string[];
     failedPayoutCount?: number;
     meta?: Record<string, any>;
+    createdAt?: string | Date;
+    deletedAt?: string | Date;
 }
 type CreateCollectionDto = {
     type: string;
@@ -611,6 +629,9 @@ interface ICollectionBookmarkDto {
     data: ICollectionDto | string;
     active: boolean;
     isDeleted?: boolean;
+    createdAt?: string | Date;
+    deletedAt?: string | Date;
+    updateAt?: string | Date;
 }
 type FindCollectionBookMarkDto = {
     page: number;
@@ -717,6 +738,7 @@ interface ConnectionFilterModuleType {
 }
 
 interface IFeed {
+    _id: string;
     creator?: string;
     owner?: string;
     owners?: IUser[] | string[];
@@ -726,6 +748,9 @@ interface IFeed {
     type: string;
     isPublic?: boolean;
     closed?: boolean;
+    createdAt?: string | Date;
+    deletedAt?: string | Date;
+    updateAt?: string | Date;
 }
 interface CreateFeedDto {
     title: string;
@@ -756,6 +781,7 @@ interface FeedModuleType {
 
 type IInviteStatus = "pending" | "accepted" | "rejected";
 interface IInviteDto {
+    _id: string;
     sender: IUser | string;
     receiver: IUser | string;
     data: ICollectionDto | string;
@@ -764,6 +790,9 @@ interface IInviteDto {
     status: IInviteStatus;
     emailToken: string;
     acceptedAt?: string;
+    createdAt?: string | Date;
+    deletedAt?: string | Date;
+    updateAt?: string | Date;
 }
 interface SendInviteDto {
     recipient: string;
@@ -825,7 +854,7 @@ interface NotificationUser {
     profile: {
         talent: {
             tags: string[];
-            availability: string;
+            availability: "busy" | "available" | "working";
             skillIds: object[];
         };
     };
@@ -836,6 +865,7 @@ interface NotificationUser {
     score: number;
 }
 interface INotificationDto {
+    _id: string;
     owner: NotificationUser;
     title: string;
     description: string;
@@ -844,6 +874,9 @@ interface INotificationDto {
     data: string;
     isAdmin: boolean;
     type: INotificationType;
+    createdAt?: string | Date;
+    deletedAt?: string | Date;
+    updateAt?: string | Date;
 }
 type FindNotificationDto = {
     page: number;
@@ -887,12 +920,16 @@ type FilterReviewDto = ({
     limit?: string;
 } & IReviewDto) | any;
 interface IReviewDto {
+    _id: string;
     data: ICollectionDto;
     owner: IUser | string;
     receiver: IUser | string;
     type: string;
     review: string;
     rating: number;
+    createdAt?: string | Date;
+    deletedAt?: string | Date;
+    updateAt?: string | Date;
 }
 interface ReviewModuleType {
     addReview(payload: AddReviewDto): Promise<ResponseDto<void>>;
@@ -925,6 +962,7 @@ interface ISendSessionMedia {
     file: object;
 }
 interface IVerification {
+    _id: string;
     owner: string;
     sessionID?: string;
     sessionToken?: string;
@@ -942,6 +980,9 @@ interface IVerification {
     mediaId?: string;
     mediaMimeType?: string;
     mediaUrl?: string;
+    createdAt?: string | Date;
+    deletedAt?: string | Date;
+    updateAt?: string | Date;
 }
 type IVerificationStatus = "created" | "approved" | "resubmission_requested" | "declined" | "expired" | "abandoned" | "submitted" | "review";
 interface CreateSessionResponse {
@@ -1026,6 +1067,7 @@ interface IWalletExchangeDto {
     avax: number;
 }
 interface IWalletDto {
+    _id: string;
     owner: WalletUser;
     amount: number;
     ledger: number;
@@ -1041,8 +1083,12 @@ interface IWalletDto {
     status: IWalletStatus;
     prod: boolean;
     isSystem: boolean;
+    createdAt?: string | Date;
+    deletedAt?: string | Date;
+    updateAt?: string | Date;
 }
 interface ITransactionDto$1 {
+    _id: string;
     owner: WalletUser;
     amount: number;
     sender: string;
@@ -1055,6 +1101,9 @@ interface ITransactionDto$1 {
     hash: string;
     method: ITransactionMethod;
     status: ITransactionStatus;
+    createdAt?: string | Date;
+    deletedAt?: string | Date;
+    updateAt?: string | Date;
 }
 type FindTransactionsDto = {
     page: number;
@@ -1117,6 +1166,7 @@ type FindWithdrawalsDto = {
     data: IWithdrawalDto[];
 };
 interface ITransactionDto {
+    _id: string;
     owner: IUser | string;
     amount: number;
     sender: string;
@@ -1130,10 +1180,12 @@ interface ITransactionDto {
     method: string;
     status: string;
     data?: string;
-    createdAt?: string;
-    updatedAt?: string;
+    createdAt?: string | Date;
+    deletedAt?: string | Date;
+    updateAt?: string | Date;
 }
 interface IWithdrawalDto {
+    _id: string;
     owner: string | IUser;
     txId: string | ITransactionDto;
     chainTxId: string;
