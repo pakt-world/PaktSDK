@@ -26,6 +26,7 @@ export interface ISendSessionMedia {
 }
 
 export interface IVerification {
+  _id: string;
   owner: string;
   sessionID?: string;
   sessionToken?: string;
@@ -43,6 +44,9 @@ export interface IVerification {
   mediaId?: string;
   mediaMimeType?: string;
   mediaUrl?: string;
+  createdAt?: string | Date;
+  deletedAt?: string | Date;
+  updateAt?: string | Date;
 }
 
 export type IVerificationStatus =

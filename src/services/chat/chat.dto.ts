@@ -13,6 +13,9 @@ export interface IChatMessage {
   mediaType?: string;
   seen?: string;
   readBy?: string[];
+  createdAt?: string | Date;
+  deletedAt?: string | Date;
+  updateAt?: string | Date;
 }
 
 export interface IChatConversation {
@@ -20,16 +23,22 @@ export interface IChatConversation {
   type: string;
   recipients: IUser[] | string[];
   messages: IChatMessage[] | string[];
+  createdAt?: string | Date;
+  deletedAt?: string | Date;
+  updateAt?: string | Date;
 }
 
 export interface IFile {
+  _id: string;
   name: string;
   uploaded_by: IUser | string;
   url: string;
   meta: object;
   status: boolean;
   isDeleted: boolean;
-  deletedAt?: string;
+  createdAt?: string | Date;
+  deletedAt?: string | Date;
+  updateAt?: string | Date;
 }
 
 export interface ChatModuleType {

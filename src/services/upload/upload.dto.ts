@@ -20,12 +20,15 @@ export interface CreateFileUpload {
 }
 
 export interface IUploadDto {
+  _id: string;
   name: string;
   uploaded_by: UploadedUser | string;
   url: string;
   meta: Record<string, any> | undefined;
   status: boolean;
-  deletedAt: Date;
+  createdAt?: string | Date;
+  deletedAt?: string | Date;
+  updateAt?: string | Date;
 }
 
 export interface FindUploadDto {

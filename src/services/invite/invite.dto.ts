@@ -5,6 +5,7 @@ import { ICollectionDto } from "../collection/collection.dto";
 export type IInviteStatus = "pending" | "accepted" | "rejected";
 
 export interface IInviteDto {
+  _id: string;
   sender: IUser | string;
   receiver: IUser | string;
   data: ICollectionDto | string;
@@ -13,6 +14,9 @@ export interface IInviteDto {
   status: IInviteStatus;
   emailToken: string;
   acceptedAt?: string;
+  createdAt?: string | Date;
+  deletedAt?: string | Date;
+  updateAt?: string | Date;
 }
 
 export interface SendInviteDto {

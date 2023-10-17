@@ -43,6 +43,7 @@ export interface IWalletExchangeDto {
 }
 
 export interface IWalletDto {
+  _id: string;
   owner: WalletUser;
   amount: number;
   ledger: number;
@@ -58,9 +59,13 @@ export interface IWalletDto {
   status: IWalletStatus;
   prod: boolean;
   isSystem: boolean;
+  createdAt?: string | Date;
+  deletedAt?: string | Date;
+  updateAt?: string | Date;
 }
 
 export interface ITransactionDto {
+  _id: string;
   owner: WalletUser;
   amount: number;
   sender: string;
@@ -73,6 +78,9 @@ export interface ITransactionDto {
   hash: string;
   method: ITransactionMethod;
   status: ITransactionStatus;
+  createdAt?: string | Date;
+  deletedAt?: string | Date;
+  updateAt?: string | Date;
 }
 
 export type FindTransactionsDto = {

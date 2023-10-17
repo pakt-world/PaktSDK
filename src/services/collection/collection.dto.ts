@@ -6,8 +6,9 @@ export interface ICollectionTypeDto {
   _id: string;
   name: string;
   value: string;
-  createdAt?: string;
-  updateAt?: string;
+  createdAt?: string | Date;
+  deletedAt?: string | Date;
+  updateAt?: string | Date;
 }
 
 export type ICollectionStatus = "ongoing" | "pending" | "deleted" | "waiting" | "cancelled" | "completed";
@@ -56,6 +57,8 @@ export interface ICollectionDto {
   payoutTransactions?: string[];
   failedPayoutCount?: number;
   meta?: Record<string, any>;
+  createdAt?: string | Date;
+  deletedAt?: string | Date;
 }
 
 export type CreateCollectionDto = {
