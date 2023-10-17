@@ -36,7 +36,7 @@ export interface IUser {
       description?: string;
     };
     talent: {
-      availability: string;
+      availability: "busy" | "available" | "working";
       tags: string[];
       tagsIds: any[];
       tagsCategory: string;
@@ -45,7 +45,7 @@ export interface IUser {
   };
   socket?: {
     id: string;
-    status: string;
+    status: "ONLINE" | "AWAY" | "OFFLINE";
     conversation: IChatConversation;
   };
   twoFa?: {
@@ -98,6 +98,12 @@ export type ResendVerifyDto = void;
 export type ChangePasswordDto = void;
 export type ValidatePasswordToken = void;
 
+export type ValidateReferralDto = {
+  valid: boolean;
+  userId: string;
+  referralId: string;
+};
+
 export interface AuthenticationModuleType {
   login(email: string, password: string): Promise<ResponseDto<LoginDto>>;
   register(payload: RegisterPayload): Promise<ResponseDto<RegisterDto>>;
@@ -106,4 +112,5 @@ export interface AuthenticationModuleType {
   resetPassword(email: string): Promise<ResponseDto<ResetDto>>;
   changePassword(token: string, tempToken: string, password: string): Promise<ResponseDto<ChangePasswordDto>>;
   validatePasswordToken(token: string, tempToken: string): Promise<ResponseDto<ValidatePasswordToken>>;
+  validateReferral(token: string): Promise<ResponseDto<ValidateReferralDto>>;
 }

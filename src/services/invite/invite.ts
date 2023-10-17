@@ -76,4 +76,16 @@ export class InviteModule implements InviteModuleType {
       return response.data;
     });
   }
+
+  cancelInvite(inviteId: string): Promise<ResponseDto<{}>> {
+    return ErrorUtils.tryFail(async () => {
+      const url = `${API_PATHS.CANCEL_AN_INVITE}/${inviteId}/cancel`;
+      const response: ResponseDto<{}> = await this.connector.post({
+        path: url,
+      });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
+      return response.data;
+    });
+  }
 }

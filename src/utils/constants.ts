@@ -9,10 +9,11 @@ export const API_PATHS = {
   LOGIN: "/auth/login",
   REGISTER: "/auth/create-account",
   ACCOUNT_VERIFY: "/auth/account/verify",
-  RESEND_VERIFY_LINK: "/auth/account/verify",
+  RESEND_VERIFY_LINK: "/auth/verify/resend",
   VALIDATE_PASSWORD_TOKEN: "/auth/validate/password",
   RESET_PASSWORD: "/auth/password/reset",
   CHANGE_PASSWORD: "/auth/password/change",
+  VALIDATE_REFERRAL: "/auth/referral/validate/",
 
   // Collection endpoints
   COLLECTION: "/collection",
@@ -83,6 +84,7 @@ export const API_PATHS = {
   DECLINE_INVITE: "/invite",
   VIEW_ALL_INVITE: "/invite/",
   VIEW_A_INVITE: "/invite/",
+  CANCEL_AN_INVITE: "/invite/",
 
   //Feeds
   FEEDS: "/feeds",
