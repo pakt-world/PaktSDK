@@ -80,7 +80,7 @@ export interface ITransactionDto {
   status: ITransactionStatus;
   createdAt?: string | Date;
   deletedAt?: string | Date;
-  updateAt?: string | Date;
+  updatedAt?: string | Date;
 }
 
 export type FindTransactionsDto = {

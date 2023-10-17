@@ -38,7 +38,7 @@ interface ITransactionDto {
   data?: string;
   createdAt?: string | Date;
   deletedAt?: string | Date;
-  updateAt?: string | Date;
+  updatedAt?: string | Date;
 }
 
 export interface IWithdrawalDto {

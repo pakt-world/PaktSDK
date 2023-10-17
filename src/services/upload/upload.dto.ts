@@ -28,7 +28,7 @@ export interface IUploadDto {
   status: boolean;
   createdAt?: string | Date;
   deletedAt?: string | Date;
-  updateAt?: string | Date;
+  updatedAt?: string | Date;
 }
 
 export interface FindUploadDto {
