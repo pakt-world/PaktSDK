@@ -134,7 +134,7 @@ interface IFile {
     isDeleted: boolean;
     createdAt?: string | Date;
     deletedAt?: string | Date;
-    updateAt?: string | Date;
+    updatedAt?: string | Date;
 }
 interface ChatModuleType {
     getUserMessages(): Promise<ResponseDto<IChatConversation[]>>;
@@ -194,7 +194,7 @@ interface IUser {
     meta?: Record<string, any>;
     createdAt?: string | Date;
     deletedAt?: string | Date;
-    updateAt?: string | Date;
+    updatedAt?: string | Date;
 }
 type LoginDto = {
     email: string;
@@ -445,7 +445,7 @@ interface IUploadDto {
     status: boolean;
     createdAt?: string | Date;
     deletedAt?: string | Date;
-    updateAt?: string | Date;
+    updatedAt?: string | Date;
 }
 interface FindUploadDto {
     count: number;
@@ -526,6 +526,7 @@ interface ICollectionDto {
     meta?: Record<string, any>;
     createdAt?: string | Date;
     deletedAt?: string | Date;
+    updatedAt?: string | Date;
 }
 type CreateCollectionDto = {
     type: string;
@@ -631,7 +632,7 @@ interface ICollectionBookmarkDto {
     isDeleted?: boolean;
     createdAt?: string | Date;
     deletedAt?: string | Date;
-    updateAt?: string | Date;
+    updatedAt?: string | Date;
 }
 type FindCollectionBookMarkDto = {
     page: number;
@@ -726,10 +727,14 @@ type IConnectionKeys = "tags" | "tagCount" | "afroScore";
 type IConnectionFilterDecider = "greater_than" | "less_than" | "equal_to" | "contains" | "between";
 type IConnectionEvents = "CREATE_CONVERSATION" | "CREATE_JOB" | "ASSIGN_JOB";
 interface IConnectionFilter {
+    _id: string;
     event: IConnectionEvents;
     key: IConnectionKeys;
     value: any;
     decider: IConnectionFilterDecider;
+    createdAt?: string | Date;
+    deletedAt?: string | Date;
+    updatedAt?: string | Date;
 }
 interface ConnectionFilterModuleType {
     create(payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>>;
@@ -750,7 +755,7 @@ interface IFeed {
     closed?: boolean;
     createdAt?: string | Date;
     deletedAt?: string | Date;
-    updateAt?: string | Date;
+    updatedAt?: string | Date;
 }
 interface CreateFeedDto {
     title: string;
@@ -792,7 +797,7 @@ interface IInviteDto {
     acceptedAt?: string;
     createdAt?: string | Date;
     deletedAt?: string | Date;
-    updateAt?: string | Date;
+    updatedAt?: string | Date;
 }
 interface SendInviteDto {
     recipient: string;
@@ -876,7 +881,7 @@ interface INotificationDto {
     type: INotificationType;
     createdAt?: string | Date;
     deletedAt?: string | Date;
-    updateAt?: string | Date;
+    updatedAt?: string | Date;
 }
 type FindNotificationDto = {
     page: number;
@@ -929,7 +934,7 @@ interface IReviewDto {
     rating: number;
     createdAt?: string | Date;
     deletedAt?: string | Date;
-    updateAt?: string | Date;
+    updatedAt?: string | Date;
 }
 interface ReviewModuleType {
     addReview(payload: AddReviewDto): Promise<ResponseDto<void>>;
@@ -982,7 +987,7 @@ interface IVerification {
     mediaUrl?: string;
     createdAt?: string | Date;
     deletedAt?: string | Date;
-    updateAt?: string | Date;
+    updatedAt?: string | Date;
 }
 type IVerificationStatus = "created" | "approved" | "resubmission_requested" | "declined" | "expired" | "abandoned" | "submitted" | "review";
 interface CreateSessionResponse {
@@ -1103,7 +1108,7 @@ interface ITransactionDto$1 {
     status: ITransactionStatus;
     createdAt?: string | Date;
     deletedAt?: string | Date;
-    updateAt?: string | Date;
+    updatedAt?: string | Date;
 }
 type FindTransactionsDto = {
     page: number;
@@ -1182,7 +1187,7 @@ interface ITransactionDto {
     data?: string;
     createdAt?: string | Date;
     deletedAt?: string | Date;
-    updateAt?: string | Date;
+    updatedAt?: string | Date;
 }
 interface IWithdrawalDto {
     _id: string;
