@@ -21,6 +21,7 @@ export interface ICollectionDto {
   _id?: string;
   creator: IUser;
   owner?: IUser;
+  receiver?: IUser;
   owners?: IUser[];
   name: string;
   description: string;
@@ -114,6 +115,7 @@ export type filterCollectionDto =
   | ({
       page?: string;
       limit?: string;
+      receiver?: string;
     } & ICollectionDto)
   | any;
 

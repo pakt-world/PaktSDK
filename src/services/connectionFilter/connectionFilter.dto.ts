@@ -7,7 +7,7 @@ export type IConnectionFilterDecider = "greater_than" | "less_than" | "equal_to"
 export type IConnectionEvents = "CREATE_CONVERSATION" | "CREATE_JOB" | "ASSIGN_JOB";
 
 export interface IConnectionFilter {
-  _id: string;
+  _id?: string;
   event: IConnectionEvents;
   key: IConnectionKeys;
   value: any;
