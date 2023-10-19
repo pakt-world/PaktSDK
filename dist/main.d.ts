@@ -488,6 +488,7 @@ interface ICollectionDto {
     _id?: string;
     creator: IUser;
     owner?: IUser;
+    receiver?: IUser;
     owners?: IUser[];
     name: string;
     description: string;
@@ -574,6 +575,7 @@ type FindCollectionTypeDto = {
 type filterCollectionDto = ({
     page?: string;
     limit?: string;
+    receiver?: string;
 } & ICollectionDto) | any;
 type cancelCollectionDto = {
     reason: string;
@@ -727,7 +729,7 @@ type IConnectionKeys = "tags" | "tagCount" | "afroScore";
 type IConnectionFilterDecider = "greater_than" | "less_than" | "equal_to" | "contains" | "between";
 type IConnectionEvents = "CREATE_CONVERSATION" | "CREATE_JOB" | "ASSIGN_JOB";
 interface IConnectionFilter {
-    _id: string;
+    _id?: string;
     event: IConnectionEvents;
     key: IConnectionKeys;
     value: any;
