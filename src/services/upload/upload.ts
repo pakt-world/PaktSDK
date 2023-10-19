@@ -37,7 +37,7 @@ export class UploadModule implements UploadModuleType {
     return ErrorUtils.tryFail(async () => {
       const theFilter = filter ? filter : {};
       const fetchUrl = parseUrlWithQuery(API_PATHS.FILE_UPLOAD, theFilter);
-      const url = filter ? API_PATHS.GET_REVIEW : fetchUrl;
+      const url = filter ? API_PATHS.FILE_UPLOAD : fetchUrl;
 
       const response: ResponseDto<FindUploadDto> = await this.connector.get({
         path: url,
