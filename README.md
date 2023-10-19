@@ -754,7 +754,7 @@ export const createManyCollection = async (payload: CreateManyCollectionDto) => 
 Get all Collections corresponding to an optional filter, else return ALL collection
 
 ```typescript
-type filterDto =
+type filterCollectionDto =
   | ({
       page?: string;
       limit?: string;
@@ -769,7 +769,22 @@ type FindCollectionDto = {
   data: ICollectionDto[];
 };
 
-export const getAllCollections = async (filter?: filterDto) => {
+/**
+ * Search by the creator, recipient and/or owner of a collection
+ *
+ * When a collection is created, the logged in user is the `creator` of the collection.
+ *
+ * When an invite is sent to and accepted by another user, such user is now marked as the `owner` and can be filtered as the `receiver`
+ *
+ * */
+export const getAllCollections = async (filter?: filterCollectionDto) => {
+  const sampleCollectionFilter: filterCollectionDto  = {
+    page: 1,
+    limit: 50,
+    creator: "user_id",
+    receiver: "user_id",
+    status: ICollectionStatus <=> //Check the SDK for the type of status to be filtered by
+  };
   const collections: FindCollectionDto = await sdkInit.collections.getAll(filter);
 };
 ```
