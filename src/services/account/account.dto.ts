@@ -29,6 +29,7 @@ export type updateUserDto = {
     privateEarnings?: boolean;
     privateInvestments?: boolean;
   };
+  isPrivate?: boolean;
   socials?: {
     github?: string;
     twitter?: string;

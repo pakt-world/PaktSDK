@@ -1,7 +1,7 @@
 import { Container, Service } from "typedi";
 import { PaktConnector } from "../../connector";
 import { API_PATHS } from "../../utils/constants";
-import { ErrorUtils, ResponseDto, parseUrlWithQuery } from "../../utils/response";
+import { ErrorUtils, ResponseDto, Status, parseUrlWithQuery } from "../../utils/response";
 import {
   FindCollectionBookMarkDto,
   ICollectionBookmarkDto,
@@ -34,6 +34,8 @@ export class BookMarkModule {
     return ErrorUtils.tryFail(async () => {
       const fetchUrl = parseUrlWithQuery(API_PATHS.BOOKMARK, filter);
       const response: ResponseDto<FindCollectionBookMarkDto> = await this.connector.get({ path: fetchUrl });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
@@ -49,6 +51,8 @@ export class BookMarkModule {
     return ErrorUtils.tryFail(async () => {
       const fetchUrl = parseUrlWithQuery(API_PATHS.BOOKMARK + "/" + id, filter);
       const response: ResponseDto<ICollectionBookmarkDto> = await this.connector.get({ path: fetchUrl });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
@@ -64,6 +68,8 @@ export class BookMarkModule {
         path: API_PATHS.BOOKMARK,
         body: credentials,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
@@ -77,6 +83,8 @@ export class BookMarkModule {
       const response: ResponseDto<ICollectionBookmarkDto> = await this.connector.delete({
         path: API_PATHS.BOOKMARK + "/" + id,
       });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        throw new Error(response.message);
       return response.data;
     });
   }
