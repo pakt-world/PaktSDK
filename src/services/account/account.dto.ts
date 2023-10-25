@@ -3,7 +3,7 @@ import { IUser } from "../auth";
 
 export type fetchAccountDto = {} & IUser;
 
-export type updateUserDto = {
+export interface updateUserDto {
   userName?: string;
   profileImage?: string;
   bgImage?: string;
@@ -37,7 +37,7 @@ export type updateUserDto = {
     website?: string;
   };
   meta?: Record<string, any>;
-};
+}
 
 export type TwoFATypeDto = "google_auth" | "email" | "security_answer";
 
@@ -65,7 +65,7 @@ export interface FindUsers {
   page: number;
   total: number;
   limit: number;
-  data: IUser[];
+  data: Record<string, any>[] | IUser[];
 }
 
 export interface AccountModuleType {
@@ -77,7 +77,7 @@ export interface AccountModuleType {
   activate2FA(code: string): Promise<ResponseDto<void>>;
   deactivate2FA(code: string): Promise<ResponseDto<void>>;
   sendEmailTwoFA(): Promise<ResponseDto<{}>>;
-  getAUser(id: string): Promise<ResponseDto<IUser>>;
+  getAUser(id: string): Promise<ResponseDto<fetchAccountDto>>;
   getUsers(filter?: FilterUserDto): Promise<ResponseDto<FindUsers>>;
   logout(): Promise<ResponseDto<void>>;
 }

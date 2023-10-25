@@ -295,7 +295,7 @@ declare class AuthenticationModule implements AuthenticationModuleType {
 }
 
 type fetchAccountDto = {} & IUser;
-type updateUserDto = {
+interface updateUserDto {
     userName?: string;
     profileImage?: string;
     bgImage?: string;
@@ -329,7 +329,7 @@ type updateUserDto = {
         website?: string;
     };
     meta?: Record<string, any>;
-};
+}
 type TwoFATypeDto = "google_auth" | "email" | "security_answer";
 type TwoFAresponse = {
     type: TwoFATypeDto;
@@ -353,7 +353,7 @@ interface FindUsers {
     page: number;
     total: number;
     limit: number;
-    data: IUser[];
+    data: Record<string, any>[] | IUser[];
 }
 interface AccountModuleType {
     getUser(): Promise<ResponseDto<fetchAccountDto>>;
@@ -364,7 +364,7 @@ interface AccountModuleType {
     activate2FA(code: string): Promise<ResponseDto<void>>;
     deactivate2FA(code: string): Promise<ResponseDto<void>>;
     sendEmailTwoFA(): Promise<ResponseDto<{}>>;
-    getAUser(id: string): Promise<ResponseDto<IUser>>;
+    getAUser(id: string): Promise<ResponseDto<fetchAccountDto>>;
     getUsers(filter?: FilterUserDto): Promise<ResponseDto<FindUsers>>;
     logout(): Promise<ResponseDto<void>>;
 }
@@ -413,7 +413,7 @@ declare class AccountModule implements AccountModuleType {
      */
     deactivate2FA(code: string): Promise<ResponseDto<void>>;
     sendEmailTwoFA(): Promise<ResponseDto<{}>>;
-    getAUser(id: string): Promise<ResponseDto<IUser>>;
+    getAUser(id: string): Promise<ResponseDto<fetchAccountDto>>;
     getUsers(filter?: FilterUserDto | undefined): Promise<ResponseDto<FindUsers>>;
     /**
      * Logout.
