@@ -43,6 +43,7 @@ export interface IUser {
       about?: string;
     };
   };
+  isPrivate?: boolean;
   socket?: {
     id: string;
     status: "ONLINE" | "AWAY" | "OFFLINE";

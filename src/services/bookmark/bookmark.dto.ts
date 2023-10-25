@@ -1,11 +1,17 @@
 import { ResponseDto } from "../../utils/response";
+import { IUser } from "../auth";
 import { ICollectionDto } from "../collection/collection.dto";
+import { IFeed } from "../feed";
+import { IInviteDto } from "../invite";
 
 export interface ICollectionBookmarkDto {
   _id?: string;
-  owner: string; //TODO :: add IUserDto
-  data: ICollectionDto | string;
-  active: boolean;
+  owner?: IUser | string; //TODO :: add IUserDto
+  data?: ICollectionDto | string;
+  feed?: IFeed;
+  invite?: IInviteDto;
+  type?: BookmarkType;
+  active?: boolean;
   isDeleted?: boolean;
   createdAt?: string | Date;
   deletedAt?: string | Date;
@@ -20,7 +26,8 @@ export type FindCollectionBookMarkDto = {
 };
 
 export type createBookMarkDto = {
-  collection: string;
+  reference: string;
+  type: BookmarkType;
 };
 
 export type filterBookmarkDto =
@@ -28,7 +35,16 @@ export type filterBookmarkDto =
       page?: string;
       limit?: string;
     }
-  | ICollectionBookmarkDto;
+  | ICollectionBookmarkDto
+  | Record<string, any>;
+
+export enum BookmarkEnumType {
+  FEED = "feed",
+  COLLECTION = "collection",
+  INVITE = "invite",
+}
+
+export type BookmarkType = "feed" | "collection" | "invite";
 
 export interface BookMarkModuleType {
   getAll(filter?: filterBookmarkDto): Promise<ResponseDto<FindCollectionBookMarkDto>>;
