@@ -2,7 +2,6 @@ import { Container, Service } from "typedi";
 import { PaktConnector } from "../../connector";
 import { API_PATHS } from "../../utils/constants";
 import { ErrorUtils, ResponseDto, Status, parseUrlWithQuery } from "../../utils/response";
-import { IUser } from "../auth";
 import {
   AccountModuleType,
   FilterUserDto,
@@ -76,7 +75,7 @@ export class AccountModule implements AccountModuleType {
       const body = { ...payload };
       const response: ResponseDto<fetchAccountDto> = await this.connector.patch({
         path: API_PATHS.ACCOUNT_UPDATE,
-        body,
+        body: payload,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
@@ -156,9 +155,11 @@ export class AccountModule implements AccountModuleType {
     });
   }
 
-  async getAUser(id: string): Promise<ResponseDto<IUser>> {
+  async getAUser(id: string): Promise<ResponseDto<fetchAccountDto>> {
     return ErrorUtils.tryFail(async () => {
-      const response: ResponseDto<IUser> = await this.connector.get({ path: `${API_PATHS.ACCOUNT_FETCH_SINGLE}${id}` });
+      const response: ResponseDto<fetchAccountDto> = await this.connector.get({
+        path: `${API_PATHS.ACCOUNT_FETCH_SINGLE}${id}`,
+      });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
       return response.data;

@@ -181,6 +181,7 @@ interface IUser {
             about?: string;
         };
     };
+    isPrivate?: boolean;
     socket?: {
         id: string;
         status: "ONLINE" | "AWAY" | "OFFLINE";
@@ -294,7 +295,7 @@ declare class AuthenticationModule implements AuthenticationModuleType {
 }
 
 type fetchAccountDto = {} & IUser;
-type updateUserDto = {
+interface updateUserDto {
     userName?: string;
     profileImage?: string;
     bgImage?: string;
@@ -320,6 +321,7 @@ type updateUserDto = {
         privateEarnings?: boolean;
         privateInvestments?: boolean;
     };
+    isPrivate?: boolean;
     socials?: {
         github?: string;
         twitter?: string;
@@ -327,7 +329,7 @@ type updateUserDto = {
         website?: string;
     };
     meta?: Record<string, any>;
-};
+}
 type TwoFATypeDto = "google_auth" | "email" | "security_answer";
 type TwoFAresponse = {
     type: TwoFATypeDto;
@@ -351,7 +353,7 @@ interface FindUsers {
     page: number;
     total: number;
     limit: number;
-    data: IUser[];
+    data: Record<string, any>[] | IUser[];
 }
 interface AccountModuleType {
     getUser(): Promise<ResponseDto<fetchAccountDto>>;
@@ -362,7 +364,7 @@ interface AccountModuleType {
     activate2FA(code: string): Promise<ResponseDto<void>>;
     deactivate2FA(code: string): Promise<ResponseDto<void>>;
     sendEmailTwoFA(): Promise<ResponseDto<{}>>;
-    getAUser(id: string): Promise<ResponseDto<IUser>>;
+    getAUser(id: string): Promise<ResponseDto<fetchAccountDto>>;
     getUsers(filter?: FilterUserDto): Promise<ResponseDto<FindUsers>>;
     logout(): Promise<ResponseDto<void>>;
 }
@@ -411,7 +413,7 @@ declare class AccountModule implements AccountModuleType {
      */
     deactivate2FA(code: string): Promise<ResponseDto<void>>;
     sendEmailTwoFA(): Promise<ResponseDto<{}>>;
-    getAUser(id: string): Promise<ResponseDto<IUser>>;
+    getAUser(id: string): Promise<ResponseDto<fetchAccountDto>>;
     getUsers(filter?: FilterUserDto | undefined): Promise<ResponseDto<FindUsers>>;
     /**
      * Logout.
@@ -626,70 +628,6 @@ interface CollectionModuleType {
     updateManyCollections(collections: UpdateManyCollectionsDto): Promise<ResponseDto<{}>>;
 }
 
-interface ICollectionBookmarkDto {
-    _id?: string;
-    owner: string;
-    data: ICollectionDto | string;
-    active: boolean;
-    isDeleted?: boolean;
-    createdAt?: string | Date;
-    deletedAt?: string | Date;
-    updatedAt?: string | Date;
-}
-type FindCollectionBookMarkDto = {
-    page: number;
-    pages: number;
-    total: number;
-    limit: number;
-    data: ICollectionBookmarkDto[];
-};
-type createBookMarkDto = {
-    collection: string;
-};
-type filterBookmarkDto = {
-    page?: string;
-    limit?: string;
-} | ICollectionBookmarkDto;
-interface BookMarkModuleType {
-    getAll(filter?: filterBookmarkDto): Promise<ResponseDto<FindCollectionBookMarkDto>>;
-    getById(id: string, filter?: Record<string, any> | ICollectionBookmarkDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
-    create(payload: createBookMarkDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
-    delete(id: string): Promise<ResponseDto<any>>;
-}
-
-declare class BookMarkModule {
-    private id;
-    private connector;
-    constructor(id: string);
-    /**
-     * findall. This method finds all logged User's Bookmark collections.
-     * @param filter filterBookmarkDto
-     */
-    getAll(filter?: filterBookmarkDto): Promise<ResponseDto<FindCollectionBookMarkDto>>;
-    /**
-     * findall. This method finds bookmarked collection by id.
-     * @param filter Record<string, any> | ICollectionBookmarkDto
-     */
-    getById(id: string, filter?: Record<string, any> | ICollectionBookmarkDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
-    /**
-     * create. This method creates a new collection bookmark.
-     * @param payload createBookMarkDto
-     */
-    create(payload: createBookMarkDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
-    /**
-     * delete. This method deleted a collection bookmark.
-     * @param payload is, the bookmark id
-     */
-    delete(id: string): Promise<ResponseDto<ICollectionBookmarkDto>>;
-}
-
-declare class ChatModule implements ChatModuleType {
-    private id;
-    private connector;
-    constructor(id: string);
-    getUserMessages(): Promise<ResponseDto<IChatConversation[]>>;
-}
-
 declare class CollectionModule implements CollectionModuleType {
     private id;
     private connector;
@@ -723,25 +661,6 @@ declare class CollectionModule implements CollectionModuleType {
     getACollectionType(typeId: string): Promise<ResponseDto<ICollectionTypeDto>>;
     deleteACollection(collectionId: string): Promise<ResponseDto<{}>>;
     updateManyCollections(collections: UpdateManyCollectionsDto): Promise<ResponseDto<{}>>;
-}
-
-type IConnectionKeys = "tags" | "tagCount" | "afroScore";
-type IConnectionFilterDecider = "greater_than" | "less_than" | "equal_to" | "contains" | "between";
-type IConnectionEvents = "CREATE_CONVERSATION" | "CREATE_JOB" | "ASSIGN_JOB";
-interface IConnectionFilter {
-    _id?: string;
-    event: IConnectionEvents;
-    key: IConnectionKeys;
-    value: any;
-    decider: IConnectionFilterDecider;
-    createdAt?: string | Date;
-    deletedAt?: string | Date;
-    updatedAt?: string | Date;
-}
-interface ConnectionFilterModuleType {
-    create(payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>>;
-    getForAUser(): Promise<ResponseDto<IConnectionFilter>>;
-    update(payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>>;
 }
 
 interface IFeed {
@@ -779,6 +698,17 @@ interface FindFeedDto {
     limit: number;
 }
 interface FeedModuleType {
+    create(payload: CreateFeedDto): Promise<ResponseDto<{}>>;
+    getAll(filter?: FilterFeedDto): Promise<ResponseDto<FindFeedDto>>;
+    getById(filterId: string): Promise<ResponseDto<IFeed>>;
+    dismissAllFeeds(): Promise<ResponseDto<{}>>;
+    dismissAFeed(filterId: string): Promise<ResponseDto<{}>>;
+}
+
+declare class FeedModule implements FeedModuleType {
+    private id;
+    private connector;
+    constructor(id: string);
     create(payload: CreateFeedDto): Promise<ResponseDto<{}>>;
     getAll(filter?: FilterFeedDto): Promise<ResponseDto<FindFeedDto>>;
     getById(filterId: string): Promise<ResponseDto<IFeed>>;
@@ -835,6 +765,99 @@ declare class InviteModule implements InviteModuleType {
     getAll(filter?: FilterInviteDto): Promise<ResponseDto<FindInvitesDto>>;
     getAnInvite(id: string): Promise<ResponseDto<IInviteDto>>;
     cancelInvite(inviteId: string): Promise<ResponseDto<{}>>;
+}
+
+interface ICollectionBookmarkDto {
+    _id?: string;
+    owner?: IUser | string;
+    data?: ICollectionDto | string;
+    feed?: IFeed;
+    invite?: IInviteDto;
+    type?: BookmarkType;
+    active?: boolean;
+    isDeleted?: boolean;
+    createdAt?: string | Date;
+    deletedAt?: string | Date;
+    updatedAt?: string | Date;
+}
+type FindCollectionBookMarkDto = {
+    page: number;
+    pages: number;
+    total: number;
+    limit: number;
+    data: ICollectionBookmarkDto[];
+};
+type createBookMarkDto = {
+    reference: string;
+    type: BookmarkType;
+};
+type filterBookmarkDto = {
+    page?: string;
+    limit?: string;
+} | ICollectionBookmarkDto | Record<string, any>;
+declare enum BookmarkEnumType {
+    FEED = "feed",
+    COLLECTION = "collection",
+    INVITE = "invite"
+}
+type BookmarkType = "feed" | "collection" | "invite";
+interface BookMarkModuleType {
+    getAll(filter?: filterBookmarkDto): Promise<ResponseDto<FindCollectionBookMarkDto>>;
+    getById(id: string, filter?: Record<string, any> | ICollectionBookmarkDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
+    create(payload: createBookMarkDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
+    delete(id: string): Promise<ResponseDto<any>>;
+}
+
+declare class BookMarkModule {
+    private id;
+    private connector;
+    constructor(id: string);
+    /**
+     * findall. This method finds all logged User's Bookmark collections.
+     * @param filter filterBookmarkDto
+     */
+    getAll(filter?: filterBookmarkDto): Promise<ResponseDto<FindCollectionBookMarkDto>>;
+    /**
+     * findall. This method finds bookmarked collection by id.
+     * @param filter Record<string, any> | ICollectionBookmarkDto
+     */
+    getById(id: string, filter?: Record<string, any> | ICollectionBookmarkDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
+    /**
+     * create. This method creates a new collection bookmark.
+     * @param payload createBookMarkDto
+     */
+    create(payload: createBookMarkDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
+    /**
+     * delete. This method deleted a collection bookmark.
+     * @param payload is, the bookmark id
+     */
+    delete(id: string): Promise<ResponseDto<ICollectionBookmarkDto>>;
+}
+
+declare class ChatModule implements ChatModuleType {
+    private id;
+    private connector;
+    constructor(id: string);
+    getUserMessages(): Promise<ResponseDto<IChatConversation[]>>;
+}
+
+type IConnectionKeys = "tags" | "tagCount" | "afroScore";
+type IConnectionFilterDecider = "greater_than" | "less_than" | "equal_to" | "contains" | "between";
+type IConnectionEvents = "CREATE_CONVERSATION" | "CREATE_JOB" | "ASSIGN_JOB";
+interface IConnectionFilter {
+    _id?: string;
+    event: IConnectionEvents;
+    key: IConnectionKeys;
+    value: any;
+    decider: IConnectionFilterDecider;
+    createdAt?: string | Date;
+    deletedAt?: string | Date;
+    updatedAt?: string | Date;
+}
+interface ConnectionFilterModuleType {
+    create(payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>>;
+    getForAUser(): Promise<ResponseDto<IConnectionFilter>>;
+    update(payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>>;
 }
 
 declare enum INotificationType {
@@ -1217,17 +1240,6 @@ declare class ConnectionFilterModule implements ConnectionFilterModuleType {
     getForAUser(): Promise<ResponseDto<IConnectionFilter>>;
 }
 
-declare class FeedModule implements FeedModuleType {
-    private id;
-    private connector;
-    constructor(id: string);
-    create(payload: CreateFeedDto): Promise<ResponseDto<{}>>;
-    getAll(filter?: FilterFeedDto): Promise<ResponseDto<FindFeedDto>>;
-    getById(filterId: string): Promise<ResponseDto<IFeed>>;
-    dismissAllFeeds(): Promise<ResponseDto<{}>>;
-    dismissAFeed(filterId: string): Promise<ResponseDto<{}>>;
-}
-
 declare class WithdrawalModule implements WithdrawalModuleType {
     private id;
     private connector;
@@ -1265,4 +1277,4 @@ declare class PaktSDK {
     private static generateRandomString;
 }
 
-export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, CHARACTERS, ChangePasswordDto, ChatModule, ChatModuleType, CollectionModule, CollectionModuleType, ConnectionFilterModule, ConnectionFilterModuleType, CreateCollectionDto, CreateFeedDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, ErrorUtils, FeedModule, FeedModuleType, FilterFeedDto, FilterInviteDto, FilterReviewDto, FilterUploadDto, FilterUserDto, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindFeedDto, FindInvitesDto, FindNotificationDto, FindReviewDto, FindTransactionsDto, FindUploadDto, FindUsers, FindWithdrawalsDto, IChatConversation, IChatMessage, ICollectionBookmarkDto, ICollectionDto, ICollectionStatus, ICollectionTypeDto, IConnectionEvents, IConnectionFilter, IConnectionFilterDecider, IConnectionKeys, ICreateSessionPayload, IFeed, IFile, IInviteDto, IInviteStatus, INotificationDto, IReviewDto, ISendSessionMedia, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, IUploadDto, IUser, IUserTwoFaType, IVerification, IVerificationStatus, IWalletDto, IWalletExchangeDto, IWithdrawalDto, InviteModule, InviteModuleType, LoginDto, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, RegisterDto, RegisterPayload, ResendVerifyDto, ResetDto, ResponseDto, ReviewModule, ReviewModuleType, SendInviteDto, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UpdateCollectionDto, UpdateManyCollectionsDto, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, ValidateReferralDto, VerificationDocumentTypes, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelCollectionDto, createBookMarkDto, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, parseUrlWithQuery, updateUserDto };
+export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, BookmarkEnumType, BookmarkType, CHARACTERS, ChangePasswordDto, ChatModule, ChatModuleType, CollectionModule, CollectionModuleType, ConnectionFilterModule, ConnectionFilterModuleType, CreateCollectionDto, CreateFeedDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, ErrorUtils, FeedModule, FeedModuleType, FilterFeedDto, FilterInviteDto, FilterReviewDto, FilterUploadDto, FilterUserDto, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindFeedDto, FindInvitesDto, FindNotificationDto, FindReviewDto, FindTransactionsDto, FindUploadDto, FindUsers, FindWithdrawalsDto, IChatConversation, IChatMessage, ICollectionBookmarkDto, ICollectionDto, ICollectionStatus, ICollectionTypeDto, IConnectionEvents, IConnectionFilter, IConnectionFilterDecider, IConnectionKeys, ICreateSessionPayload, IFeed, IFile, IInviteDto, IInviteStatus, INotificationDto, IReviewDto, ISendSessionMedia, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, IUploadDto, IUser, IUserTwoFaType, IVerification, IVerificationStatus, IWalletDto, IWalletExchangeDto, IWithdrawalDto, InviteModule, InviteModuleType, LoginDto, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, RegisterDto, RegisterPayload, ResendVerifyDto, ResetDto, ResponseDto, ReviewModule, ReviewModuleType, SendInviteDto, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UpdateCollectionDto, UpdateManyCollectionsDto, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, ValidateReferralDto, VerificationDocumentTypes, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelCollectionDto, createBookMarkDto, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, parseUrlWithQuery, updateUserDto };
