@@ -10,6 +10,7 @@ export interface ICollectionBookmarkDto {
   data?: ICollectionDto | string;
   feed?: IFeed;
   invite?: IInviteDto;
+  user?: IUser;
   type?: BookmarkType;
   active?: boolean;
   isDeleted?: boolean;
@@ -42,9 +43,10 @@ export enum BookmarkEnumType {
   FEED = "feed",
   COLLECTION = "collection",
   INVITE = "invite",
+  USER = "user",
 }
 
-export type BookmarkType = "feed" | "collection" | "invite";
+export type BookmarkType = "feed" | "collection" | "invite" | "user";
 
 export interface BookMarkModuleType {
   getAll(filter?: filterBookmarkDto): Promise<ResponseDto<FindCollectionBookMarkDto>>;
