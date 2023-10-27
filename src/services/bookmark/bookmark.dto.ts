@@ -6,7 +6,7 @@ import { IInviteDto } from "../invite";
 
 export interface ICollectionBookmarkDto {
   _id?: string;
-  owner?: IUser | string; //TODO :: add IUserDto
+  owner?: IUser | string;
   data?: ICollectionDto | string;
   feed?: IFeed;
   invite?: IInviteDto;
