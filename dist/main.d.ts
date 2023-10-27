@@ -773,6 +773,7 @@ interface ICollectionBookmarkDto {
     data?: ICollectionDto | string;
     feed?: IFeed;
     invite?: IInviteDto;
+    user?: IUser;
     type?: BookmarkType;
     active?: boolean;
     isDeleted?: boolean;
@@ -798,9 +799,10 @@ type filterBookmarkDto = {
 declare enum BookmarkEnumType {
     FEED = "feed",
     COLLECTION = "collection",
-    INVITE = "invite"
+    INVITE = "invite",
+    USER = "user"
 }
-type BookmarkType = "feed" | "collection" | "invite";
+type BookmarkType = "feed" | "collection" | "invite" | "user";
 interface BookMarkModuleType {
     getAll(filter?: filterBookmarkDto): Promise<ResponseDto<FindCollectionBookMarkDto>>;
     getById(id: string, filter?: Record<string, any> | ICollectionBookmarkDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
