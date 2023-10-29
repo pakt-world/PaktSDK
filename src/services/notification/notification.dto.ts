@@ -67,7 +67,7 @@ export type filterNotificationDto =
   | any;
 
 export interface NotificationModuleType {
-  getAll(filter?: filterNotificationDto): Promise<ResponseDto<FindNotificationDto>>;
-  markOneAsRead(id: string, filter?: filterNotificationDto): Promise<ResponseDto<void>>;
-  markAll(): Promise<ResponseDto<void>>;
+  getAll(authToken: string, filter?: filterNotificationDto): Promise<ResponseDto<FindNotificationDto>>;
+  markOneAsRead(authToken: string, id: string, filter?: filterNotificationDto): Promise<ResponseDto<void>>;
+  markAll(authToken: string): Promise<ResponseDto<void>>;
 }

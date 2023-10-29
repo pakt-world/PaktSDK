@@ -69,15 +69,20 @@ export interface FindUsers {
 }
 
 export interface AccountModuleType {
-  getUser(): Promise<ResponseDto<fetchAccountDto>>;
-  onboardEndpoint(tagCategory: string, profileImage: string, type: string): Promise<ResponseDto<fetchAccountDto>>;
-  updateAccount(payload: updateUserDto): Promise<ResponseDto<fetchAccountDto>>;
-  changePassword(oldPassword: string, newPassword: string): Promise<ResponseDto<fetchAccountDto>>;
-  initate2FA(type: TwoFATypeDto): Promise<ResponseDto<TwoFAresponse>>;
-  activate2FA(code: string): Promise<ResponseDto<void>>;
-  deactivate2FA(code: string): Promise<ResponseDto<void>>;
-  sendEmailTwoFA(): Promise<ResponseDto<{}>>;
-  getAUser(id: string): Promise<ResponseDto<fetchAccountDto>>;
-  getUsers(filter?: FilterUserDto): Promise<ResponseDto<FindUsers>>;
-  logout(): Promise<ResponseDto<void>>;
+  getUser(authToken: string): Promise<ResponseDto<fetchAccountDto>>;
+  onboardEndpoint(
+    tagCategory: string,
+    profileImage: string,
+    type: string,
+    authToken: string,
+  ): Promise<ResponseDto<fetchAccountDto>>;
+  updateAccount(payload: updateUserDto, authToken: string): Promise<ResponseDto<fetchAccountDto>>;
+  changePassword(oldPassword: string, newPassword: string, authToken: string): Promise<ResponseDto<fetchAccountDto>>;
+  initate2FA(type: TwoFATypeDto, authToken: string): Promise<ResponseDto<TwoFAresponse>>;
+  activate2FA(code: string, authToken: string): Promise<ResponseDto<void>>;
+  deactivate2FA(code: string, authToken: string): Promise<ResponseDto<void>>;
+  sendEmailTwoFA(authToken: string): Promise<ResponseDto<{}>>;
+  getAUser(id: string, authToken: string): Promise<ResponseDto<fetchAccountDto>>;
+  getUsers(authToken: string, filter?: FilterUserDto): Promise<ResponseDto<FindUsers>>;
+  logout(authToken: string): Promise<ResponseDto<void>>;
 }

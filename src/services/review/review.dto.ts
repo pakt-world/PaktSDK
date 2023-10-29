@@ -36,7 +36,7 @@ export interface IReviewDto {
 }
 
 export interface ReviewModuleType {
-  addReview(payload: AddReviewDto): Promise<ResponseDto<void>>;
-  viewAll(filter?: FilterReviewDto): Promise<ResponseDto<FindReviewDto>>;
-  viewAReview(reviewId: string): Promise<ResponseDto<IReviewDto>>;
+  addReview(authToken: string, payload: AddReviewDto): Promise<ResponseDto<void>>;
+  viewAll(authToken: string, filter?: FilterReviewDto): Promise<ResponseDto<FindReviewDto>>;
+  viewAReview(authToken: string, reviewId: string): Promise<ResponseDto<IReviewDto>>;
 }
