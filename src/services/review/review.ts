@@ -20,12 +20,13 @@ export class ReviewModule implements ReviewModuleType {
     this.connector = Container.of(this.id).get(PaktConnector);
   }
 
-  viewAll(filter?: FilterReviewDto | undefined): Promise<ResponseDto<FindReviewDto>> {
+  viewAll(authToken: string, filter?: FilterReviewDto | undefined): Promise<ResponseDto<FindReviewDto>> {
     return ErrorUtils.tryFail(async () => {
       const fetchUrl = parseUrlWithQuery(API_PATHS.GET_REVIEW, filter);
 
       const response: ResponseDto<FindReviewDto> = await this.connector.get({
         path: fetchUrl,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
@@ -33,10 +34,11 @@ export class ReviewModule implements ReviewModuleType {
     });
   }
 
-  viewAReview(reviewId: string): Promise<ResponseDto<IReviewDto>> {
+  viewAReview(authToken: string, reviewId: string): Promise<ResponseDto<IReviewDto>> {
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<IReviewDto> = await this.connector.get({
         path: `${API_PATHS.GET_REVIEW}${reviewId}`,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
@@ -44,12 +46,13 @@ export class ReviewModule implements ReviewModuleType {
     });
   }
 
-  addReview(payload: AddReviewDto): Promise<ResponseDto<void>> {
+  addReview(authToken: string, payload: AddReviewDto): Promise<ResponseDto<void>> {
     const reviewPayload = { ...payload };
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<void> = await this.connector.post({
         path: API_PATHS.ADD_REVIEW,
         body: reviewPayload,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);

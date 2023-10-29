@@ -29,70 +29,77 @@ export class WalletModule implements WalletModuleType {
     this.coin = coin;
   }
 
-  getTransactions(): Promise<ResponseDto<FindTransactionsDto>> {
+  getTransactions(authToken: string): Promise<ResponseDto<FindTransactionsDto>> {
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<FindTransactionsDto> = await this.connector.get({
         path: API_PATHS.WALLET_TRANSACTIONS,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
       return response.data;
     });
   }
-  getATransaction(id: string): Promise<ResponseDto<ITransactionDto>> {
+  getATransaction(authToken: string, id: string): Promise<ResponseDto<ITransactionDto>> {
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<ITransactionDto> = await this.connector.get({
         path: `${API_PATHS.A_WALLET_TRANSACTION}/${id}`,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
       return response.data;
     });
   }
-  getTransactionStats(): Promise<ResponseDto<ITransactionStatsDto[]>> {
+  getTransactionStats(authToken: string): Promise<ResponseDto<ITransactionStatsDto[]>> {
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<ITransactionStatsDto[]> = await this.connector.get({
         path: API_PATHS.WALLET_STATS,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
       return response.data;
     });
   }
-  getAggregateTransactionStats(): Promise<ResponseDto<AggTxns[]>> {
+  getAggregateTransactionStats(authToken: string): Promise<ResponseDto<AggTxns[]>> {
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<AggTxns[]> = await this.connector.get({
         path: API_PATHS.WALLET_AGGREGATE_STATS,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
       return response.data;
     });
   }
-  getWalletData(): Promise<ResponseDto<IWalletDto>> {
+  getWalletData(authToken: string): Promise<ResponseDto<IWalletDto>> {
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<IWalletDto> = await this.connector.get({
         path: API_PATHS.WALLET_AGGREGATE_STATS,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
       return response.data;
     });
   }
-  getWallets(): Promise<ResponseDto<IWalletDto[]>> {
+  getWallets(authToken: string): Promise<ResponseDto<IWalletDto[]>> {
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<IWalletDto[]> = await this.connector.get({
         path: API_PATHS.WALLETS,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
       return response.data;
     });
   }
-  getSingleWallet(coin: string): Promise<ResponseDto<IWalletDto>> {
+  getSingleWallet(authToken: string, coin: string): Promise<ResponseDto<IWalletDto>> {
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<IWalletDto> = await this.connector.get({
         path: API_PATHS.SINGLE_WALLET + "/" + coin,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
@@ -100,10 +107,11 @@ export class WalletModule implements WalletModuleType {
     });
   }
 
-  async getExchange(): Promise<ResponseDto<IWalletExchangeDto>> {
+  async getExchange(authToken: string): Promise<ResponseDto<IWalletExchangeDto>> {
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<IWalletExchangeDto> = await this.connector.get({
         path: API_PATHS.WALLET_EXCHANGE,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);

@@ -28,12 +28,13 @@ export class UserVerificationModule implements UserVerificationModuleType {
     this.connector = Container.of(this.id).get(PaktConnector);
   }
 
-  createSession(payload: ICreateSessionPayload): Promise<ResponseDto<CreateSessionResponse>> {
+  createSession(authToken: string, payload: ICreateSessionPayload): Promise<ResponseDto<CreateSessionResponse>> {
     const credentials = { ...payload };
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<CreateSessionResponse> = await this.connector.post({
         path: API_PATHS.CREATE_SESSION,
         body: credentials,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
@@ -41,12 +42,13 @@ export class UserVerificationModule implements UserVerificationModuleType {
     });
   }
 
-  sendSessionMedia(payload: ISendSessionMedia): Promise<ResponseDto<SendSessionMediaResponse>> {
+  sendSessionMedia(authToken: string, payload: ISendSessionMedia): Promise<ResponseDto<SendSessionMediaResponse>> {
     const credentials = { ...payload };
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<SendSessionMediaResponse> = await this.connector.post({
         path: API_PATHS.SEND_SESSION_MEDIA,
         body: credentials,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
@@ -54,11 +56,12 @@ export class UserVerificationModule implements UserVerificationModuleType {
     });
   }
 
-  getSessionAttempts(): Promise<ResponseDto<SessionAttempts>> {
+  getSessionAttempts(authToken: string): Promise<ResponseDto<SessionAttempts>> {
     const fetchUrl = parseUrlWithQuery(API_PATHS.SESSION_ATTEMPTS, null);
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<SessionAttempts> = await this.connector.get({
         path: fetchUrl,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
@@ -66,11 +69,12 @@ export class UserVerificationModule implements UserVerificationModuleType {
     });
   }
 
-  getUserVerifications(): Promise<ResponseDto<IVerification[]>> {
+  getUserVerifications(authToken: string): Promise<ResponseDto<IVerification[]>> {
     const fetchUrl = parseUrlWithQuery(API_PATHS.USER_VERIFICATION, null);
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<IVerification[]> = await this.connector.get({
         path: fetchUrl,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);

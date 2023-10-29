@@ -43,9 +43,9 @@ export interface FindFeedDto {
 }
 
 export interface FeedModuleType {
-  create(payload: CreateFeedDto): Promise<ResponseDto<{}>>;
-  getAll(filter?: FilterFeedDto): Promise<ResponseDto<FindFeedDto>>;
-  getById(filterId: string): Promise<ResponseDto<IFeed>>;
-  dismissAllFeeds(): Promise<ResponseDto<{}>>;
-  dismissAFeed(filterId: string): Promise<ResponseDto<{}>>;
+  create(authToken: string, payload: CreateFeedDto): Promise<ResponseDto<{}>>;
+  getAll(authToken: string, filter?: FilterFeedDto): Promise<ResponseDto<FindFeedDto>>;
+  getById(authToken: string, filterId: string): Promise<ResponseDto<IFeed>>;
+  dismissAllFeeds(authToken: string): Promise<ResponseDto<{}>>;
+  dismissAFeed(authToken: string, filterId: string): Promise<ResponseDto<{}>>;
 }

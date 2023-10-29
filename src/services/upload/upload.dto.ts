@@ -45,7 +45,7 @@ export type FilterUploadDto =
   | any;
 
 export interface UploadModuleType {
-  fileUpload(payload: CreateFileUpload): Promise<ResponseDto<IUploadDto>>;
-  getFileUploads(filter?: FilterUploadDto): Promise<ResponseDto<FindUploadDto>>;
-  getAFileUpload(id: string): Promise<ResponseDto<IUploadDto>>;
+  fileUpload(authToken: string, payload: CreateFileUpload): Promise<ResponseDto<IUploadDto>>;
+  getFileUploads(authToken: string, filter?: FilterUploadDto): Promise<ResponseDto<FindUploadDto>>;
+  getAFileUpload(authToken: string, id: string): Promise<ResponseDto<IUploadDto>>;
 }

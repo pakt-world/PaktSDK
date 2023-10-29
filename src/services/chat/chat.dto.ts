@@ -42,5 +42,5 @@ export interface IFile {
 }
 
 export interface ChatModuleType {
-  getUserMessages(): Promise<ResponseDto<IChatConversation[]>>;
+  getUserMessages(authToken: string): Promise<ResponseDto<IChatConversation[]>>;
 }
