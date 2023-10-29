@@ -2,7 +2,7 @@ import { Headers, RequestInfo, RequestInit } from "node-fetch";
 import { Container, Service } from "typedi";
 import { version } from "../../package.json";
 import { API_PATHS } from "../utils";
-import { AUTH_TOKEN, PAKT_CONFIG } from "../utils/token";
+import { PAKT_CONFIG } from "../utils/token";
 import { GetUrl, PostRequest } from "./connector.dto";
 const fetch = (url: RequestInfo, init?: RequestInit) =>
   import("node-fetch").then(({ default: fetch }) => fetch(url, init));
@@ -36,11 +36,15 @@ export class PaktConnector {
     return this.request<T>({ ...request, method: "DELETE" });
   }
 
-  private async request<T>({ path, params, body, method }: PostRequest, retry = 0, externalUrl?: string): Promise<T> {
+  private async request<T>(
+    { path, params, body, method, authToken }: PostRequest,
+    retry = 0,
+    externalUrl?: string,
+  ): Promise<T> {
     const { verbose } = Container.of(this.id).get(PAKT_CONFIG);
 
     const url = externalUrl || this.getUrl({ path, params });
-    const headers = await this.headers(retry);
+    const headers = await this.headers(retry, authToken);
     const request: RequestInit = {
       headers,
       method,
@@ -92,10 +96,10 @@ export class PaktConnector {
     return url.toString();
   }
 
-  private async headers(retry: number) {
+  private async headers(retry: number, authToken?: string) {
     let authHeader = {};
     const config = Container.of(this.id).get(PAKT_CONFIG);
-    const authToken = Container.of(this.id).get(AUTH_TOKEN);
+    //const authToken = Container.of(this.id).get(AUTH_TOKEN);
     if (authToken) {
       authHeader = {
         Authorization: `Bearer ${authToken}`,

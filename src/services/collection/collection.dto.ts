@@ -161,13 +161,13 @@ export interface UpdateManyCollectionsDto {
 }
 
 export interface CollectionModuleType {
-  getAll(filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionDto>>;
-  getById(id: string): Promise<ResponseDto<ICollectionDto>>;
-  getTypes(filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionTypeDto>>;
-  getACollectionType(typeId: string): Promise<ResponseDto<ICollectionTypeDto>>;
-  create(payload: CreateCollectionDto): Promise<ResponseDto<ICollectionDto>>;
-  createMany(payload: CreateManyCollectionDto): Promise<ResponseDto<ICollectionDto[]>>;
-  updateCollection(id: string, payload: UpdateCollectionDto): Promise<ResponseDto<{}>>;
-  deleteACollection(id: string): Promise<ResponseDto<{}>>;
-  updateManyCollections(collections: UpdateManyCollectionsDto): Promise<ResponseDto<{}>>;
+  getAll(authToken: string, filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionDto>>;
+  getById(authToken: string, id: string): Promise<ResponseDto<ICollectionDto>>;
+  getTypes(authToken: string, filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionTypeDto>>;
+  getACollectionType(authToken: string, typeId: string): Promise<ResponseDto<ICollectionTypeDto>>;
+  create(authToken: string, payload: CreateCollectionDto): Promise<ResponseDto<ICollectionDto>>;
+  createMany(authToken: string, payload: CreateManyCollectionDto): Promise<ResponseDto<ICollectionDto[]>>;
+  updateCollection(authToken: string, id: string, payload: UpdateCollectionDto): Promise<ResponseDto<{}>>;
+  deleteACollection(authToken: string, id: string): Promise<ResponseDto<{}>>;
+  updateManyCollections(authToken: string, collections: UpdateManyCollectionsDto): Promise<ResponseDto<{}>>;
 }

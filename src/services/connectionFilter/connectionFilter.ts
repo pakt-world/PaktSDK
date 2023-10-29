@@ -20,12 +20,13 @@ export class ConnectionFilterModule implements ConnectionFilterModuleType {
     this.connector = Container.of(this.id).get(PaktConnector);
   }
 
-  create(payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>> {
+  create(authToken: string, payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>> {
     return ErrorUtils.tryFail(async () => {
       const requestBody = { ...payload };
       const response: ResponseDto<IConnectionFilter> = await this.connector.post({
         path: API_PATHS.CREATE_CONNECTION_FILTER,
         body: requestBody,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
@@ -33,12 +34,13 @@ export class ConnectionFilterModule implements ConnectionFilterModuleType {
     });
   }
 
-  update(payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>> {
+  update(authToken: string, payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>> {
     return ErrorUtils.tryFail(async () => {
       const requestBody = { ...payload };
       const response: ResponseDto<IConnectionFilter> = await this.connector.patch({
         path: API_PATHS.UPDATE_CONNECTION_FILTER,
         body: requestBody,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
@@ -46,10 +48,11 @@ export class ConnectionFilterModule implements ConnectionFilterModuleType {
     });
   }
 
-  getForAUser(): Promise<ResponseDto<IConnectionFilter>> {
+  getForAUser(authToken: string): Promise<ResponseDto<IConnectionFilter>> {
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<IConnectionFilter> = await this.connector.get({
         path: API_PATHS.GET_CONNECTION_FILTER,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
