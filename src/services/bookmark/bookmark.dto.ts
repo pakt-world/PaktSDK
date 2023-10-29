@@ -49,11 +49,12 @@ export enum BookmarkEnumType {
 export type BookmarkType = "feed" | "collection" | "invite" | "user";
 
 export interface BookMarkModuleType {
-  getAll(filter?: filterBookmarkDto): Promise<ResponseDto<FindCollectionBookMarkDto>>;
+  getAll(authToken: string, filter?: filterBookmarkDto): Promise<ResponseDto<FindCollectionBookMarkDto>>;
   getById(
+    authToken: string,
     id: string,
     filter?: Record<string, any> | ICollectionBookmarkDto,
   ): Promise<ResponseDto<ICollectionBookmarkDto>>;
-  create(payload: createBookMarkDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
-  delete(id: string): Promise<ResponseDto<any>>;
+  create(authToken: string, payload: createBookMarkDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
+  delete(authToken: string, id: string): Promise<ResponseDto<any>>;
 }

@@ -90,8 +90,8 @@ export interface SessionAttempts {
 }
 
 export interface UserVerificationModuleType {
-  createSession(payload: ICreateSessionPayload): Promise<ResponseDto<CreateSessionResponse>>;
-  sendSessionMedia(payload: ISendSessionMedia): Promise<ResponseDto<SendSessionMediaResponse>>;
-  getSessionAttempts(): Promise<ResponseDto<SessionAttempts>>;
-  getUserVerifications(): Promise<ResponseDto<IVerification[]>>;
+  createSession(authToken: string, payload: ICreateSessionPayload): Promise<ResponseDto<CreateSessionResponse>>;
+  sendSessionMedia(authToken: string, payload: ISendSessionMedia): Promise<ResponseDto<SendSessionMediaResponse>>;
+  getSessionAttempts(authToken: string): Promise<ResponseDto<SessionAttempts>>;
+  getUserVerifications(authToken: string): Promise<ResponseDto<IVerification[]>>;
 }

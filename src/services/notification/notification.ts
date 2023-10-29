@@ -20,11 +20,12 @@ export class NotificationModule implements NotificationModuleType {
     this.connector = Container.of(this.id).get(PaktConnector);
   }
 
-  async getAll(filter?: filterNotificationDto): Promise<ResponseDto<FindNotificationDto>> {
+  async getAll(authToken: string, filter?: filterNotificationDto): Promise<ResponseDto<FindNotificationDto>> {
     const fetchUrl = parseUrlWithQuery(API_PATHS.NOTIFICATION_FETCH, filter);
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<FindNotificationDto> = await this.connector.get({
         path: fetchUrl,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
@@ -32,10 +33,11 @@ export class NotificationModule implements NotificationModuleType {
     });
   }
 
-  async markAll(): Promise<ResponseDto<void>> {
+  async markAll(authToken: string): Promise<ResponseDto<void>> {
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<void> = await this.connector.post({
         path: API_PATHS.NOTIFICATION_MARK_ALL,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
@@ -43,10 +45,11 @@ export class NotificationModule implements NotificationModuleType {
     });
   }
 
-  async markOneAsRead(id: string): Promise<ResponseDto<void>> {
+  async markOneAsRead(authToken: string, id: string): Promise<ResponseDto<void>> {
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<void> = await this.connector.post({
         path: API_PATHS.NOTIFICATION_MARK_ONE + "/" + id,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);

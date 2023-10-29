@@ -40,10 +40,10 @@ export interface FindInvitesDto {
 }
 
 export interface InviteModuleType {
-  sendInvite(payload: SendInviteDto): Promise<ResponseDto<{}>>;
-  acceptInvite(inviteId: string): Promise<ResponseDto<{}>>;
-  declineInvite(inviteId: string): Promise<ResponseDto<{}>>;
-  cancelInvite(inviteId: string): Promise<ResponseDto<{}>>;
-  getAll(filter?: FilterInviteDto): Promise<ResponseDto<FindInvitesDto>>;
-  getAnInvite(id: string): Promise<ResponseDto<IInviteDto>>;
+  sendInvite(authToken: string, payload: SendInviteDto): Promise<ResponseDto<{}>>;
+  acceptInvite(authToken: string, inviteId: string): Promise<ResponseDto<{}>>;
+  declineInvite(authToken: string, inviteId: string): Promise<ResponseDto<{}>>;
+  cancelInvite(authToken: string, inviteId: string): Promise<ResponseDto<{}>>;
+  getAll(authToken: string, filter?: FilterInviteDto): Promise<ResponseDto<FindInvitesDto>>;
+  getAnInvite(authToken: string, id: string): Promise<ResponseDto<IInviteDto>>;
 }

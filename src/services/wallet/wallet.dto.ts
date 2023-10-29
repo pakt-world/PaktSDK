@@ -104,12 +104,12 @@ export interface AggTxns {
 }
 
 export interface WalletModuleType {
-  getExchange(): Promise<ResponseDto<IWalletExchangeDto>>;
-  getTransactions(): Promise<ResponseDto<FindTransactionsDto>>;
-  getATransaction(id: string): Promise<ResponseDto<ITransactionDto>>;
-  getTransactionStats(): Promise<ResponseDto<ITransactionStatsDto[]>>;
-  getAggregateTransactionStats(): Promise<ResponseDto<AggTxns[]>>;
-  getWalletData(): Promise<ResponseDto<IWalletDto>>;
-  getWallets(): Promise<ResponseDto<IWalletDto[]>>;
-  getSingleWallet(coin: string): Promise<ResponseDto<IWalletDto>>;
+  getExchange(authToken: string): Promise<ResponseDto<IWalletExchangeDto>>;
+  getTransactions(authToken: string): Promise<ResponseDto<FindTransactionsDto>>;
+  getATransaction(authToken: string, id: string): Promise<ResponseDto<ITransactionDto>>;
+  getTransactionStats(authToken: string): Promise<ResponseDto<ITransactionStatsDto[]>>;
+  getAggregateTransactionStats(authToken: string): Promise<ResponseDto<AggTxns[]>>;
+  getWalletData(authToken: string): Promise<ResponseDto<IWalletDto>>;
+  getWallets(authToken: string): Promise<ResponseDto<IWalletDto[]>>;
+  getSingleWallet(authToken: string, coin: string): Promise<ResponseDto<IWalletDto>>;
 }

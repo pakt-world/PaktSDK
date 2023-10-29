@@ -18,7 +18,7 @@ export interface IConnectionFilter {
 }
 
 export interface ConnectionFilterModuleType {
-  create(payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>>;
-  getForAUser(): Promise<ResponseDto<IConnectionFilter>>;
-  update(payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>>;
+  create(authToken: string, payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>>;
+  getForAUser(authToken: string): Promise<ResponseDto<IConnectionFilter>>;
+  update(authToken: string, payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>>;
 }

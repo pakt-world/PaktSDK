@@ -21,10 +21,11 @@ export class ChatModule implements ChatModuleType {
     this.connector = Container.of(this.id).get(PaktConnector);
   }
 
-  getUserMessages(): Promise<ResponseDto<IChatConversation[]>> {
+  getUserMessages(authToken: string): Promise<ResponseDto<IChatConversation[]>> {
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<IChatConversation[]> = await this.connector.get({
         path: API_PATHS.GET_USER_MESSAGES,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);

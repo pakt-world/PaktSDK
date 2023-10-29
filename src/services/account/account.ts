@@ -32,9 +32,9 @@ export class AccountModule implements AccountModuleType {
   /**
    * getUser.
    */
-  async getUser(): Promise<ResponseDto<fetchAccountDto>> {
+  async getUser(authToken: string): Promise<ResponseDto<fetchAccountDto>> {
     return ErrorUtils.tryFail(async () => {
-      const response: ResponseDto<fetchAccountDto> = await this.connector.get({ path: API_PATHS.ACCOUNT });
+      const response: ResponseDto<fetchAccountDto> = await this.connector.get({ path: API_PATHS.ACCOUNT, authToken });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
       return response.data;
@@ -51,12 +51,14 @@ export class AccountModule implements AccountModuleType {
     skillCategory: string,
     profileImage: string,
     type: string,
+    authToken: string,
   ): Promise<ResponseDto<fetchAccountDto>> {
     return ErrorUtils.tryFail(async () => {
       const body = { skillCategory, profileImage, type };
       const response: ResponseDto<fetchAccountDto> = await this.connector.post({
         path: API_PATHS.ACCOUNT_ONBOARD,
         body,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
@@ -70,12 +72,13 @@ export class AccountModule implements AccountModuleType {
    * @param profileImage string
    * @param type string
    */
-  async updateAccount(payload: updateUserDto): Promise<ResponseDto<fetchAccountDto>> {
+  async updateAccount(payload: updateUserDto, authToken: string): Promise<ResponseDto<fetchAccountDto>> {
     return ErrorUtils.tryFail(async () => {
       const body = { ...payload };
       const response: ResponseDto<fetchAccountDto> = await this.connector.patch({
         path: API_PATHS.ACCOUNT_UPDATE,
         body: payload,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
@@ -88,12 +91,17 @@ export class AccountModule implements AccountModuleType {
    * @param oldPassword string
    * @param newPassword string
    */
-  async changePassword(oldPassword: string, newPassword: string): Promise<ResponseDto<fetchAccountDto>> {
+  async changePassword(
+    oldPassword: string,
+    newPassword: string,
+    authToken: string,
+  ): Promise<ResponseDto<fetchAccountDto>> {
     return ErrorUtils.tryFail(async () => {
       const body = { oldPassword, newPassword };
       const response: ResponseDto<fetchAccountDto> = await this.connector.put({
         path: API_PATHS.ACCOUNT_PASSWORD,
         body,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
@@ -105,12 +113,13 @@ export class AccountModule implements AccountModuleType {
    * initate2FA.
    * @param type TwoFATypeDto
    */
-  async initate2FA(type: TwoFATypeDto): Promise<ResponseDto<TwoFAresponse>> {
+  async initate2FA(type: TwoFATypeDto, authToken: string): Promise<ResponseDto<TwoFAresponse>> {
     return ErrorUtils.tryFail(async () => {
       const body = { type };
       const response: ResponseDto<TwoFAresponse> = await this.connector.post({
         path: API_PATHS.ACCOUNT_PASSWORD,
         body,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
@@ -122,10 +131,14 @@ export class AccountModule implements AccountModuleType {
    * active2FA.
    * @param code string
    */
-  async activate2FA(code: string): Promise<ResponseDto<void>> {
+  async activate2FA(code: string, authToken: string): Promise<ResponseDto<void>> {
     return ErrorUtils.tryFail(async () => {
       const body = { code };
-      const response: ResponseDto<void> = await this.connector.post({ path: API_PATHS.ACCOUNT_TWO_ACTIVATE, body });
+      const response: ResponseDto<void> = await this.connector.post({
+        path: API_PATHS.ACCOUNT_TWO_ACTIVATE,
+        body,
+        authToken,
+      });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
       return response.data;
@@ -136,41 +149,48 @@ export class AccountModule implements AccountModuleType {
    * active2FA.
    * @param code string
    */
-  async deactivate2FA(code: string): Promise<ResponseDto<void>> {
+  async deactivate2FA(code: string, authToken: string): Promise<ResponseDto<void>> {
     return ErrorUtils.tryFail(async () => {
       const body = { code };
-      const response: ResponseDto<void> = await this.connector.post({ path: API_PATHS.ACCOUNT_TWO_DEACTIVATE, body });
+      const response: ResponseDto<void> = await this.connector.post({
+        path: API_PATHS.ACCOUNT_TWO_DEACTIVATE,
+        body,
+        authToken,
+      });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
       return response.data;
     });
   }
 
-  async sendEmailTwoFA(): Promise<ResponseDto<{}>> {
+  async sendEmailTwoFA(authToken: string): Promise<ResponseDto<{}>> {
     return ErrorUtils.tryFail(async () => {
-      const response: ResponseDto<{}> = await this.connector.post({ path: API_PATHS.ACCOUNT_SEND_EMAIL_TWO_FA });
+      const response: ResponseDto<{}> = await this.connector.post({
+        path: API_PATHS.ACCOUNT_SEND_EMAIL_TWO_FA,
+        authToken,
+      });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
       return response.data;
     });
   }
 
-  async getAUser(id: string): Promise<ResponseDto<fetchAccountDto>> {
+  async getAUser(id: string, authToken: string): Promise<ResponseDto<fetchAccountDto>> {
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<fetchAccountDto> = await this.connector.get({
         path: `${API_PATHS.ACCOUNT_FETCH_SINGLE}${id}`,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
       return response.data;
     });
   }
-  async getUsers(filter?: FilterUserDto | undefined): Promise<ResponseDto<FindUsers>> {
+  async getUsers(authToken: string, filter?: FilterUserDto | undefined): Promise<ResponseDto<FindUsers>> {
     if (filter) {
       const query = parseUrlWithQuery(API_PATHS.ACCOUNT_FETCH_ALL, { ...filter });
-      console.log({ query });
       return ErrorUtils.tryFail(async () => {
-        const response: ResponseDto<FindUsers> = await this.connector.get({ path: query });
+        const response: ResponseDto<FindUsers> = await this.connector.get({ path: query, authToken });
         if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
           throw new Error(response.message);
         return response.data;
@@ -187,9 +207,9 @@ export class AccountModule implements AccountModuleType {
   /**
    * Logout.
    */
-  async logout(): Promise<ResponseDto<void>> {
+  async logout(authToken: string): Promise<ResponseDto<void>> {
     return ErrorUtils.tryFail(async () => {
-      const response: ResponseDto<void> = await this.connector.post({ path: API_PATHS.ACCOUNT_LOGOUT });
+      const response: ResponseDto<void> = await this.connector.post({ path: API_PATHS.ACCOUNT_LOGOUT, authToken });
       return response.data;
     });
   }

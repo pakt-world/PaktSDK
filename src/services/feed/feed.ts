@@ -20,12 +20,13 @@ export class FeedModule implements FeedModuleType {
     this.connector = Container.of(this.id).get(PaktConnector);
   }
 
-  create(payload: CreateFeedDto): Promise<ResponseDto<{}>> {
+  create(authToken: string, payload: CreateFeedDto): Promise<ResponseDto<{}>> {
     return ErrorUtils.tryFail(async () => {
       const credentials = { ...payload };
       const response: ResponseDto<{}> = await this.connector.post({
         path: `${API_PATHS.FEEDS}/`,
         body: credentials,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
@@ -33,12 +34,13 @@ export class FeedModule implements FeedModuleType {
     });
   }
 
-  getAll(filter?: FilterFeedDto): Promise<ResponseDto<FindFeedDto>> {
+  getAll(authToken: string, filter?: FilterFeedDto): Promise<ResponseDto<FindFeedDto>> {
     return ErrorUtils.tryFail(async () => {
       const theFilter = filter ? { ...filter, isOwner: true } : { isOwner: true };
       const fetchUrl = parseUrlWithQuery(`${API_PATHS.FEEDS}/`, { ...theFilter });
       const response: ResponseDto<FindFeedDto> = await this.connector.get({
         path: fetchUrl,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
@@ -46,10 +48,11 @@ export class FeedModule implements FeedModuleType {
     });
   }
 
-  getById(filterId: string): Promise<ResponseDto<IFeed>> {
+  getById(authToken: string, filterId: string): Promise<ResponseDto<IFeed>> {
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<IFeed> = await this.connector.get({
         path: `${API_PATHS.FEEDS}/${filterId}`,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
@@ -57,10 +60,11 @@ export class FeedModule implements FeedModuleType {
     });
   }
 
-  dismissAllFeeds(): Promise<ResponseDto<{}>> {
+  dismissAllFeeds(authToken: string): Promise<ResponseDto<{}>> {
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<IFeed> = await this.connector.put({
         path: `${API_PATHS.FEEDS_DISMISS_ALL}`,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
@@ -68,10 +72,11 @@ export class FeedModule implements FeedModuleType {
     });
   }
 
-  dismissAFeed(filterId: string): Promise<ResponseDto<{}>> {
+  dismissAFeed(authToken: string, filterId: string): Promise<ResponseDto<{}>> {
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<IFeed> = await this.connector.put({
         path: `${API_PATHS.FEEDS}/${filterId}/dismiss`,
+        authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
         throw new Error(response.message);
