@@ -109,7 +109,6 @@ export interface WalletModuleType {
   getATransaction(authToken: string, id: string): Promise<ResponseDto<ITransactionDto>>;
   getTransactionStats(authToken: string): Promise<ResponseDto<ITransactionStatsDto[]>>;
   getAggregateTransactionStats(authToken: string): Promise<ResponseDto<AggTxns[]>>;
-  getWalletData(authToken: string): Promise<ResponseDto<IWalletDto>>;
   getWallets(authToken: string): Promise<ResponseDto<IWalletDto[]>>;
   getSingleWallet(authToken: string, coin: string): Promise<ResponseDto<IWalletDto>>;
 }
