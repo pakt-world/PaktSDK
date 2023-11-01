@@ -45,9 +45,9 @@ export const API_PATHS = {
   // Wallet Endpoints
   WALLET_TRANSACTIONS: "/transaction/",
   A_WALLET_TRANSACTION: "/transaction",
+  TRANSACTION_STATS: "/transaction/stats",
   WALLET_EXCHANGE: "/wallet/exchange",
   WALLET_DATA: "/wallet/data",
-  WALLET_STATS: "/wallet/stats",
   WALLET_AGGREGATE_STATS: "/wallet/aggregate/stats",
   WALLETS: "/wallet",
   SINGLE_WALLET: "/wallet/coin",
