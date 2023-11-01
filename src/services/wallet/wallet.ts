@@ -54,7 +54,7 @@ export class WalletModule implements WalletModuleType {
   getTransactionStats(authToken: string): Promise<ResponseDto<ITransactionStatsDto[]>> {
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<ITransactionStatsDto[]> = await this.connector.get({
-        path: API_PATHS.WALLET_STATS,
+        path: API_PATHS.TRANSACTION_STATS,
         authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
