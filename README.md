@@ -634,6 +634,21 @@ export const getTransactionStats = async (authToken: string) => {
 };
 ```
 
+### Get Transaction Aggregate Stats
+
+Gets the aggregate transaction stats for a user, the model `AggTxns` showcases how the data looks like.
+
+```typescript
+interface AggTxns {
+  type: string;
+  amount: number;
+  date: string;
+}
+export const getAggregateTransactionStats = async (authToken: string) => {
+  const aggregateStats: ResponseDto<AggTxns[]> = await sdkInit.wallet.getAggregateTransactionStats(authToken);
+};
+```
+
 ## Withdrawal
 
 With the PAKT SDK, users can make withdrawals, as well as fetch list withdrawals history
