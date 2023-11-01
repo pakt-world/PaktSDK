@@ -73,17 +73,6 @@ export class WalletModule implements WalletModuleType {
       return response.data;
     });
   }
-  getWalletData(authToken: string): Promise<ResponseDto<IWalletDto>> {
-    return ErrorUtils.tryFail(async () => {
-      const response: ResponseDto<IWalletDto> = await this.connector.get({
-        path: API_PATHS.TRANSACTION_AGGREGATE_STATS,
-        authToken,
-      });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
-      return response.data;
-    });
-  }
   getWallets(authToken: string): Promise<ResponseDto<IWalletDto[]>> {
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<IWalletDto[]> = await this.connector.get({

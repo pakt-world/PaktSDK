@@ -50,7 +50,6 @@ export const API_PATHS = {
   TRANSACTION_EXCHANGE: "/transaction/exchange",
 
   // Wallet Endpoints
-  WALLET_DATA: "/wallet/data",
   WALLETS: "/wallet",
   SINGLE_WALLET: "/wallet/coin",
 
