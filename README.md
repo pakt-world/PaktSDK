@@ -505,6 +505,8 @@ PAKT SDK allows the user to get the following:
 - Get Transactions records executed,
 - Get A Transaction details,
 - Get Exchange rate for crypto currencies in use,
+- Get Transaction stats
+- Get Aggregate Transaction stats
 
 Models for Wallet & Transaction are typed like so:
 
@@ -714,16 +716,20 @@ export const fetch = async ({ filter }: { filter: FilterWithdrawalDto }) => {
 With the PAKT SDK, users can
 
 - Create collection,
+- Create many collection,
 - Get all collection,
 - Get a collection by the id,
-- Get Saved collection,
-- Get Suggested collection,
-- Get Invites,
-- Get Related collection,
-- Cancel collection,
-- Complete Deliverable for a collection
+- Update a collection,
+- Update many collections,
+- Get collection types,
+- Get a collection type,
+- Delete a collection,
 
-### Create Collections
+The collection feature requires the authorization token.
+
+### Create a Collection
+
+Create a collection
 
 ```typescript
 interface ICollectionDto {
@@ -768,19 +774,21 @@ interface ICollectionDto {
 type CreateCollectionDto = {
   type: string;
   name: string;
-  category?: string;
   description: string;
   isPrivate: boolean;
+  category?: string;
   tags?: string[];
   attachments?: string[];
 };
 
 export const createCollection = async (payload: CreateCollectionDto) => {
-  const create: ICollectionDto = await sdkInit.collection.create(payload);
+  const create: ResponseDto<ICollectionDto> = await sdkInit.collection.create(payload);
 };
 ```
 
 ### Create Many Collections
+
+Users can create many collections, this requires the parent collection id.
 
 ```typescript
 type CreateManyCollectionDto = {
@@ -796,19 +804,23 @@ type CreateManyCollectionDto = {
   }[];
 };
 export const createManyCollection = async (payload: CreateManyCollectionDto) => {
-  const create: ICollectionDto = await sdkInit.collection.createMany(payload);
+  const create: ResponseDto<ICollectionDto[]> = await sdkInit.collection.createMany(payload);
 };
 ```
 
 ### Get all Collections
 
-Get all Collections corresponding to an optional filter, else return ALL collection
+Get all Collections corresponding to an optional filter, else return ALL collection.
+Search by the creator, recipient and/or owner of a collection.
+When a collection is created, the logged in user is the `creator` of the collection.
+When an invite is sent to and accepted by another user, such user is now marked as the `owner` and can be filtered as the `receiver`.
 
 ```typescript
 type filterCollectionDto =
   | ({
       page?: string;
       limit?: string;
+      receiver?: string;
     } & ICollectionDto)
   | any;
 
@@ -820,14 +832,6 @@ type FindCollectionDto = {
   data: ICollectionDto[];
 };
 
-/**
- * Search by the creator, recipient and/or owner of a collection
- *
- * When a collection is created, the logged in user is the `creator` of the collection.
- *
- * When an invite is sent to and accepted by another user, such user is now marked as the `owner` and can be filtered as the `receiver`
- *
- * */
 export const getAllCollections = async (filter?: filterCollectionDto) => {
   const sampleCollectionFilter: filterCollectionDto  = {
     page: 1,
@@ -850,21 +854,116 @@ export const getACollection = async (id: string) => {
 };
 ```
 
-### Get Collections by types
+### Get Collections types
 
-Get Collections by types
+Collection types refer to the style of the collection and is used to differentiate collection.
+
+Get Collection types.
 
 ```typescript
-export const getACollection = async (filter: filterDto) => {
-  const collections: FindCollectionDto = await sdkInit.collections.getTypes(filter);
+interface FindCollectionTypeDto = {
+  page: number;
+  pages: number;
+  total: number;
+  limit: number;
+  data: ICollectionTypeDto[];
+};
+
+interface ICollectionTypeDto {
+  _id: string;
+  name: string;
+  value: string;
+  createdAt?: string | Date;
+  deletedAt?: string | Date;
+  updateAt?: string | Date;
+};
+
+export const getCollectionTypes = async (authToken: string, filter: filterCollectionDto) => {
+  const collections: ResponseDto<FindCollectionTypeDto> = await sdkInit.collections.getTypes(authToken, filter);
 };
 ```
 
-### Get Details of a collection
+### Get A Collection type
+
+Get A Collections type.
 
 ```typescript
-export const getASingleCollection = async (id: string, filter?: filterDto) => {
-  const collection: ICollectionDto = await sdkInit.collection.getById(id, filter);
+interface ICollectionTypeDto {
+  _id: string;
+  name: string;
+  value: string;
+  createdAt?: string | Date;
+  deletedAt?: string | Date;
+  updateAt?: string | Date;
+}
+
+export const getACollectionType = async (authToken: string, typeId: string) => {
+  const collections: ResponseDto<ICollectionTypeDto> = await sdkInit.collections.getACollectionType(authToken, typeId);
+};
+```
+
+### Update a collection
+
+A collection can be updated
+
+```typescript
+interface UpdateCollectionDto {
+  type?: string;
+  name: string;
+  description: string;
+  isPrivate?: boolean;
+  category?: string | undefined;
+  paymentFee?: number | undefined;
+  deliveryDate?: string | undefined;
+  tags?: string[] | undefined;
+  parent?: string;
+  image?: string;
+  status?: ICollectionStatus;
+  attachments?: string[];
+  meta?: Record<string, any>;
+}
+
+export const updateASingleCollection = async (authToken: string, id: string, payload?: UpdateCollectionDto) => {
+  const collection: ResponseDto<{}> = await sdkInit.collection.updateCollection(authToken, id, filter);
+};
+```
+
+### Update Many Collections
+
+A list of collections can be updated together, they need not belong to the same parent.
+
+```typescript
+interface UpdateManyCollectionsDto {
+  collections: {
+    id: string;
+    type?: string;
+    name: string;
+    description: string;
+    isPrivate?: boolean;
+    category?: string | undefined;
+    paymentFee?: number | undefined;
+    deliveryDate?: string | undefined;
+    tags?: string[] | undefined;
+    parent?: string;
+    image?: string;
+    status?: ICollectionStatus;
+    attachments?: string[];
+    meta?: Record<string, any>;
+  }[];
+}
+
+export const updateManyCollections = async (authToken: string, collections: UpdateManyCollectionsDto) => {
+  const update: ResponseDto<{}> = await sdkInit.collection.updateManyCollections(authToken, collections);
+};
+```
+
+### Delete a Collection
+
+Delete a collection
+
+```typescript
+export const deleteACollection = async (authToken: string, collectionId: string) => {
+  const deleted: ResponseDto<{}> = await sdkInit.collection.deleteACollection(authToken, collectionId);
 };
 ```
 
