@@ -32,7 +32,7 @@ export class WalletModule implements WalletModuleType {
   getTransactions(authToken: string): Promise<ResponseDto<FindTransactionsDto>> {
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<FindTransactionsDto> = await this.connector.get({
-        path: API_PATHS.WALLET_TRANSACTIONS,
+        path: API_PATHS.TRANSACTIONS,
         authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
@@ -43,7 +43,7 @@ export class WalletModule implements WalletModuleType {
   getATransaction(authToken: string, id: string): Promise<ResponseDto<ITransactionDto>> {
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<ITransactionDto> = await this.connector.get({
-        path: `${API_PATHS.A_WALLET_TRANSACTION}/${id}`,
+        path: `${API_PATHS.A_TRANSACTION}/${id}`,
         authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
@@ -65,7 +65,7 @@ export class WalletModule implements WalletModuleType {
   getAggregateTransactionStats(authToken: string): Promise<ResponseDto<AggTxns[]>> {
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<AggTxns[]> = await this.connector.get({
-        path: API_PATHS.WALLET_AGGREGATE_STATS,
+        path: API_PATHS.TRANSACTION_AGGREGATE_STATS,
         authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
@@ -76,7 +76,7 @@ export class WalletModule implements WalletModuleType {
   getWalletData(authToken: string): Promise<ResponseDto<IWalletDto>> {
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<IWalletDto> = await this.connector.get({
-        path: API_PATHS.WALLET_AGGREGATE_STATS,
+        path: API_PATHS.TRANSACTION_AGGREGATE_STATS,
         authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
@@ -110,7 +110,7 @@ export class WalletModule implements WalletModuleType {
   async getExchange(authToken: string): Promise<ResponseDto<IWalletExchangeDto>> {
     return ErrorUtils.tryFail(async () => {
       const response: ResponseDto<IWalletExchangeDto> = await this.connector.get({
-        path: API_PATHS.WALLET_EXCHANGE,
+        path: API_PATHS.TRANSACTION_EXCHANGE,
         authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)

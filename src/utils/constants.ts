@@ -42,13 +42,15 @@ export const API_PATHS = {
   ACCOUNT_LOGOUT: "/account/logout",
   ACCOUNT_SEND_EMAIL_TWO_FA: "/account/2fa/email",
 
-  // Wallet Endpoints
-  WALLET_TRANSACTIONS: "/transaction/",
-  A_WALLET_TRANSACTION: "/transaction",
+  //transaction endpoints
+  TRANSACTIONS: "/transaction/",
+  A_TRANSACTION: "/transaction",
   TRANSACTION_STATS: "/transaction/stats",
-  WALLET_EXCHANGE: "/wallet/exchange",
+  TRANSACTION_AGGREGATE_STATS: "/transaction/aggregate/stats",
+  TRANSACTION_EXCHANGE: "/transaction/exchange",
+
+  // Wallet Endpoints
   WALLET_DATA: "/wallet/data",
-  WALLET_AGGREGATE_STATS: "/wallet/aggregate/stats",
   WALLETS: "/wallet",
   SINGLE_WALLET: "/wallet/coin",
 
