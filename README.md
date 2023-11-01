@@ -108,6 +108,8 @@ const auth: ResponseDto<UserModelDto> = await sdkInit.auth.login();
 
 For brevity, the examples below will include the encapsulating `T`.
 
+Please note that the features requires the authorization token, retrieved from the login.
+
 ## Authentication
 
 With the PAKT SDK, users can:
@@ -561,8 +563,8 @@ interface ITransactionDto {
 ### Get all Wallets
 
 ```typescript
-export const getAllWallets = async () => {
-  const wallets: IWalletDto[] = await sdkInit.wallet.getWallets();
+export const getAllWallets = async (authToken: string) => {
+  const wallets: ResponseDto<IWalletDto[]> = await sdkInit.wallet.getWallets(authToken);
 };
 ```
 
@@ -571,8 +573,27 @@ export const getAllWallets = async () => {
 Get a single Wallet details
 
 ```typescript
-export const getSingleWallet = async (coin: string) => {
-  const wallet: IWalletDto = await sdkInit.wallet.getSingleWallet(coin);
+export const getSingleWallet = async (authToken: string, coin: string) => {
+  const wallet: ResponseDto<IWalletDto> = await sdkInit.wallet.getSingleWallet(authToken, coin);
+};
+```
+
+### Get Transaction records for a user
+
+Returns the list of transactions of a user. The response for a list of transaction is as seen in `FindTransactionsDto`
+
+```typescript
+type FindTransactionsDto = {
+  page: number;
+  pages: number;
+  total: number;
+  limit: number;
+  transactions: ITransactionDto[];
+};
+
+export const getTransactions = async (authToken: string) => {
+  const resp: ResponseDto<FindTransactionsDto> = await sdkInit.wallet.getTransactions(authToken);
+  const transactions = resp.data;
 };
 ```
 
@@ -582,7 +603,7 @@ Returns the details of a transaction of a user
 
 ```typescript
 export const getATransactionDetails = async (transactionId: string) => {
-  const transaction: ITransactionDto = await sdkInit.wallet.getATransaction(transactionId);
+  const transaction: ResponseDto<ITransactionDto> = await sdkInit.wallet.getATransaction(authToken, transactionId);
 };
 ```
 
@@ -591,12 +612,27 @@ export const getATransactionDetails = async (transactionId: string) => {
 Get the exchange rate of available coins, the prevailing cryptocurrency & platform used.
 
 ```typescript
-export const exchangeRate = async () => {
-  const rate = await sdkInit.wallet.getExchange();
+export const exchangeRate = async (authToken: string) => {
+  const rate = await sdkInit.wallet.getExchange(authToken);
 };
 ```
 
 ---
+
+### Get Transaction Stats
+
+Gets the stats for the transactions
+
+```typescript
+interface ITransactionStatsDto {
+  _id: number;
+  count: number;
+  date: string;
+}
+export const getTransactionStats = async (authToken: string) => {
+  const stats: ResponseDto<ITransactionStatsDto[]> = await sdkInit.wallet.getTransactionStats(authToken);
+};
+```
 
 ## Withdrawal
 
