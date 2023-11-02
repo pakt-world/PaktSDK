@@ -28,59 +28,54 @@ export class FeedModule implements FeedModuleType {
         body: credentials,
         authToken,
       });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
-      return response.data;
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
     });
   }
 
   getAll(authToken: string, filter?: FilterFeedDto): Promise<ResponseDto<FindFeedDto>> {
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const theFilter = filter ? { ...filter, isOwner: true } : { isOwner: true };
       const fetchUrl = parseUrlWithQuery(`${API_PATHS.FEEDS}/`, { ...theFilter });
       const response: ResponseDto<FindFeedDto> = await this.connector.get({
         path: fetchUrl,
         authToken,
       });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
-      return response.data;
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
     });
   }
 
   getById(authToken: string, filterId: string): Promise<ResponseDto<IFeed>> {
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IFeed> = await this.connector.get({
         path: `${API_PATHS.FEEDS}/${filterId}`,
         authToken,
       });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
-      return response.data;
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
     });
   }
 
   dismissAllFeeds(authToken: string): Promise<ResponseDto<{}>> {
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IFeed> = await this.connector.put({
         path: `${API_PATHS.FEEDS_DISMISS_ALL}`,
         authToken,
       });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
-      return response.data;
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
     });
   }
 
   dismissAFeed(authToken: string, filterId: string): Promise<ResponseDto<{}>> {
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IFeed> = await this.connector.put({
         path: `${API_PATHS.FEEDS}/${filterId}/dismiss`,
         authToken,
       });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
-      return response.data;
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
     });
   }
 }

@@ -55,6 +55,8 @@ export interface IUser {
     securityQuestion?: string;
   };
   meta?: Record<string, any>;
+  isBookmarked?: boolean;
+  bookmarkId?: string;
   createdAt?: string | Date;
   deletedAt?: string | Date;
   updatedAt?: string | Date;

@@ -21,42 +21,39 @@ export class ConnectionFilterModule implements ConnectionFilterModuleType {
   }
 
   create(authToken: string, payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>> {
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const requestBody = { ...payload };
       const response: ResponseDto<IConnectionFilter> = await this.connector.post({
         path: API_PATHS.CREATE_CONNECTION_FILTER,
         body: requestBody,
         authToken,
       });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
-      return response.data;
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
     });
   }
 
   update(authToken: string, payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>> {
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const requestBody = { ...payload };
       const response: ResponseDto<IConnectionFilter> = await this.connector.patch({
         path: API_PATHS.UPDATE_CONNECTION_FILTER,
         body: requestBody,
         authToken,
       });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
-      return response.data;
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
     });
   }
 
   getForAUser(authToken: string): Promise<ResponseDto<IConnectionFilter>> {
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IConnectionFilter> = await this.connector.get({
         path: API_PATHS.GET_CONNECTION_FILTER,
         authToken,
       });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
-      return response.data;
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
     });
   }
 }

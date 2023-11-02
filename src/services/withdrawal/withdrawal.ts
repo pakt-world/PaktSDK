@@ -27,27 +27,26 @@ export class WithdrawalModule implements WithdrawalModuleType {
   }
 
   createWithdrawal(authToken: string, payload: CreateWithdrawal): Promise<ResponseDto<IWithdrawalDto>> {
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const requestBody = { ...payload };
       const response: ResponseDto<IWithdrawalDto> = await this.connector.post({
         path: API_PATHS.CREATE_WITHDRAWAL,
         body: requestBody,
         authToken,
       });
-      return response.data;
+      return response;
     });
   }
 
   fetchWithdrawal(authToken: string, filter: FilterWithdrawal): Promise<ResponseDto<FindWithdrawalsDto>> {
     const fetchUrl = parseUrlWithQuery(API_PATHS.FETCH_WITHDRAWALS, filter);
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<FindWithdrawalsDto> = await this.connector.get({
         path: fetchUrl,
         authToken,
       });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
-      return response.data;
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
     });
   }
 }

@@ -25,6 +25,7 @@ type ErrorWithMessage = {
 };
 declare const ErrorUtils: {
     tryFail: <T>(f: (() => Promise<T>) | (() => T)) => Promise<ResponseDto<T>>;
+    newTryFail: <T_1>(f: (() => Promise<T_1>) | (() => T_1)) => Promise<T_1>;
     formatErrorMsg: (message: string) => string;
     toErrorWithMessage: (maybeError: unknown) => ErrorWithMessage;
     isErrorWithMessage(e: unknown): e is ErrorWithMessage;
@@ -61,12 +62,11 @@ declare const API_PATHS: {
     ACCOUNT_FETCH_SINGLE: string;
     ACCOUNT_LOGOUT: string;
     ACCOUNT_SEND_EMAIL_TWO_FA: string;
-    WALLET_TRANSACTIONS: string;
-    A_WALLET_TRANSACTION: string;
-    WALLET_EXCHANGE: string;
-    WALLET_DATA: string;
-    WALLET_STATS: string;
-    WALLET_AGGREGATE_STATS: string;
+    TRANSACTIONS: string;
+    A_TRANSACTION: string;
+    TRANSACTION_STATS: string;
+    TRANSACTION_AGGREGATE_STATS: string;
+    TRANSACTION_EXCHANGE: string;
     WALLETS: string;
     SINGLE_WALLET: string;
     FILE_UPLOAD: string;
@@ -194,6 +194,8 @@ interface IUser {
         securityQuestion?: string;
     };
     meta?: Record<string, any>;
+    isBookmarked?: boolean;
+    bookmarkId?: string;
     createdAt?: string | Date;
     deletedAt?: string | Date;
     updatedAt?: string | Date;
@@ -1161,7 +1163,6 @@ interface WalletModuleType {
     getATransaction(authToken: string, id: string): Promise<ResponseDto<ITransactionDto$1>>;
     getTransactionStats(authToken: string): Promise<ResponseDto<ITransactionStatsDto[]>>;
     getAggregateTransactionStats(authToken: string): Promise<ResponseDto<AggTxns[]>>;
-    getWalletData(authToken: string): Promise<ResponseDto<IWalletDto>>;
     getWallets(authToken: string): Promise<ResponseDto<IWalletDto[]>>;
     getSingleWallet(authToken: string, coin: string): Promise<ResponseDto<IWalletDto>>;
 }
@@ -1175,7 +1176,6 @@ declare class WalletModule implements WalletModuleType {
     getATransaction(authToken: string, id: string): Promise<ResponseDto<ITransactionDto$1>>;
     getTransactionStats(authToken: string): Promise<ResponseDto<ITransactionStatsDto[]>>;
     getAggregateTransactionStats(authToken: string): Promise<ResponseDto<AggTxns[]>>;
-    getWalletData(authToken: string): Promise<ResponseDto<IWalletDto>>;
     getWallets(authToken: string): Promise<ResponseDto<IWalletDto[]>>;
     getSingleWallet(authToken: string, coin: string): Promise<ResponseDto<IWalletDto>>;
     getExchange(authToken: string): Promise<ResponseDto<IWalletExchangeDto>>;
