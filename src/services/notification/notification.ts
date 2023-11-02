@@ -22,38 +22,35 @@ export class NotificationModule implements NotificationModuleType {
 
   async getAll(authToken: string, filter?: filterNotificationDto): Promise<ResponseDto<FindNotificationDto>> {
     const fetchUrl = parseUrlWithQuery(API_PATHS.NOTIFICATION_FETCH, filter);
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<FindNotificationDto> = await this.connector.get({
         path: fetchUrl,
         authToken,
       });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
-      return response.data;
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
     });
   }
 
   async markAll(authToken: string): Promise<ResponseDto<void>> {
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<void> = await this.connector.post({
         path: API_PATHS.NOTIFICATION_MARK_ALL,
         authToken,
       });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
-      return response.data;
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
     });
   }
 
   async markOneAsRead(authToken: string, id: string): Promise<ResponseDto<void>> {
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<void> = await this.connector.post({
         path: API_PATHS.NOTIFICATION_MARK_ONE + "/" + id,
         authToken,
       });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
-      return response.data;
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
     });
   }
 }

@@ -22,14 +22,13 @@ export class ChatModule implements ChatModuleType {
   }
 
   getUserMessages(authToken: string): Promise<ResponseDto<IChatConversation[]>> {
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IChatConversation[]> = await this.connector.get({
         path: API_PATHS.GET_USER_MESSAGES,
         authToken,
       });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
-      return response.data;
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
     });
   }
 }
