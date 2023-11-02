@@ -45,10 +45,11 @@ export class PaktConnector {
 
     const url = externalUrl || this.getUrl({ path, params });
     const headers = await this.headers(retry, authToken);
+    const bodypayload = body ? { body: JSON.stringify(body) } : {};
     const request: RequestInit = {
       headers,
       method,
-      body: body ? JSON.stringify(body) : "",
+      ...bodypayload,
     };
 
     const start = Date.now();
