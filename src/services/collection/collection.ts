@@ -38,7 +38,7 @@ export class CollectionModule implements CollectionModuleType {
    */
   async getAll(authToken: string, filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionDto>> {
     return ErrorUtils.newTryFail(async () => {
-      const fetchUrl = parseUrlWithQuery(`${API_PATHS.COLLECTION}/`, filter);
+      const fetchUrl = parseUrlWithQuery(`${API_PATHS.COLLECTION}`, filter);
       const response: ResponseDto<FindCollectionDto> = await this.connector.get({ path: fetchUrl, authToken });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
