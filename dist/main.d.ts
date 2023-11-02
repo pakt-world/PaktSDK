@@ -8,8 +8,8 @@ interface PaktConfig {
 }
 
 declare enum Status {
-    SUCCESS = "SUCCESS",
-    ERROR = "ERROR"
+    SUCCESS = "success",
+    ERROR = "error"
 }
 interface ResponseDto<T> {
     data: T;
