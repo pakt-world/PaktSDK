@@ -35,6 +35,22 @@ export const ErrorUtils = {
       };
     }
   },
+  newTryFail: async <T>(f: (() => Promise<T>) | (() => T)): Promise<T> => {
+    try {
+      const data = await f();
+      return {
+        ...data,
+      };
+    } catch (e) {
+      const parseErr = ErrorUtils.toErrorWithMessage(e);
+      return {
+        data: null as unknown as T,
+        status: Status.ERROR,
+        message: parseErr ? parseErr.message : ["Internal Server Error"],
+        code: parseErr.code,
+      } as unknown as T;
+    }
+  },
   formatErrorMsg: (message: string) => {
     return message.replace("attr.", "");
   },
@@ -83,7 +99,7 @@ export const ErrorUtils = {
 
 export const parseUrlWithQuery = (url: string, filter: object | any) => {
   let querys = "?";
-  Object.keys(filter).map((key) => {
+  Object.keys(filter || {}).map((key) => {
     querys = querys + `${key}=${filter[key]}&`;
   });
   return url + querys;
