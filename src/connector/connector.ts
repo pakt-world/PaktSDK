@@ -48,7 +48,7 @@ export class PaktConnector {
     const request: RequestInit = {
       headers,
       method,
-      body: body ? JSON.stringify(body) : undefined,
+      body: body ? JSON.stringify(body) : "",
     };
 
     const start = Date.now();

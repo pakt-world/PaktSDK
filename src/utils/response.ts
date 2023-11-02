@@ -1,6 +1,6 @@
 export enum Status {
-  SUCCESS = "SUCCESS",
-  ERROR = "ERROR",
+  SUCCESS = "success",
+  ERROR = "error",
 }
 
 export interface ResponseDto<T> {
