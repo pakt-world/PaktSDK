@@ -31,12 +31,11 @@ export class BookMarkModule {
    * @param filter filterBookmarkDto
    */
   async getAll(authToken: string, filter?: filterBookmarkDto): Promise<ResponseDto<FindCollectionBookMarkDto>> {
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const fetchUrl = parseUrlWithQuery(API_PATHS.BOOKMARK, filter);
       const response: ResponseDto<FindCollectionBookMarkDto> = await this.connector.get({ path: fetchUrl, authToken });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
-      return response.data;
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
     });
   }
 
@@ -49,12 +48,11 @@ export class BookMarkModule {
     id: string,
     filter?: Record<string, any> | ICollectionBookmarkDto,
   ): Promise<ResponseDto<ICollectionBookmarkDto>> {
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const fetchUrl = parseUrlWithQuery(API_PATHS.BOOKMARK + "/" + id, filter);
       const response: ResponseDto<ICollectionBookmarkDto> = await this.connector.get({ path: fetchUrl, authToken });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
-      return response.data;
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
     });
   }
 
@@ -63,16 +61,15 @@ export class BookMarkModule {
    * @param payload createBookMarkDto
    */
   async create(authToken: string, payload: createBookMarkDto): Promise<ResponseDto<ICollectionBookmarkDto>> {
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const credentials = { ...payload };
       const response: ResponseDto<ICollectionBookmarkDto> = await this.connector.post({
         path: API_PATHS.BOOKMARK,
         body: credentials,
         authToken,
       });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
-      return response.data;
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
     });
   }
 
@@ -81,14 +78,13 @@ export class BookMarkModule {
    * @param payload is, the bookmark id
    */
   async delete(authToken: string, id: string): Promise<ResponseDto<ICollectionBookmarkDto>> {
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<ICollectionBookmarkDto> = await this.connector.delete({
         path: API_PATHS.BOOKMARK + "/" + id,
         authToken,
       });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
-      return response.data;
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
     });
   }
 }

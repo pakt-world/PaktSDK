@@ -22,20 +22,19 @@ export class UploadModule implements UploadModuleType {
 
   fileUpload(authToken: string, payload: CreateFileUpload): Promise<ResponseDto<IUploadDto>> {
     const credentials = { ...payload };
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IUploadDto> = await this.connector.post({
         path: API_PATHS.FILE_UPLOAD,
         body: credentials,
         authToken,
       });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
-      return response.data;
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
     });
   }
 
   getFileUploads(authToken: string, filter: FilterUploadDto): Promise<ResponseDto<FindUploadDto>> {
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const theFilter = filter ? filter : {};
       const fetchUrl = parseUrlWithQuery(API_PATHS.FILE_UPLOAD, theFilter);
       const url = filter ? API_PATHS.FILE_UPLOAD : fetchUrl;
@@ -44,20 +43,18 @@ export class UploadModule implements UploadModuleType {
         path: url,
         authToken,
       });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
-      return response.data;
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
     });
   }
   getAFileUpload(authToken: string, id: string): Promise<ResponseDto<IUploadDto>> {
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IUploadDto> = await this.connector.get({
         path: `${API_PATHS.FILE_UPLOAD}${id}`,
         authToken,
       });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
-      return response.data;
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
     });
   }
 }

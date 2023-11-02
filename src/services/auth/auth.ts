@@ -38,17 +38,16 @@ export class AuthenticationModule implements AuthenticationModuleType {
    * @param password
    */
   async login(email: string, password: string): Promise<ResponseDto<LoginDto>> {
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const credentials = { email, password };
       const response: ResponseDto<LoginDto> = await this.connector.post({ path: API_PATHS.LOGIN, body: credentials });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       if (response.data.tempToken) {
         Container.of(this.id).set(TEMP_TOKEN, response.data.tempToken.token);
       } else {
         Container.of(this.id).set(AUTH_TOKEN, response.data.token);
       }
-      return response.data;
+      return response;
     });
   }
 
@@ -60,18 +59,17 @@ export class AuthenticationModule implements AuthenticationModuleType {
    * @param password
    */
   async register(payload: RegisterPayload): Promise<ResponseDto<RegisterDto>> {
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const credentials = { ...payload };
       const response: ResponseDto<RegisterDto> = await this.connector.post({
         path: API_PATHS.REGISTER,
         body: credentials,
       });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       if (response.data.tempToken.token) {
         Container.of(this.id).set(TEMP_TOKEN, response.data.tempToken.token);
       }
-      return response.data;
+      return response;
     });
   }
 
@@ -81,18 +79,17 @@ export class AuthenticationModule implements AuthenticationModuleType {
    * @param token
    */
   async verifyAccount(tempToken: string, token: string): Promise<ResponseDto<AccountVerifyDto>> {
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const credentials = { tempToken, token };
       const response: ResponseDto<AccountVerifyDto> = await this.connector.post({
         path: API_PATHS.ACCOUNT_VERIFY,
         body: credentials,
       });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
 
       Container.of(this.id).set(AUTH_TOKEN, response.data.token);
 
-      return response.data;
+      return response;
     });
   }
 
@@ -101,19 +98,18 @@ export class AuthenticationModule implements AuthenticationModuleType {
    * @param email
    */
   async resendVerifyLink(email: string): Promise<ResponseDto<ResetDto>> {
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const credentials = { email };
       const response: ResponseDto<ResetDto> = await this.connector.post({
         path: API_PATHS.RESEND_VERIFY_LINK,
         body: credentials,
       });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
 
       if (response.data.tempToken) {
         Container.of(this.id).set(TEMP_TOKEN, response.data.tempToken.token);
       }
-      return response.data;
+      return response;
     });
   }
 
@@ -122,15 +118,14 @@ export class AuthenticationModule implements AuthenticationModuleType {
    * @param email
    */
   async resetPassword(email: string): Promise<ResponseDto<ResetDto>> {
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const credentials = { email };
       const response: ResponseDto<ResetDto> = await this.connector.post({
         path: API_PATHS.RESET_PASSWORD,
         body: credentials,
       });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
-      return response.data;
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
     });
   }
 
@@ -140,41 +135,38 @@ export class AuthenticationModule implements AuthenticationModuleType {
    * @param password
    */
   async changePassword(token: string, tempToken: string, password: string): Promise<ResponseDto<ChangePasswordDto>> {
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const credentials = { token, tempToken, password };
       const response: ResponseDto<ChangePasswordDto> = await this.connector.post({
         path: API_PATHS.CHANGE_PASSWORD,
         body: credentials,
       });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
-      return response.data;
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
     });
   }
 
   validatePasswordToken(token: string, tempToken: string): Promise<ResponseDto<ValidatePasswordToken>> {
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const credentials = { token, tempToken };
       const response: ResponseDto<ChangePasswordDto> = await this.connector.post({
         path: `${API_PATHS.VALIDATE_PASSWORD_TOKEN}/${token}`,
         body: credentials,
       });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
-      return response.data;
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
     });
   }
 
   validateReferral(token: string): Promise<ResponseDto<ValidateReferralDto>> {
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const credentials = { token };
       const response: ResponseDto<ValidateReferralDto> = await this.connector.post({
         path: `${API_PATHS.VALIDATE_REFERRAL}`,
         body: credentials,
       });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
-        throw new Error(response.message);
-      return response.data;
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
     });
   }
 }
