@@ -9,8 +9,8 @@ export interface CreateWithdrawal {
 }
 
 export interface FilterWithdrawal {
-  page: number;
-  limit: number;
+  page?: number;
+  limit?: number;
   owner: string;
 }
 
@@ -41,6 +41,8 @@ interface ITransactionDto {
   updatedAt?: string | Date;
 }
 
+export type IWithdrawalStatus = "pending" | "processing" | "completed" | "failed";
+
 export interface IWithdrawalDto {
   _id: string;
   owner: string | IUser;
@@ -51,7 +53,7 @@ export interface IWithdrawalDto {
   amount: number;
   usdValue: number;
   usdRate: number;
-  status: string;
+  status: IWithdrawalStatus;
 }
 
 export interface WithdrawalModuleType {
