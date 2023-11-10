@@ -1,6 +1,9 @@
 import { ResponseDto } from "../../utils/response";
 import { IUser } from "../auth";
+import { IInviteDto } from "../invite";
+import { IReviewDto } from "../review";
 import { IUploadDto } from "../upload";
+import { IWalletDto } from "../wallet";
 
 export interface ICollectionTypeDto {
   _id: string;
@@ -32,19 +35,18 @@ export interface ICollectionDto {
   collections?: ICollectionDto[] | string[];
   stage?: number;
   image?: IUploadDto;
-  invite?: string; //TODO:: addd ICollectionInviteDto
-  invites?: string[]; //TODO:: addd ICollectionInviteDto
+  invite?: string | IInviteDto;
+  invites?: string[] | IInviteDto[];
   applications?: string[]; //TODO:: addd IApplicationDto
-  wallet?: string; //TODO:: addd IWalletDto
+  wallet?: string | IWalletDto;
   attachments?: IAttachmentDto[];
   attachmentData?: string[];
   status?: ICollectionStatus;
   inviteAccepted?: boolean;
   isPrivate?: boolean;
-  emailToken?: string;
-  rating?: string; //TODO:: add IRatingDto
-  recipientRating?: string; //TODO:: add IRatingDto
-  ratings?: string[];
+  rating?: string | IReviewDto;
+  recipientRating?: string | IReviewDto;
+  ratings?: string[] | IReviewDto[];
   score?: number;
   progress?: number;
   isDeleted?: boolean;

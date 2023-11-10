@@ -38,6 +38,8 @@ enum ITransactionMethod {
   FEEPAYOUT = "fee-payout",
 }
 
+export type ITransactionType = "sent" | "deposit" | "withdrawal" | "recieved" | "escrow" | "job-payout" | "fee-payout";
+
 export interface IWalletExchangeDto {
   avax: number;
 }
@@ -74,7 +76,7 @@ export interface ITransactionDto {
   usdValue: number;
   description: string;
   tx: string;
-  type: string;
+  type: ITransactionType;
   hash: string;
   method: ITransactionMethod;
   status: ITransactionStatus;
@@ -90,6 +92,8 @@ export type FindTransactionsDto = {
   limit: number;
   transactions: ITransactionDto[];
 };
+
+export type ITransactionStatsFormat = "weekly" | "monthly" | "yearly";
 
 export interface ITransactionStatsDto {
   _id: number;
@@ -107,7 +111,7 @@ export interface WalletModuleType {
   getExchange(authToken: string): Promise<ResponseDto<IWalletExchangeDto>>;
   getTransactions(authToken: string): Promise<ResponseDto<FindTransactionsDto>>;
   getATransaction(authToken: string, id: string): Promise<ResponseDto<ITransactionDto>>;
-  getTransactionStats(authToken: string): Promise<ResponseDto<ITransactionStatsDto[]>>;
+  getTransactionStats(authToken: string, format: ITransactionStatsFormat): Promise<ResponseDto<ITransactionStatsDto[]>>;
   getAggregateTransactionStats(authToken: string): Promise<ResponseDto<AggTxns[]>>;
   getWallets(authToken: string): Promise<ResponseDto<IWalletDto[]>>;
   getSingleWallet(authToken: string, coin: string): Promise<ResponseDto<IWalletDto>>;

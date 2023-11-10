@@ -4,7 +4,6 @@ import { IUser } from "../auth";
 export type fetchAccountDto = {} & IUser;
 
 export interface updateUserDto {
-  userName?: string;
   profileImage?: string;
   bgImage?: string;
   profile?: {
@@ -39,7 +38,7 @@ export interface updateUserDto {
   meta?: Record<string, any>;
 }
 
-export type TwoFATypeDto = "google_auth" | "email" | "security_answer";
+export type TwoFATypeDto = "google_auth" | "email";
 
 export type TwoFAresponse = {
   type: TwoFATypeDto;
@@ -56,6 +55,9 @@ export interface FilterUserDto {
   tags?: string[];
   range?: number[];
   type?: "recipient" | "creator";
+  owner?: boolean;
+  profileCompletenessMin?: number;
+  profileCompletenessMax?: number;
   page?: number;
   limit?: number;
 }
