@@ -48,11 +48,11 @@ const configData = {
 const sdkInit = await PaktSDK.init(configData);
 ```
 
-The above code initializes the PAKT SDK, and ensures the API KEY is generated on www.pakt.world.
+The above code initializes the PAKT SDK and ensures the API KEY is generated on www.pakt.world.
 
 ---
 
-If you want to learn how to use the PAKT SDk, visit this link for the [documentation & guide.](https://pakt-1.gitbook.io/pakt-sdk/web-sdk/overview/getting-started)
+If you want to learn how to use the PAKT SDK, visit this link for the [documentation & guide.](https://pakt-1.gitbook.io/pakt-sdk/web-sdk/overview/getting-started)
 
 
 ## Example
