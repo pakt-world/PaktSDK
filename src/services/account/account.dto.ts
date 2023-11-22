@@ -25,8 +25,6 @@ export interface updateUserDto {
       tagsIds?: string | any[];
       tagsCategory?: string;
     };
-    privateEarnings?: boolean;
-    privateInvestments?: boolean;
   };
   isPrivate?: boolean;
   socials?: {
