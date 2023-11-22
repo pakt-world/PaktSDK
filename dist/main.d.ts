@@ -299,7 +299,6 @@ declare class AuthenticationModule implements AuthenticationModuleType {
 
 type fetchAccountDto = {} & IUser;
 interface updateUserDto {
-    userName?: string;
     profileImage?: string;
     bgImage?: string;
     profile?: {
@@ -321,8 +320,6 @@ interface updateUserDto {
             tagsIds?: string | any[];
             tagsCategory?: string;
         };
-        privateEarnings?: boolean;
-        privateInvestments?: boolean;
     };
     isPrivate?: boolean;
     socials?: {
@@ -333,7 +330,7 @@ interface updateUserDto {
     };
     meta?: Record<string, any>;
 }
-type TwoFATypeDto = "google_auth" | "email" | "security_answer";
+type TwoFATypeDto = "google_auth" | "email";
 type TwoFAresponse = {
     type: TwoFATypeDto;
     qrCodeUrl?: string;
@@ -348,6 +345,9 @@ interface FilterUserDto {
     tags?: string[];
     range?: number[];
     type?: "recipient" | "creator";
+    owner?: boolean;
+    profileCompletenessMin?: number;
+    profileCompletenessMax?: number;
     page?: number;
     limit?: number;
 }
@@ -424,6 +424,134 @@ declare class AccountModule implements AccountModuleType {
     logout(authToken: string): Promise<ResponseDto<void>>;
 }
 
+type IInviteStatus = "pending" | "accepted" | "rejected";
+interface IInviteDto {
+    _id: string;
+    sender: IUser | string;
+    receiver: IUser | string;
+    data: ICollectionDto | string;
+    message: string;
+    description: string;
+    status: IInviteStatus;
+    emailToken: string;
+    acceptedAt?: string;
+    createdAt?: string | Date;
+    deletedAt?: string | Date;
+    updatedAt?: string | Date;
+}
+interface SendInviteDto {
+    recipient: string;
+    collection: string;
+}
+type FilterInviteDto = ({
+    page?: string;
+    limit?: string;
+} & IInviteDto) | any;
+interface FindInvitesDto {
+    data: IInviteDto[];
+    total: number;
+    pages: number;
+    page: number;
+    limit: number;
+}
+interface InviteModuleType {
+    sendInvite(authToken: string, payload: SendInviteDto): Promise<ResponseDto<{}>>;
+    acceptInvite(authToken: string, inviteId: string): Promise<ResponseDto<{}>>;
+    declineInvite(authToken: string, inviteId: string): Promise<ResponseDto<{}>>;
+    cancelInvite(authToken: string, inviteId: string): Promise<ResponseDto<{}>>;
+    getAll(authToken: string, filter?: FilterInviteDto): Promise<ResponseDto<FindInvitesDto>>;
+    getAnInvite(authToken: string, id: string): Promise<ResponseDto<IInviteDto>>;
+}
+
+declare class InviteModule implements InviteModuleType {
+    private id;
+    private connector;
+    constructor(id: string);
+    sendInvite(authToken: string, payload: SendInviteDto): Promise<ResponseDto<{}>>;
+    acceptInvite(authToken: string, inviteId: string): Promise<ResponseDto<{}>>;
+    declineInvite(authToken: string, inviteId: string): Promise<ResponseDto<{}>>;
+    getAll(authToken: string, filter?: FilterInviteDto): Promise<ResponseDto<FindInvitesDto>>;
+    getAnInvite(authToken: string, id: string): Promise<ResponseDto<IInviteDto>>;
+    cancelInvite(authToken: string, inviteId: string): Promise<ResponseDto<{}>>;
+}
+
+declare class CollectionModule implements CollectionModuleType {
+    private id;
+    private connector;
+    constructor(id: string);
+    /**
+     * findall. This method finds all logged User's Jobs both created and assigned.
+     * @param filter filterDto
+     */
+    getAll(authToken: string, filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionDto>>;
+    /**
+     * findall. This method finds all logged User's Jobs both created and assigned.
+     * @param filter filterCollectionDto
+     */
+    getById(authToken: string, id: string): Promise<ResponseDto<ICollectionDto>>;
+    /**
+     * getTypes. This method finds collection types accepted for creating collection
+     * @param filter filterDto
+     */
+    getTypes(authToken: string, filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionTypeDto>>;
+    /**
+     * create. This method creates a new Job.
+     * @param payload CreateCollectionDto
+     */
+    create(authToken: string, payload: CreateCollectionDto): Promise<ResponseDto<ICollectionDto>>;
+    /**
+     * createMany. This method creates multiple collections for a type
+     * @param filter CreateManyCollectionDto
+     */
+    createMany(authToken: string, payload: CreateManyCollectionDto): Promise<ResponseDto<ICollectionDto[]>>;
+    updateCollection(authToken: string, id: string, payload: UpdateCollectionDto): Promise<ResponseDto<{}>>;
+    getACollectionType(authToken: string, typeId: string): Promise<ResponseDto<ICollectionTypeDto>>;
+    deleteACollection(authToken: string, collectionId: string): Promise<ResponseDto<{}>>;
+    updateManyCollections(authToken: string, collections: UpdateManyCollectionsDto): Promise<ResponseDto<{}>>;
+}
+
+interface AddReviewDto {
+    collectionId: string;
+    rating: number;
+    review: string;
+    receiver: string;
+}
+interface FindReviewDto {
+    count: number;
+    pages: number;
+    data: IReviewDto[];
+}
+type FilterReviewDto = ({
+    page?: string;
+    limit?: string;
+} & IReviewDto) | any;
+interface IReviewDto {
+    _id: string;
+    data: ICollectionDto;
+    owner: IUser | string;
+    receiver: IUser | string;
+    type: string;
+    review: string;
+    rating: number;
+    createdAt?: string | Date;
+    deletedAt?: string | Date;
+    updatedAt?: string | Date;
+}
+interface ReviewModuleType {
+    addReview(authToken: string, payload: AddReviewDto): Promise<ResponseDto<void>>;
+    viewAll(authToken: string, filter?: FilterReviewDto): Promise<ResponseDto<FindReviewDto>>;
+    viewAReview(authToken: string, reviewId: string): Promise<ResponseDto<IReviewDto>>;
+}
+
+declare class ReviewModule implements ReviewModuleType {
+    private id;
+    private connector;
+    constructor(id: string);
+    viewAll(authToken: string, filter?: FilterReviewDto | undefined): Promise<ResponseDto<FindReviewDto>>;
+    viewAReview(authToken: string, reviewId: string): Promise<ResponseDto<IReviewDto>>;
+    addReview(authToken: string, payload: AddReviewDto): Promise<ResponseDto<void>>;
+}
+
 interface UploadedUser {
     profile: {
         talent: {
@@ -476,6 +604,125 @@ declare class UploadModule implements UploadModuleType {
     getAFileUpload(authToken: string, id: string): Promise<ResponseDto<IUploadDto>>;
 }
 
+interface WalletUser {
+    profile: {
+        talent: {
+            tags: string[];
+            availability: string;
+            tagsIds: object[];
+        };
+    };
+    _id: string;
+    firstName: string;
+    lastName: string;
+    type: string;
+    score: number;
+}
+declare enum IWalletStatus {
+    ACTIVE = "active",
+    DEACTIVATED = "deactivated",
+    BLOCKED = "blocked"
+}
+declare enum ITransactionStatus {
+    PENDING = "pending",
+    PROCESSING = "processing",
+    COMPLETED = "completed",
+    FAILED = "failed"
+}
+declare enum ITransactionMethod {
+    SENT = "sent",
+    DEPOSIT = "deposit",
+    WITHDRAWAL = "withdrawal",
+    RECIEVED = "recieved",
+    ESCROW = "escrow",
+    JOBPAYOUT = "job-payout",
+    FEEPAYOUT = "fee-payout"
+}
+type ITransactionType = "sent" | "deposit" | "withdrawal" | "recieved" | "escrow" | "job-payout" | "fee-payout";
+interface IWalletExchangeDto {
+    avax: number;
+}
+interface IWalletDto {
+    _id: string;
+    owner: WalletUser;
+    amount: number;
+    ledger: number;
+    lock: number;
+    lockedUsd: number;
+    usdValue: number;
+    usdRate: number;
+    spendable: number;
+    address: string;
+    coin: string;
+    walletId: string;
+    walletData: string;
+    status: IWalletStatus;
+    prod: boolean;
+    isSystem: boolean;
+    createdAt?: string | Date;
+    deletedAt?: string | Date;
+    updateAt?: string | Date;
+}
+interface ITransactionDto$1 {
+    _id: string;
+    owner: WalletUser;
+    amount: number;
+    sender: string;
+    reciever: string;
+    currency: string;
+    usdValue: number;
+    description: string;
+    tx: string;
+    type: ITransactionType;
+    hash: string;
+    method: ITransactionMethod;
+    status: ITransactionStatus;
+    createdAt?: string | Date;
+    deletedAt?: string | Date;
+    updatedAt?: string | Date;
+}
+type FindTransactionsDto = {
+    page: number;
+    pages: number;
+    total: number;
+    limit: number;
+    transactions: ITransactionDto$1[];
+};
+type ITransactionStatsFormat = "weekly" | "monthly" | "yearly";
+interface ITransactionStatsDto {
+    _id: number;
+    count: number;
+    date: string;
+}
+interface AggTxns {
+    type: string;
+    amount: number;
+    date: string;
+}
+interface WalletModuleType {
+    getExchange(authToken: string): Promise<ResponseDto<IWalletExchangeDto>>;
+    getTransactions(authToken: string): Promise<ResponseDto<FindTransactionsDto>>;
+    getATransaction(authToken: string, id: string): Promise<ResponseDto<ITransactionDto$1>>;
+    getTransactionStats(authToken: string, format: ITransactionStatsFormat): Promise<ResponseDto<ITransactionStatsDto[]>>;
+    getAggregateTransactionStats(authToken: string): Promise<ResponseDto<AggTxns[]>>;
+    getWallets(authToken: string): Promise<ResponseDto<IWalletDto[]>>;
+    getSingleWallet(authToken: string, coin: string): Promise<ResponseDto<IWalletDto>>;
+}
+
+declare class WalletModule implements WalletModuleType {
+    private id;
+    private coin;
+    private connector;
+    constructor(id: string, coin?: string);
+    getTransactions(authToken: string): Promise<ResponseDto<FindTransactionsDto>>;
+    getATransaction(authToken: string, id: string): Promise<ResponseDto<ITransactionDto$1>>;
+    getTransactionStats(authToken: string): Promise<ResponseDto<ITransactionStatsDto[]>>;
+    getAggregateTransactionStats(authToken: string): Promise<ResponseDto<AggTxns[]>>;
+    getWallets(authToken: string): Promise<ResponseDto<IWalletDto[]>>;
+    getSingleWallet(authToken: string, coin: string): Promise<ResponseDto<IWalletDto>>;
+    getExchange(authToken: string): Promise<ResponseDto<IWalletExchangeDto>>;
+}
+
 interface ICollectionTypeDto {
     _id: string;
     name: string;
@@ -504,19 +751,18 @@ interface ICollectionDto {
     collections?: ICollectionDto[] | string[];
     stage?: number;
     image?: IUploadDto;
-    invite?: string;
-    invites?: string[];
+    invite?: string | IInviteDto;
+    invites?: string[] | IInviteDto[];
     applications?: string[];
-    wallet?: string;
+    wallet?: string | IWalletDto;
     attachments?: IAttachmentDto[];
     attachmentData?: string[];
     status?: ICollectionStatus;
     inviteAccepted?: boolean;
     isPrivate?: boolean;
-    emailToken?: string;
-    rating?: string;
-    recipientRating?: string;
-    ratings?: string[];
+    rating?: string | IReviewDto;
+    recipientRating?: string | IReviewDto;
+    ratings?: string[] | IReviewDto[];
     score?: number;
     progress?: number;
     isDeleted?: boolean;
@@ -631,41 +877,6 @@ interface CollectionModuleType {
     updateManyCollections(authToken: string, collections: UpdateManyCollectionsDto): Promise<ResponseDto<{}>>;
 }
 
-declare class CollectionModule implements CollectionModuleType {
-    private id;
-    private connector;
-    constructor(id: string);
-    /**
-     * findall. This method finds all logged User's Jobs both created and assigned.
-     * @param filter filterDto
-     */
-    getAll(authToken: string, filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionDto>>;
-    /**
-     * findall. This method finds all logged User's Jobs both created and assigned.
-     * @param filter filterCollectionDto
-     */
-    getById(authToken: string, id: string): Promise<ResponseDto<ICollectionDto>>;
-    /**
-     * getTypes. This method finds collection types accepted for creating collection
-     * @param filter filterDto
-     */
-    getTypes(authToken: string, filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionTypeDto>>;
-    /**
-     * create. This method creates a new Job.
-     * @param payload CreateCollectionDto
-     */
-    create(authToken: string, payload: CreateCollectionDto): Promise<ResponseDto<ICollectionDto>>;
-    /**
-     * createMany. This method creates multiple collections for a type
-     * @param filter CreateManyCollectionDto
-     */
-    createMany(authToken: string, payload: CreateManyCollectionDto): Promise<ResponseDto<ICollectionDto[]>>;
-    updateCollection(authToken: string, id: string, payload: UpdateCollectionDto): Promise<ResponseDto<{}>>;
-    getACollectionType(authToken: string, typeId: string): Promise<ResponseDto<ICollectionTypeDto>>;
-    deleteACollection(authToken: string, collectionId: string): Promise<ResponseDto<{}>>;
-    updateManyCollections(authToken: string, collections: UpdateManyCollectionsDto): Promise<ResponseDto<{}>>;
-}
-
 interface IFeed {
     _id: string;
     creator?: string;
@@ -717,57 +928,6 @@ declare class FeedModule implements FeedModuleType {
     getById(authToken: string, filterId: string): Promise<ResponseDto<IFeed>>;
     dismissAllFeeds(authToken: string): Promise<ResponseDto<{}>>;
     dismissAFeed(authToken: string, filterId: string): Promise<ResponseDto<{}>>;
-}
-
-type IInviteStatus = "pending" | "accepted" | "rejected";
-interface IInviteDto {
-    _id: string;
-    sender: IUser | string;
-    receiver: IUser | string;
-    data: ICollectionDto | string;
-    message: string;
-    description: string;
-    status: IInviteStatus;
-    emailToken: string;
-    acceptedAt?: string;
-    createdAt?: string | Date;
-    deletedAt?: string | Date;
-    updatedAt?: string | Date;
-}
-interface SendInviteDto {
-    recipient: string;
-    collection: string;
-}
-type FilterInviteDto = ({
-    page?: string;
-    limit?: string;
-} & IInviteDto) | any;
-interface FindInvitesDto {
-    data: IInviteDto[];
-    total: number;
-    pages: number;
-    page: number;
-    limit: number;
-}
-interface InviteModuleType {
-    sendInvite(authToken: string, payload: SendInviteDto): Promise<ResponseDto<{}>>;
-    acceptInvite(authToken: string, inviteId: string): Promise<ResponseDto<{}>>;
-    declineInvite(authToken: string, inviteId: string): Promise<ResponseDto<{}>>;
-    cancelInvite(authToken: string, inviteId: string): Promise<ResponseDto<{}>>;
-    getAll(authToken: string, filter?: FilterInviteDto): Promise<ResponseDto<FindInvitesDto>>;
-    getAnInvite(authToken: string, id: string): Promise<ResponseDto<IInviteDto>>;
-}
-
-declare class InviteModule implements InviteModuleType {
-    private id;
-    private connector;
-    constructor(id: string);
-    sendInvite(authToken: string, payload: SendInviteDto): Promise<ResponseDto<{}>>;
-    acceptInvite(authToken: string, inviteId: string): Promise<ResponseDto<{}>>;
-    declineInvite(authToken: string, inviteId: string): Promise<ResponseDto<{}>>;
-    getAll(authToken: string, filter?: FilterInviteDto): Promise<ResponseDto<FindInvitesDto>>;
-    getAnInvite(authToken: string, id: string): Promise<ResponseDto<IInviteDto>>;
-    cancelInvite(authToken: string, inviteId: string): Promise<ResponseDto<{}>>;
 }
 
 interface ICollectionBookmarkDto {
@@ -939,48 +1099,6 @@ declare class NotificationModule implements NotificationModuleType {
     markOneAsRead(authToken: string, id: string): Promise<ResponseDto<void>>;
 }
 
-interface AddReviewDto {
-    collectionId: string;
-    rating: number;
-    review: string;
-    receiver: string;
-}
-interface FindReviewDto {
-    count: number;
-    pages: number;
-    data: IReviewDto[];
-}
-type FilterReviewDto = ({
-    page?: string;
-    limit?: string;
-} & IReviewDto) | any;
-interface IReviewDto {
-    _id: string;
-    data: ICollectionDto;
-    owner: IUser | string;
-    receiver: IUser | string;
-    type: string;
-    review: string;
-    rating: number;
-    createdAt?: string | Date;
-    deletedAt?: string | Date;
-    updatedAt?: string | Date;
-}
-interface ReviewModuleType {
-    addReview(authToken: string, payload: AddReviewDto): Promise<ResponseDto<void>>;
-    viewAll(authToken: string, filter?: FilterReviewDto): Promise<ResponseDto<FindReviewDto>>;
-    viewAReview(authToken: string, reviewId: string): Promise<ResponseDto<IReviewDto>>;
-}
-
-declare class ReviewModule implements ReviewModuleType {
-    private id;
-    private connector;
-    constructor(id: string);
-    viewAll(authToken: string, filter?: FilterReviewDto | undefined): Promise<ResponseDto<FindReviewDto>>;
-    viewAReview(authToken: string, reviewId: string): Promise<ResponseDto<IReviewDto>>;
-    addReview(authToken: string, payload: AddReviewDto): Promise<ResponseDto<void>>;
-}
-
 type VerificationDocumentTypes = "PASSPORT" | "ID_CARD" | "RESIDENCE_PERMIT" | "DRIVERS_LICENSE" | "VISA" | "OTHER";
 interface ICreateSessionPayload {
     firstName: string;
@@ -1064,123 +1182,6 @@ declare class UserVerificationModule implements UserVerificationModuleType {
     getUserVerifications(authToken: string): Promise<ResponseDto<IVerification[]>>;
 }
 
-interface WalletUser {
-    profile: {
-        talent: {
-            tags: string[];
-            availability: string;
-            tagsIds: object[];
-        };
-    };
-    _id: string;
-    firstName: string;
-    lastName: string;
-    type: string;
-    score: number;
-}
-declare enum IWalletStatus {
-    ACTIVE = "active",
-    DEACTIVATED = "deactivated",
-    BLOCKED = "blocked"
-}
-declare enum ITransactionStatus {
-    PENDING = "pending",
-    PROCESSING = "processing",
-    COMPLETED = "completed",
-    FAILED = "failed"
-}
-declare enum ITransactionMethod {
-    SENT = "sent",
-    DEPOSIT = "deposit",
-    WITHDRAWAL = "withdrawal",
-    RECIEVED = "recieved",
-    ESCROW = "escrow",
-    JOBPAYOUT = "job-payout",
-    FEEPAYOUT = "fee-payout"
-}
-interface IWalletExchangeDto {
-    avax: number;
-}
-interface IWalletDto {
-    _id: string;
-    owner: WalletUser;
-    amount: number;
-    ledger: number;
-    lock: number;
-    lockedUsd: number;
-    usdValue: number;
-    usdRate: number;
-    spendable: number;
-    address: string;
-    coin: string;
-    walletId: string;
-    walletData: string;
-    status: IWalletStatus;
-    prod: boolean;
-    isSystem: boolean;
-    createdAt?: string | Date;
-    deletedAt?: string | Date;
-    updateAt?: string | Date;
-}
-interface ITransactionDto$1 {
-    _id: string;
-    owner: WalletUser;
-    amount: number;
-    sender: string;
-    reciever: string;
-    currency: string;
-    usdValue: number;
-    description: string;
-    tx: string;
-    type: string;
-    hash: string;
-    method: ITransactionMethod;
-    status: ITransactionStatus;
-    createdAt?: string | Date;
-    deletedAt?: string | Date;
-    updatedAt?: string | Date;
-}
-type FindTransactionsDto = {
-    page: number;
-    pages: number;
-    total: number;
-    limit: number;
-    transactions: ITransactionDto$1[];
-};
-interface ITransactionStatsDto {
-    _id: number;
-    count: number;
-    date: string;
-}
-interface AggTxns {
-    type: string;
-    amount: number;
-    date: string;
-}
-interface WalletModuleType {
-    getExchange(authToken: string): Promise<ResponseDto<IWalletExchangeDto>>;
-    getTransactions(authToken: string): Promise<ResponseDto<FindTransactionsDto>>;
-    getATransaction(authToken: string, id: string): Promise<ResponseDto<ITransactionDto$1>>;
-    getTransactionStats(authToken: string): Promise<ResponseDto<ITransactionStatsDto[]>>;
-    getAggregateTransactionStats(authToken: string): Promise<ResponseDto<AggTxns[]>>;
-    getWallets(authToken: string): Promise<ResponseDto<IWalletDto[]>>;
-    getSingleWallet(authToken: string, coin: string): Promise<ResponseDto<IWalletDto>>;
-}
-
-declare class WalletModule implements WalletModuleType {
-    private id;
-    private coin;
-    private connector;
-    constructor(id: string, coin?: string);
-    getTransactions(authToken: string): Promise<ResponseDto<FindTransactionsDto>>;
-    getATransaction(authToken: string, id: string): Promise<ResponseDto<ITransactionDto$1>>;
-    getTransactionStats(authToken: string): Promise<ResponseDto<ITransactionStatsDto[]>>;
-    getAggregateTransactionStats(authToken: string): Promise<ResponseDto<AggTxns[]>>;
-    getWallets(authToken: string): Promise<ResponseDto<IWalletDto[]>>;
-    getSingleWallet(authToken: string, coin: string): Promise<ResponseDto<IWalletDto>>;
-    getExchange(authToken: string): Promise<ResponseDto<IWalletExchangeDto>>;
-}
-
 interface CreateWithdrawal {
     coin: string;
     amount: number;
@@ -1188,8 +1189,8 @@ interface CreateWithdrawal {
     password: string;
 }
 interface FilterWithdrawal {
-    page: number;
-    limit: number;
+    page?: number;
+    limit?: number;
     owner: string;
 }
 type FindWithdrawalsDto = {
@@ -1217,6 +1218,7 @@ interface ITransactionDto {
     deletedAt?: string | Date;
     updatedAt?: string | Date;
 }
+type IWithdrawalStatus = "pending" | "processing" | "completed" | "failed";
 interface IWithdrawalDto {
     _id: string;
     owner: string | IUser;
@@ -1227,7 +1229,7 @@ interface IWithdrawalDto {
     amount: number;
     usdValue: number;
     usdRate: number;
-    status: string;
+    status: IWithdrawalStatus;
 }
 interface WithdrawalModuleType {
     createWithdrawal(authToken: string, payload: CreateWithdrawal): Promise<ResponseDto<IWithdrawalDto>>;
@@ -1280,4 +1282,4 @@ declare class PaktSDK {
     private static generateRandomString;
 }
 
-export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, BookmarkEnumType, BookmarkType, CHARACTERS, ChangePasswordDto, ChatModule, ChatModuleType, CollectionModule, CollectionModuleType, ConnectionFilterModule, ConnectionFilterModuleType, CreateCollectionDto, CreateFeedDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, ErrorUtils, FeedModule, FeedModuleType, FilterFeedDto, FilterInviteDto, FilterReviewDto, FilterUploadDto, FilterUserDto, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindFeedDto, FindInvitesDto, FindNotificationDto, FindReviewDto, FindTransactionsDto, FindUploadDto, FindUsers, FindWithdrawalsDto, IChatConversation, IChatMessage, ICollectionBookmarkDto, ICollectionDto, ICollectionStatus, ICollectionTypeDto, IConnectionEvents, IConnectionFilter, IConnectionFilterDecider, IConnectionKeys, ICreateSessionPayload, IFeed, IFile, IInviteDto, IInviteStatus, INotificationDto, IReviewDto, ISendSessionMedia, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, IUploadDto, IUser, IUserTwoFaType, IVerification, IVerificationStatus, IWalletDto, IWalletExchangeDto, IWithdrawalDto, InviteModule, InviteModuleType, LoginDto, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, RegisterDto, RegisterPayload, ResendVerifyDto, ResetDto, ResponseDto, ReviewModule, ReviewModuleType, SendInviteDto, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UpdateCollectionDto, UpdateManyCollectionsDto, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, ValidateReferralDto, VerificationDocumentTypes, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelCollectionDto, createBookMarkDto, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, isEmpty, parseUrlWithQuery, updateUserDto };
+export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, BookmarkEnumType, BookmarkType, CHARACTERS, ChangePasswordDto, ChatModule, ChatModuleType, CollectionModule, CollectionModuleType, ConnectionFilterModule, ConnectionFilterModuleType, CreateCollectionDto, CreateFeedDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, ErrorUtils, FeedModule, FeedModuleType, FilterFeedDto, FilterInviteDto, FilterReviewDto, FilterUploadDto, FilterUserDto, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindFeedDto, FindInvitesDto, FindNotificationDto, FindReviewDto, FindTransactionsDto, FindUploadDto, FindUsers, FindWithdrawalsDto, IChatConversation, IChatMessage, ICollectionBookmarkDto, ICollectionDto, ICollectionStatus, ICollectionTypeDto, IConnectionEvents, IConnectionFilter, IConnectionFilterDecider, IConnectionKeys, ICreateSessionPayload, IFeed, IFile, IInviteDto, IInviteStatus, INotificationDto, IReviewDto, ISendSessionMedia, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, ITransactionStatsFormat, ITransactionType, IUploadDto, IUser, IUserTwoFaType, IVerification, IVerificationStatus, IWalletDto, IWalletExchangeDto, IWithdrawalDto, IWithdrawalStatus, InviteModule, InviteModuleType, LoginDto, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, RegisterDto, RegisterPayload, ResendVerifyDto, ResetDto, ResponseDto, ReviewModule, ReviewModuleType, SendInviteDto, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UpdateCollectionDto, UpdateManyCollectionsDto, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, ValidateReferralDto, VerificationDocumentTypes, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelCollectionDto, createBookMarkDto, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, isEmpty, parseUrlWithQuery, updateUserDto };
