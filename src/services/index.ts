@@ -13,6 +13,7 @@ import { FeedModule } from "./feed";
 import { FeedModuleType } from "./feed/feed.dto";
 import { InviteModule, InviteModuleType } from "./invite";
 import { NotificationModule, NotificationModuleType } from "./notification";
+import { PaymentModule, PaymentModuleType } from "./payment";
 import { ReviewModule, ReviewModuleType } from "./review";
 import { UploadModule, UploadModuleType } from "./upload/upload";
 import { UserVerificationModule, UserVerificationModuleType } from "./userVerification";
@@ -29,6 +30,7 @@ export * from "./connectionFilter";
 export * from "./feed";
 export * from "./invite";
 export * from "./notification";
+export * from "./payment";
 export * from "./review";
 export * from "./upload";
 export * from "./userVerification";
@@ -51,6 +53,7 @@ export class PaktSDK {
   connectionFilter: ConnectionFilterModuleType;
   invite: InviteModuleType;
   feed: FeedModuleType;
+  payment: PaymentModuleType;
 
   constructor(id: string) {
     this.auth = Container.of(id).get(AuthenticationModule);
@@ -67,6 +70,7 @@ export class PaktSDK {
     this.connectionFilter = Container.of(id).get(ConnectionFilterModule);
     this.invite = Container.of(id).get(InviteModule);
     this.feed = Container.of(id).get(FeedModule);
+    this.payment = Container.of(id).get(PaymentModule);
   }
   /**
    * Initialize Pakt SDK. This method must be called before any other method.
