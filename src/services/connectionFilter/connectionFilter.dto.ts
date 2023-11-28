@@ -4,13 +4,13 @@ export type IConnectionKeys = "tags" | "tagCount" | "afroScore";
 
 export type IConnectionFilterDecider = "greater_than" | "less_than" | "equal_to" | "contains" | "between";
 
-export type IConnectionEvents = "CREATE_CONVERSATION" | "CREATE_JOB" | "ASSIGN_JOB";
+export type IConnectionEvents = "CREATE_CONVERSATION";
 
 export interface IConnectionFilter {
   _id?: string;
   event: IConnectionEvents;
   key: IConnectionKeys;
-  value: any;
+  value: string | number | string[];
   decider: IConnectionFilterDecider;
   createdAt?: string | Date;
   deletedAt?: string | Date;
