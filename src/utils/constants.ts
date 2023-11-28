@@ -91,6 +91,13 @@ export const API_PATHS = {
   FEEDS: "/feeds",
   FEEDS_DISMISS_ONE: "/dismiss",
   FEEDS_DISMISS_ALL: "/feeds/dismiss/all",
+
+  //Payment
+  CREATE_ORDER: "/payment/",
+  VALIDATE_ORDER: "/payment/validate",
+  RELEASE_ORDER: "/payment/release",
+  PAYMENT_METHODS: "/payment/coins",
+  RPC: "/payment/rpc",
 };
 
 export type expectedISOCountries =
