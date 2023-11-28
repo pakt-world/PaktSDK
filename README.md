@@ -54,34 +54,6 @@ The above code initializes the PAKT SDK and ensures the API KEY is generated on 
 
 If you want to learn how to use the PAKT SDK, visit this link for the [documentation & guide.](https://pakt-1.gitbook.io/pakt-sdk/web-sdk/overview/getting-started)
 
-# Table of Contents
-
-[Authentication](https://docs.pakt.world/pakt/web-sdk/overview/references/authentication)
-
-[Account](https://docs.pakt.world/pakt/web-sdk/overview/references/account)
-
-[Notification](https://docs.pakt.world/pakt/web-sdk/overview/references/notifications)
-
-[Upload](https://docs.pakt.world/pakt/web-sdk/overview/references/upload)
-
-[Review](https://docs.pakt.world/pakt/web-sdk/overview/references/reviews)
-
-[Wallet](https://docs.pakt.world/pakt/web-sdk/overview/references/wallet)
-
-[Withdrawal](https://docs.pakt.world/pakt/web-sdk/overview/references/wallet/withdrawal)
-
-[Collections](https://docs.pakt.world/pakt/web-sdk/overview/references/collections)
-
-[Bookmarks](https://docs.pakt.world/pakt/web-sdk/overview/references/bookmarks)
-
-[Verification](https://docs.pakt.world/pakt/web-sdk/overview/references/verification)
-
-[Connection Filter](https://docs.pakt.world/pakt/web-sdk/overview/references/connection-filters)
-
-[Invite](https://docs.pakt.world/pakt/web-sdk/overview/references/invite)
-
-[Chat](https://docs.pakt.world/pakt/web-sdk/overview/references/messaging-wip)
-
 ## Example
 
 Explore our example project which effectively demonstrates the practical application of our SDK:

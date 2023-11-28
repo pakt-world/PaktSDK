@@ -21,7 +21,7 @@ export class FeedModule implements FeedModuleType {
   }
 
   create(authToken: string, payload: CreateFeedDto): Promise<ResponseDto<{}>> {
-    return ErrorUtils.tryFail(async () => {
+    return ErrorUtils.newTryFail(async () => {
       const credentials = { ...payload };
       const response: ResponseDto<{}> = await this.connector.post({
         path: `${API_PATHS.FEEDS}/`,
