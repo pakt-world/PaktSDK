@@ -1,9 +1,12 @@
 import { Container, Service } from "typedi";
 import { PaktConnector } from "../../connector/connector";
-import { ResponseDto } from "../../utils/response";
+import { API_PATHS } from "../../utils/constants";
+import { ErrorUtils, ResponseDto, Status } from "../../utils/response";
 import {
+  IBlockchainCoinDto,
   ICreatePaymentDto,
   IPaymentDataDto,
+  IRPCDto,
   IReleasePaymentDto,
   IValidatePaymentDto,
   PaymentModuleType,
@@ -26,14 +29,63 @@ export class PaymentModule implements PaymentModuleType {
   }
 
   create(authToken: string, payload: ICreatePaymentDto): Promise<ResponseDto<IPaymentDataDto>> {
-    throw new Error("Method not implemented.");
+    return ErrorUtils.newTryFail(async () => {
+      const credentials = { ...payload };
+      const response: ResponseDto<IPaymentDataDto> = await this.connector.post({
+        path: `${API_PATHS.CREATE_ORDER}`,
+        body: credentials,
+        authToken,
+      });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
+    });
   }
 
   validate(authToken: string, payload: IValidatePaymentDto): Promise<ResponseDto<{}>> {
-    throw new Error("Method not implemented.");
+    return ErrorUtils.newTryFail(async () => {
+      const credentials = { ...payload };
+      const response: ResponseDto<IPaymentDataDto> = await this.connector.post({
+        path: `${API_PATHS.VALIDATE_ORDER}`,
+        body: credentials,
+        authToken,
+      });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
+    });
   }
 
   release(authToken: string, payload: IReleasePaymentDto): Promise<ResponseDto<{}>> {
-    throw new Error("Method not implemented.");
+    return ErrorUtils.newTryFail(async () => {
+      const credentials = { ...payload };
+      const response: ResponseDto<IPaymentDataDto> = await this.connector.post({
+        path: `${API_PATHS.RELEASE_ORDER}`,
+        body: credentials,
+        authToken,
+      });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
+    });
+  }
+
+  paymentMethods(authToken: string): Promise<ResponseDto<IBlockchainCoinDto[]>> {
+    return ErrorUtils.newTryFail(async () => {
+      const response: ResponseDto<IBlockchainCoinDto[]> = await this.connector.get({
+        path: `${API_PATHS.PAYMENT_METHODS}`,
+        authToken,
+      });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
+    });
+  }
+
+  activeRpc(authToken: string): Promise<ResponseDto<IRPCDto>> {
+    return ErrorUtils.newTryFail(async () => {
+      const response: ResponseDto<IRPCDto> = await this.connector.get({
+        path: `${API_PATHS.RPC}`,
+        authToken,
+      });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
+    });
   }
 }
