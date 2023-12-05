@@ -795,6 +795,10 @@ type CreateCollectionDto = {
     tags?: string[];
     attachments?: string[];
     meta?: Record<string, any>;
+    paymentFee?: number;
+    parent?: string;
+    image?: string;
+    status?: ICollectionStatus;
 };
 type CreateManyCollectionDto = {
     type: string;
@@ -808,6 +812,7 @@ type CreateManyCollectionDto = {
         tags?: string[];
         attachments?: string[];
         meta?: Record<string, any>;
+        paymentFee?: number;
     }[];
 };
 type assignCollectionDto = {
@@ -1253,7 +1258,7 @@ interface CreateSessionResponse {
     };
 }
 interface SendSessionMediaResponse {
-    status: string;
+    status: IVerificationStatus;
     image: {
         context: "face" | "document-front" | "document-back";
         id: string;
