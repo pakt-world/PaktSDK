@@ -72,7 +72,7 @@ export interface CreateSessionResponse {
 }
 
 export interface SendSessionMediaResponse {
-  status: string;
+  status: IVerificationStatus;
   image: {
     context: "face" | "document-front" | "document-back";
     id: string;

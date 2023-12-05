@@ -75,6 +75,10 @@ export type CreateCollectionDto = {
   tags?: string[];
   attachments?: string[];
   meta?: Record<string, any>;
+  paymentFee?: number;
+  parent?: string;
+  image?: string;
+  status?: ICollectionStatus;
 };
 
 export type CreateManyCollectionDto = {
@@ -89,6 +93,7 @@ export type CreateManyCollectionDto = {
     tags?: string[];
     attachments?: string[];
     meta?: Record<string, any>;
+    paymentFee?: number;
   }[];
 };
 
