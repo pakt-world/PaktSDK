@@ -98,6 +98,15 @@ export const API_PATHS = {
   RELEASE_ORDER: "/payment/release",
   PAYMENT_METHODS: "/payment/coins",
   RPC: "/payment/rpc",
+
+  //Referrals endpoint
+  FETCH_USER_REFERRALS: "/referrals/",
+  FETCH_USER_REFERRAL_STATS: "/referrals/stats",
+  SEND_REFERRALS_INVITE: "/referrals/invite",
+
+  //Tags-category endpoint
+  FETCH_CATEGORIES: "/tag-category/",
+  FETCH_CATEGORIES_BY_ID: "/tag-category",
 };
 
 export type expectedISOCountries =
