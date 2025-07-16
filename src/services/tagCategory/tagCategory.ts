@@ -3,6 +3,8 @@ import { PaktConnector } from "../../connector";
 import { API_PATHS, ErrorUtils, ResponseDto, Status, parseUrlWithQuery } from "../../utils";
 import { FilterTagCategories, FindTagCategories, ITagCategory, TagCategoriesModule } from "./tagCategory.dto";
 
+export * from "./tagCategory.dto";
+
 @Service({
   factory: (data: { id: string }) => {
     return new TagCategoryModule(data.id);

@@ -1212,6 +1212,85 @@ declare class PaymentModule implements PaymentModuleType {
     activeRpc(authToken: string): Promise<ResponseDto<IRPCDto>>;
 }
 
+type IReferralProgramType = "unlimited" | "expiring" | "time_period_reset" | "conditional" | "system" | "limited";
+interface IReferralProgram {
+    title: string;
+    description: string;
+    numberOfReferrals: string;
+    invitationCap: string;
+    code: string;
+    type: IReferralProgramType;
+    link: string;
+    expiresAt: string;
+    timeframe: string;
+    status: boolean;
+    isSystem: boolean;
+    isAdminInvite: boolean;
+    counts?: number;
+    numberOfDays?: number;
+    conditional?: string;
+}
+type IReferralProgramConditional = "referral" | "five_star_collection_completion";
+interface IUserReferrals {
+    referralId: IReferralProgram | string;
+    userId: IUser | string;
+    referral: IUser | string;
+    conditional: IReferralProgramConditional;
+    completedGig: boolean;
+    status: boolean;
+    referred_at: string;
+    type: IReferralProgramType;
+}
+interface FindUserReferrals extends IUserReferrals {
+    data: IUserReferrals[];
+    referralMessage: string;
+    pages: number;
+    total: number;
+    limit: number;
+}
+interface IUserReferralStats {
+    referralLink: string;
+    totalAllowedInvites: number | string;
+    inviteSent: number | string;
+}
+interface UserReferralModule {
+    fetchUserReferrals(authToken: string, filter?: {
+        page?: number;
+        limit?: number;
+    } & Record<string, any>): Promise<ResponseDto<FindUserReferrals>>;
+    fetchUserReferralsStats(authToken: string): Promise<ResponseDto<IUserReferralStats>>;
+    sendReferrralsInvite(authToken: string, emails: string[]): Promise<ResponseDto<{}>>;
+}
+
+interface ITagCategory {
+    name: string;
+    description: string;
+    type: string;
+    icon?: string;
+    color?: string;
+    isParent?: boolean;
+    parent: ITagCategory | string;
+    categories: ITagCategory[] | string[];
+}
+interface FindTagCategories {
+    data: ITagCategory[];
+    total: number;
+    pages: number;
+    page: number;
+    limit: number;
+}
+interface FilterTagCategories {
+    page?: number;
+    limt?: number;
+    owner?: string;
+    type?: string;
+    search?: string;
+}
+interface TagCategoriesModule {
+    fetchCategories(authToken: string, filter?: FilterTagCategories): Promise<ResponseDto<FindTagCategories>>;
+    fetchACategory(authToken: string, id: string): Promise<ResponseDto<ITagCategory>>;
+}
+
 type VerificationDocumentTypes = "PASSPORT" | "ID_CARD" | "RESIDENCE_PERMIT" | "DRIVERS_LICENSE" | "VISA" | "OTHER";
 interface ICreateSessionPayload {
     firstName: string;
@@ -1358,6 +1437,23 @@ declare class ConnectionFilterModule implements ConnectionFilterModuleType {
     getForAUser(authToken: string): Promise<ResponseDto<IConnectionFilter>>;
 }
 
+declare class ReferralsModule implements UserReferralModule {
+    private id;
+    private connector;
+    constructor(id: string);
+    fetchUserReferrals(authToken: string, filter?: Record<string, any>): Promise<ResponseDto<FindUserReferrals>>;
+    fetchUserReferralsStats(authToken: string): Promise<ResponseDto<IUserReferralStats>>;
+    sendReferrralsInvite(authToken: string, emails: string[]): Promise<ResponseDto<{}>>;
+}
+
+declare class TagCategoryModule implements TagCategoriesModule {
+    private id;
+    private connector;
+    constructor(id: string);
+    fetchCategories(authToken: string, filter?: FilterTagCategories | undefined): Promise<ResponseDto<FindTagCategories>>;
+    fetchACategory(authToken: string, id: string): Promise<ResponseDto<ITagCategory>>;
+}
+
 declare class WithdrawalModule implements WithdrawalModuleType {
     private id;
     private connector;
@@ -1382,6 +1478,8 @@ declare class PaktSDK {
     invite: InviteModuleType;
     feed: FeedModuleType;
     payment: PaymentModuleType;
+    referrals: UserReferralModule;
+    tagCategory: TagCategoriesModule;
     constructor(id: string);
     /**
      * Initialize Pakt SDK. This method must be called before any other method.
@@ -1396,4 +1494,4 @@ declare class PaktSDK {
     private static generateRandomString;
 }
 
-export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, BookmarkEnumType, BookmarkType, CHARACTERS, ChangePasswordDto, ChatModule, ChatModuleType, CollectionModule, CollectionModuleType, ConnectionFilterModule, ConnectionFilterModuleType, CreateCollectionDto, CreateFeedDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, ErrorUtils, FEED_TYPES, FEED_TYPES_ENUM, FeedModule, FeedModuleType, FilterFeedDto, FilterInviteDto, FilterReviewDto, FilterUploadDto, FilterUserDto, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindFeedDto, FindInvitesDto, FindNotificationDto, FindReviewDto, FindTransactionsDto, FindUploadDto, FindUsers, FindWithdrawalsDto, IBlockchainCoinDto, IChatConversation, IChatMessage, ICollectionBookmarkDto, ICollectionDto, ICollectionStatus, ICollectionTypeDto, IConnectionEvents, IConnectionFilter, IConnectionFilterDecider, IConnectionKeys, ICreatePaymentDto, ICreateSessionPayload, IFeed, IFile, IInviteDto, IInviteStatus, INotificationDto, IPaymentCoins, IPaymentDataDto, IPaymentStatusEnum, IPaymentStatusType, IRPCDto, IReleasePaymentDto, IReviewDto, ISendSessionMedia, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, ITransactionStatsFormat, ITransactionType, IUploadDto, IUser, IUserTwoFaType, IValidatePaymentDto, IVerification, IVerificationStatus, IWalletDto, IWalletExchangeDto, IWithdrawalDto, IWithdrawalStatus, InviteModule, InviteModuleType, LoginDto, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, PaymentModule, PaymentModuleType, RegisterDto, RegisterPayload, ResendVerifyDto, ResetDto, ResponseDto, ReviewModule, ReviewModuleType, SendInviteDto, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UpdateCollectionDto, UpdateManyCollectionsDto, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, ValidateReferralDto, VerificationDocumentTypes, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelCollectionDto, createBookMarkDto, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, isEmpty, parseUrlWithQuery, updateUserDto };
+export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, BookmarkEnumType, BookmarkType, CHARACTERS, ChangePasswordDto, ChatModule, ChatModuleType, CollectionModule, CollectionModuleType, ConnectionFilterModule, ConnectionFilterModuleType, CreateCollectionDto, CreateFeedDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, ErrorUtils, FEED_TYPES, FEED_TYPES_ENUM, FeedModule, FeedModuleType, FilterFeedDto, FilterInviteDto, FilterReviewDto, FilterTagCategories, FilterUploadDto, FilterUserDto, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindFeedDto, FindInvitesDto, FindNotificationDto, FindReviewDto, FindTagCategories, FindTransactionsDto, FindUploadDto, FindUserReferrals, FindUsers, FindWithdrawalsDto, IBlockchainCoinDto, IChatConversation, IChatMessage, ICollectionBookmarkDto, ICollectionDto, ICollectionStatus, ICollectionTypeDto, IConnectionEvents, IConnectionFilter, IConnectionFilterDecider, IConnectionKeys, ICreatePaymentDto, ICreateSessionPayload, IFeed, IFile, IInviteDto, IInviteStatus, INotificationDto, IPaymentCoins, IPaymentDataDto, IPaymentStatusEnum, IPaymentStatusType, IRPCDto, IReferralProgram, IReleasePaymentDto, IReviewDto, ISendSessionMedia, ITagCategory, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, ITransactionStatsFormat, ITransactionType, IUploadDto, IUser, IUserReferralStats, IUserReferrals, IUserTwoFaType, IValidatePaymentDto, IVerification, IVerificationStatus, IWalletDto, IWalletExchangeDto, IWithdrawalDto, IWithdrawalStatus, InviteModule, InviteModuleType, LoginDto, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, PaymentModule, PaymentModuleType, ReferralsModule, RegisterDto, RegisterPayload, ResendVerifyDto, ResetDto, ResponseDto, ReviewModule, ReviewModuleType, SendInviteDto, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TagCategoriesModule, TagCategoryModule, TwoFATypeDto, TwoFAresponse, UpdateCollectionDto, UpdateManyCollectionsDto, UploadModule, UploadModuleType, UserReferralModule, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, ValidateReferralDto, VerificationDocumentTypes, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelCollectionDto, createBookMarkDto, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, isEmpty, parseUrlWithQuery, updateUserDto };

@@ -3,6 +3,8 @@ import { PaktConnector } from "../../connector";
 import { API_PATHS, ErrorUtils, ResponseDto, Status, parseUrlWithQuery } from "../../utils";
 import { FindUserReferrals, IUserReferralStats, UserReferralModule } from "./referrals.dto";
 
+export * from "./referrals.dto";
+
 @Service({
   factory: (data: { id: string }) => {
     return new ReferralsModule(data.id);

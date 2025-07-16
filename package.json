@@ -1,6 +1,6 @@
 {
   "name": "pakt-sdk",
-  "version": "0.1.41",
+  "version": "0.1.42",
   "description": "The PAKT SDK is an advanced software development kit, purpose-built for web applications, that empowers developers to construct innovative products on the PAKT Operating System.",
   "files": [
     "./dist/main.js",
@@ -19,7 +19,6 @@
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
     "build": "rimraf ./dist && tsup",
-    "server": "node build/usage/registration.js",
     "sd": "tsc --experimentalDecorators --resolveJsonModule ./src/services/index.ts"
   },
   "repository": {

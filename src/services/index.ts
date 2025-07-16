@@ -14,7 +14,11 @@ import { FeedModuleType } from "./feed/feed.dto";
 import { InviteModule, InviteModuleType } from "./invite";
 import { NotificationModule, NotificationModuleType } from "./notification";
 import { PaymentModule, PaymentModuleType } from "./payment";
+import { ReferralsModule } from "./referrals";
+import { UserReferralModule } from "./referrals/referrals.dto";
 import { ReviewModule, ReviewModuleType } from "./review";
+import { TagCategoryModule } from "./tagCategory";
+import { TagCategoriesModule } from "./tagCategory/tagCategory.dto";
 import { UploadModule, UploadModuleType } from "./upload/upload";
 import { UserVerificationModule, UserVerificationModuleType } from "./userVerification";
 import { WalletModule, WalletModuleType } from "./wallet/wallet";
@@ -31,7 +35,9 @@ export * from "./feed";
 export * from "./invite";
 export * from "./notification";
 export * from "./payment";
+export * from "./referrals";
 export * from "./review";
+export * from "./tagCategory";
 export * from "./upload";
 export * from "./userVerification";
 export * from "./wallet";
@@ -54,6 +60,8 @@ export class PaktSDK {
   invite: InviteModuleType;
   feed: FeedModuleType;
   payment: PaymentModuleType;
+  referrals: UserReferralModule;
+  tagCategory: TagCategoriesModule;
 
   constructor(id: string) {
     this.auth = Container.of(id).get(AuthenticationModule);
@@ -71,6 +79,8 @@ export class PaktSDK {
     this.invite = Container.of(id).get(InviteModule);
     this.feed = Container.of(id).get(FeedModule);
     this.payment = Container.of(id).get(PaymentModule);
+    this.referrals = Container.of(id).get(ReferralsModule);
+    this.tagCategory = Container.of(id).get(TagCategoryModule);
   }
   /**
    * Initialize Pakt SDK. This method must be called before any other method.
