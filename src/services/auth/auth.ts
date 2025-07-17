@@ -1,18 +1,28 @@
 import { Container, Service } from "typedi";
 import { PaktConnector } from "../../connector";
 import { API_PATHS } from "../../utils/constants";
-import { ErrorUtils, ResponseDto, Status } from "../../utils/response";
+import { ErrorUtils, parseUrlWithQuery, ResponseDto, Status } from "../../utils/response";
 import { AUTH_TOKEN, TEMP_TOKEN } from "../../utils/token";
 import {
   AccountVerifyDto,
   AuthenticationModuleType,
+  ChangeAuthenticationPasswordPayload,
   ChangePasswordDto,
+  GoogleOAuthGenerateDto,
+  GoogleOAuthValdatePayload,
+  GoogleOAuthValidateDto,
+  IRegisterResponse,
+  IResendVerifyLink,
   LoginDto,
+  LoginPayload,
   RegisterDto,
   RegisterPayload,
+  ResendVerifyPayload,
   ResetDto,
+  ResetPasswordPayload,
   ValidatePasswordToken,
   ValidateReferralDto,
+  VerifyAccountPayload,
 } from "./auth.dto";
 
 // Export all Types to Service
@@ -37,10 +47,9 @@ export class AuthenticationModule implements AuthenticationModuleType {
    * @param email
    * @param password
    */
-  async login(email: string, password: string): Promise<ResponseDto<LoginDto>> {
+  async login(payload: LoginPayload): Promise<ResponseDto<LoginDto>> {
     return ErrorUtils.newTryFail(async () => {
-      const credentials = { email, password };
-      const response: ResponseDto<LoginDto> = await this.connector.post({ path: API_PATHS.LOGIN, body: credentials });
+      const response: ResponseDto<LoginDto> = await this.connector.post({ path: API_PATHS.LOGIN, body: payload });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       if (response.data.tempToken) {
         Container.of(this.id).set(TEMP_TOKEN, response.data.tempToken.token);
@@ -61,15 +70,23 @@ export class AuthenticationModule implements AuthenticationModuleType {
   async register(payload: RegisterPayload): Promise<ResponseDto<RegisterDto>> {
     return ErrorUtils.newTryFail(async () => {
       const credentials = { ...payload };
-      const response: ResponseDto<RegisterDto> = await this.connector.post({
+      const response: ResponseDto<IRegisterResponse> = await this.connector.post({
         path: API_PATHS.REGISTER,
         body: credentials,
       });
-      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
-      if (response.data.tempToken.token) {
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR)
+        return response as unknown as ResponseDto<RegisterDto>;
+      if (response.data?.tempToken.token) {
         Container.of(this.id).set(TEMP_TOKEN, response.data.tempToken.token);
       }
-      return response;
+      return {
+        ...response,
+        data: {
+          token: response.data.tempToken.token,
+          token_type: response.data.tempToken.token_type,
+          expiresIn: response.data.tempToken.expiresIn,
+        },
+      };
     });
   }
 
@@ -78,7 +95,8 @@ export class AuthenticationModule implements AuthenticationModuleType {
    * @param tempToken
    * @param token
    */
-  async verifyAccount(tempToken: string, token: string): Promise<ResponseDto<AccountVerifyDto>> {
+  async verifyAccount(payload: VerifyAccountPayload): Promise<ResponseDto<AccountVerifyDto>> {
+    const { tempToken, token } = payload;
     return ErrorUtils.newTryFail(async () => {
       const credentials = { tempToken, token };
       const response: ResponseDto<AccountVerifyDto> = await this.connector.post({
@@ -97,12 +115,11 @@ export class AuthenticationModule implements AuthenticationModuleType {
    * resetPassword. This method sends an email for account password reset
    * @param email
    */
-  async resendVerifyLink(email: string): Promise<ResponseDto<ResetDto>> {
+  async resendVerifyLink(payload: ResendVerifyPayload): Promise<ResponseDto<IResendVerifyLink>> {
     return ErrorUtils.newTryFail(async () => {
-      const credentials = { email };
       const response: ResponseDto<ResetDto> = await this.connector.post({
         path: API_PATHS.RESEND_VERIFY_LINK,
-        body: credentials,
+        body: payload,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
 
@@ -117,12 +134,11 @@ export class AuthenticationModule implements AuthenticationModuleType {
    * resetPassword. This method sends an email for account password reset
    * @param email
    */
-  async resetPassword(email: string): Promise<ResponseDto<ResetDto>> {
+  async resetPassword(payload: ResetPasswordPayload): Promise<ResponseDto<ResetDto>> {
     return ErrorUtils.newTryFail(async () => {
-      const credentials = { email };
       const response: ResponseDto<ResetDto> = await this.connector.post({
         path: API_PATHS.RESET_PASSWORD,
-        body: credentials,
+        body: payload,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
@@ -134,36 +150,59 @@ export class AuthenticationModule implements AuthenticationModuleType {
    * @param token
    * @param password
    */
-  async changePassword(token: string, tempToken: string, password: string): Promise<ResponseDto<ChangePasswordDto>> {
+  async changePassword(payload: ChangeAuthenticationPasswordPayload): Promise<ResponseDto<ChangePasswordDto>> {
     return ErrorUtils.newTryFail(async () => {
-      const credentials = { token, tempToken, password };
       const response: ResponseDto<ChangePasswordDto> = await this.connector.post({
         path: API_PATHS.CHANGE_PASSWORD,
-        body: credentials,
+        body: payload,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
     });
   }
 
-  validatePasswordToken(token: string, tempToken: string): Promise<ResponseDto<ValidatePasswordToken>> {
+  async validatePasswordToken(props: {
+    token: string;
+    tempToken: string;
+  }): Promise<ResponseDto<ValidatePasswordToken>> {
     return ErrorUtils.newTryFail(async () => {
-      const credentials = { token, tempToken };
+      const { token, tempToken } = props;
       const response: ResponseDto<ChangePasswordDto> = await this.connector.post({
-        path: `${API_PATHS.VALIDATE_PASSWORD_TOKEN}/${token}`,
-        body: credentials,
+        path: `${API_PATHS.VALIDATE_PASSWORD_TOKEN}`,
+        body: { tempToken, token },
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
     });
   }
 
-  validateReferral(token: string): Promise<ResponseDto<ValidateReferralDto>> {
+  async validateReferral(token: string): Promise<ResponseDto<ValidateReferralDto>> {
     return ErrorUtils.newTryFail(async () => {
       const credentials = { token };
       const response: ResponseDto<ValidateReferralDto> = await this.connector.post({
         path: `${API_PATHS.VALIDATE_REFERRAL}`,
         body: credentials,
+      });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
+    });
+  }
+
+  async googleOAuthGenerateState(): Promise<ResponseDto<GoogleOAuthGenerateDto>> {
+    return ErrorUtils.newTryFail(async () => {
+      const response: ResponseDto<GoogleOAuthGenerateDto> = await this.connector.get({
+        path: `${API_PATHS.GOOGLE_OAUTH_GENERATE_STATE}`,
+      });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
+    });
+  }
+  googleOAuthValidateState(props: GoogleOAuthValdatePayload): Promise<ResponseDto<GoogleOAuthValidateDto>> {
+    return ErrorUtils.newTryFail(async () => {
+      const { state, code } = props;
+      const query = parseUrlWithQuery(API_PATHS.GOOGLE_OAUTH_VALIDATE_STATE, { state, code });
+      const response: ResponseDto<GoogleOAuthValidateDto> = await this.connector.post({
+        path: query,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;

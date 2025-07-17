@@ -74,6 +74,12 @@ export type LoginDto = {
 } & IUser;
 
 export interface RegisterDto {
+  token: string;
+  token_type: string;
+  expiresIn: number;
+}
+
+export interface IRegisterResponse {
   tempToken: {
     token: string;
     token_type: string;
@@ -83,10 +89,36 @@ export interface RegisterDto {
 
 export interface RegisterPayload {
   firstName: string;
-  lastName: string;
+  lastName?: string;
   email: string;
   password: string;
+  confirmPassword: string;
   referral?: string;
+  type?: string;
+}
+
+export interface VerifyAccountPayload {
+  tempToken: string;
+  token: string;
+}
+
+export interface LoginPayload {
+  email: string;
+  password: string;
+}
+
+export interface ChangeAuthenticationPasswordPayload {
+  token: string;
+  tempToken: string;
+  password: string;
+}
+
+export interface ResendVerifyPayload {
+  email: string;
+}
+
+export interface ResetPasswordPayload {
+  email: string;
 }
 
 export type AccountVerifyDto = {
@@ -94,10 +126,18 @@ export type AccountVerifyDto = {
   expiresIn: number;
 } & IUser;
 
+export interface IResendVerifyLink {
+  tempToken: {
+    token: string;
+    expiresIn: number;
+    token_type: string;
+  };
+}
 export type ResetDto = {
   tempToken: {
     token: string;
     expiresIn: number;
+    token_type: string;
   };
 };
 export type ResendVerifyDto = void;
@@ -107,16 +147,41 @@ export type ValidatePasswordToken = void;
 export type ValidateReferralDto = {
   valid: boolean;
   userId: string;
+  referralCounts: number;
+  totalAllowedReferrals: number;
   referralId: string;
+  role: string;
+  isKyc: boolean;
 };
 
+export interface GoogleOAuthGenerateDto {
+  googleAuthUrl: string;
+  state: string;
+}
+
+export interface GoogleOAuthValdatePayload {
+  state: string;
+  code: string;
+}
+
+export interface GoogleOAuthValidateDto {
+  token: string;
+  token_type: string;
+  expiresIn: number;
+  isVerified: boolean;
+  timeZone: string | undefined;
+  type: "sign_in" | "sign_up";
+}
+
 export interface AuthenticationModuleType {
-  login(email: string, password: string): Promise<ResponseDto<LoginDto>>;
+  login(payload: LoginPayload): Promise<ResponseDto<LoginDto>>;
   register(payload: RegisterPayload): Promise<ResponseDto<RegisterDto>>;
-  verifyAccount(tempToken: string, token: string): Promise<ResponseDto<AccountVerifyDto>>;
-  resendVerifyLink(email: string): Promise<ResponseDto<ResetDto>>;
-  resetPassword(email: string): Promise<ResponseDto<ResetDto>>;
-  changePassword(token: string, tempToken: string, password: string): Promise<ResponseDto<ChangePasswordDto>>;
-  validatePasswordToken(token: string, tempToken: string): Promise<ResponseDto<ValidatePasswordToken>>;
+  verifyAccount(payload: VerifyAccountPayload): Promise<ResponseDto<AccountVerifyDto>>;
+  resendVerifyLink(payload: ResendVerifyPayload): Promise<ResponseDto<IResendVerifyLink>>;
+  resetPassword(payload: ResetPasswordPayload): Promise<ResponseDto<ResetDto>>;
+  changePassword(payload: ChangeAuthenticationPasswordPayload): Promise<ResponseDto<ChangePasswordDto>>;
+  validatePasswordToken(props: { token: string; tempToken: string }): Promise<ResponseDto<ValidatePasswordToken>>;
   validateReferral(token: string): Promise<ResponseDto<ValidateReferralDto>>;
+  googleOAuthGenerateState(): Promise<ResponseDto<GoogleOAuthGenerateDto>>;
+  googleOAuthValidateState(props: GoogleOAuthValdatePayload): Promise<ResponseDto<GoogleOAuthValidateDto>>;
 }

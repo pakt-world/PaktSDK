@@ -41,7 +41,6 @@
   },
   "homepage": "https://github.com/pakt-world/PaktSDK#readme",
   "devDependencies": {
-    "@types/axios": "^0.14.0",
     "@types/jest": "^27.4.1",
     "@types/node": "^18.15.11",
     "@types/node-fetch": "^2.6.3",
