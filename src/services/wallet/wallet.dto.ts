@@ -42,6 +42,7 @@ export type ITransactionType = "sent" | "deposit" | "withdrawal" | "recieved" | 
 
 export interface IWalletExchangeDto {
   avax: number;
+  [key: string]: number;
 }
 
 export interface IWalletDto {
@@ -64,6 +65,25 @@ export interface IWalletDto {
   createdAt?: string | Date;
   deletedAt?: string | Date;
   updateAt?: string | Date;
+}
+
+export interface ISingleWalletDto {
+  _id: string;
+  coin: string;
+  amount: number;
+  usdValue: number;
+  icon: string;
+  address: string;
+}
+
+export interface IWalletResponseDto {
+  totalBalance: number;
+  value: number;
+  wallets: IWalletDto[];
+}
+
+export interface IWalletBalanceDto {
+  balance: number;
 }
 
 export interface ITransactionDto {
@@ -98,7 +118,7 @@ export type ITransactionStatsFormat = "weekly" | "monthly" | "yearly";
 export interface ITransactionStatsDto {
   _id: number;
   count: number;
-  date: string;
+  date?: string;
 }
 
 export interface AggTxns {
@@ -113,6 +133,7 @@ export interface WalletModuleType {
   getATransaction(authToken: string, id: string): Promise<ResponseDto<ITransactionDto>>;
   getTransactionStats(authToken: string, format: ITransactionStatsFormat): Promise<ResponseDto<ITransactionStatsDto[]>>;
   getAggregateTransactionStats(authToken: string): Promise<ResponseDto<AggTxns[]>>;
-  getWallets(authToken: string): Promise<ResponseDto<IWalletDto[]>>;
-  getSingleWallet(authToken: string, coin: string): Promise<ResponseDto<IWalletDto>>;
+  getWallets(authToken: string): Promise<ResponseDto<IWalletResponseDto>>;
+  getSingleWalletById(authToken: string, id: string): Promise<ResponseDto<ISingleWalletDto>>;
+  getSingleWalletByCoin(authToken: string, coin: string): Promise<ResponseDto<ISingleWalletDto>>;
 }
