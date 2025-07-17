@@ -14,6 +14,8 @@ export const API_PATHS = {
   RESET_PASSWORD: "/auth/password/reset",
   CHANGE_PASSWORD: "/auth/password/change",
   VALIDATE_REFERRAL: "/auth/referral/validate/",
+  GOOGLE_OAUTH_GENERATE_STATE: "/auth/google/oauth/generate-state",
+  GOOGLE_OAUTH_VALIDATE_STATE: "/auth/google/oauth/validate-state",
 
   // Collection endpoints
   COLLECTION: "/collection",
@@ -50,8 +52,9 @@ export const API_PATHS = {
   TRANSACTION_EXCHANGE: "/transaction/exchange",
 
   // Wallet Endpoints
-  WALLETS: "/wallet",
-  SINGLE_WALLET: "/wallet/coin",
+  WALLETS: "/wallet/",
+  SINGLE_WALLET_BY_ID: "/wallet/",
+  SINGLE_WALLET_BY_COIN: "/wallet/coin",
 
   // File Upload
   FILE_UPLOAD: "/upload/",

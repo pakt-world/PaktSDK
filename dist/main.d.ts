@@ -43,6 +43,8 @@ declare const API_PATHS: {
     RESET_PASSWORD: string;
     CHANGE_PASSWORD: string;
     VALIDATE_REFERRAL: string;
+    GOOGLE_OAUTH_GENERATE_STATE: string;
+    GOOGLE_OAUTH_VALIDATE_STATE: string;
     COLLECTION: string;
     COLLECTION_TYPE: string;
     COLLECTION_MANY: string;
@@ -68,7 +70,8 @@ declare const API_PATHS: {
     TRANSACTION_AGGREGATE_STATS: string;
     TRANSACTION_EXCHANGE: string;
     WALLETS: string;
-    SINGLE_WALLET: string;
+    SINGLE_WALLET_BY_ID: string;
+    SINGLE_WALLET_BY_COIN: string;
     FILE_UPLOAD: string;
     ADD_REVIEW: string;
     GET_REVIEW: string;
@@ -221,6 +224,11 @@ type LoginDto = {
     };
 } & IUser;
 interface RegisterDto {
+    token: string;
+    token_type: string;
+    expiresIn: number;
+}
+interface IRegisterResponse {
     tempToken: {
         token: string;
         token_type: string;
@@ -229,19 +237,48 @@ interface RegisterDto {
 }
 interface RegisterPayload {
     firstName: string;
-    lastName: string;
+    lastName?: string;
     email: string;
     password: string;
+    confirmPassword: string;
     referral?: string;
+    type?: string;
+}
+interface VerifyAccountPayload {
+    tempToken: string;
+    token: string;
+}
+interface LoginPayload {
+    email: string;
+    password: string;
+}
+interface ChangeAuthenticationPasswordPayload {
+    token: string;
+    tempToken: string;
+    password: string;
+}
+interface ResendVerifyPayload {
+    email: string;
+}
+interface ResetPasswordPayload {
+    email: string;
 }
 type AccountVerifyDto = {
     token: string;
     expiresIn: number;
 } & IUser;
+interface IResendVerifyLink {
+    tempToken: {
+        token: string;
+        expiresIn: number;
+        token_type: string;
+    };
+}
 type ResetDto = {
     tempToken: {
         token: string;
         expiresIn: number;
+        token_type: string;
     };
 };
 type ResendVerifyDto = void;
@@ -250,17 +287,42 @@ type ValidatePasswordToken = void;
 type ValidateReferralDto = {
     valid: boolean;
     userId: string;
+    referralCounts: number;
+    totalAllowedReferrals: number;
     referralId: string;
+    role: string;
+    isKyc: boolean;
 };
+interface GoogleOAuthGenerateDto {
+    googleAuthUrl: string;
+    state: string;
+}
+interface GoogleOAuthValdatePayload {
+    state: string;
+    code: string;
+}
+interface GoogleOAuthValidateDto {
+    token: string;
+    token_type: string;
+    expiresIn: number;
+    isVerified: boolean;
+    timeZone: string | undefined;
+    type: "sign_in" | "sign_up";
+}
 interface AuthenticationModuleType {
-    login(email: string, password: string): Promise<ResponseDto<LoginDto>>;
+    login(payload: LoginPayload): Promise<ResponseDto<LoginDto>>;
     register(payload: RegisterPayload): Promise<ResponseDto<RegisterDto>>;
-    verifyAccount(tempToken: string, token: string): Promise<ResponseDto<AccountVerifyDto>>;
-    resendVerifyLink(email: string): Promise<ResponseDto<ResetDto>>;
-    resetPassword(email: string): Promise<ResponseDto<ResetDto>>;
-    changePassword(token: string, tempToken: string, password: string): Promise<ResponseDto<ChangePasswordDto>>;
-    validatePasswordToken(token: string, tempToken: string): Promise<ResponseDto<ValidatePasswordToken>>;
+    verifyAccount(payload: VerifyAccountPayload): Promise<ResponseDto<AccountVerifyDto>>;
+    resendVerifyLink(payload: ResendVerifyPayload): Promise<ResponseDto<IResendVerifyLink>>;
+    resetPassword(payload: ResetPasswordPayload): Promise<ResponseDto<ResetDto>>;
+    changePassword(payload: ChangeAuthenticationPasswordPayload): Promise<ResponseDto<ChangePasswordDto>>;
+    validatePasswordToken(props: {
+        token: string;
+        tempToken: string;
+    }): Promise<ResponseDto<ValidatePasswordToken>>;
     validateReferral(token: string): Promise<ResponseDto<ValidateReferralDto>>;
+    googleOAuthGenerateState(): Promise<ResponseDto<GoogleOAuthGenerateDto>>;
+    googleOAuthValidateState(props: GoogleOAuthValdatePayload): Promise<ResponseDto<GoogleOAuthValidateDto>>;
 }
 
 declare class AuthenticationModule implements AuthenticationModuleType {
@@ -272,7 +334,7 @@ declare class AuthenticationModule implements AuthenticationModuleType {
      * @param email
      * @param password
      */
-    login(email: string, password: string): Promise<ResponseDto<LoginDto>>;
+    login(payload: LoginPayload): Promise<ResponseDto<LoginDto>>;
     /**
      * register. This method creates a new user account.
      * @param firstName
@@ -286,25 +348,30 @@ declare class AuthenticationModule implements AuthenticationModuleType {
      * @param tempToken
      * @param token
      */
-    verifyAccount(tempToken: string, token: string): Promise<ResponseDto<AccountVerifyDto>>;
+    verifyAccount(payload: VerifyAccountPayload): Promise<ResponseDto<AccountVerifyDto>>;
     /**
      * resetPassword. This method sends an email for account password reset
      * @param email
      */
-    resendVerifyLink(email: string): Promise<ResponseDto<ResetDto>>;
+    resendVerifyLink(payload: ResendVerifyPayload): Promise<ResponseDto<IResendVerifyLink>>;
     /**
      * resetPassword. This method sends an email for account password reset
      * @param email
      */
-    resetPassword(email: string): Promise<ResponseDto<ResetDto>>;
+    resetPassword(payload: ResetPasswordPayload): Promise<ResponseDto<ResetDto>>;
     /**
      * changePassword. This method changes account password
      * @param token
      * @param password
      */
-    changePassword(token: string, tempToken: string, password: string): Promise<ResponseDto<ChangePasswordDto>>;
-    validatePasswordToken(token: string, tempToken: string): Promise<ResponseDto<ValidatePasswordToken>>;
+    changePassword(payload: ChangeAuthenticationPasswordPayload): Promise<ResponseDto<ChangePasswordDto>>;
+    validatePasswordToken(props: {
+        token: string;
+        tempToken: string;
+    }): Promise<ResponseDto<ValidatePasswordToken>>;
     validateReferral(token: string): Promise<ResponseDto<ValidateReferralDto>>;
+    googleOAuthGenerateState(): Promise<ResponseDto<GoogleOAuthGenerateDto>>;
+    googleOAuthValidateState(props: GoogleOAuthValdatePayload): Promise<ResponseDto<GoogleOAuthValidateDto>>;
 }
 
 type fetchAccountDto = {} & IUser;
@@ -651,6 +718,7 @@ declare enum ITransactionMethod {
 type ITransactionType = "sent" | "deposit" | "withdrawal" | "recieved" | "escrow" | "job-payout" | "fee-payout";
 interface IWalletExchangeDto {
     avax: number;
+    [key: string]: number;
 }
 interface IWalletDto {
     _id: string;
@@ -672,6 +740,22 @@ interface IWalletDto {
     createdAt?: string | Date;
     deletedAt?: string | Date;
     updateAt?: string | Date;
+}
+interface ISingleWalletDto {
+    _id: string;
+    coin: string;
+    amount: number;
+    usdValue: number;
+    icon: string;
+    address: string;
+}
+interface IWalletResponseDto {
+    totalBalance: number;
+    value: number;
+    wallets: IWalletDto[];
+}
+interface IWalletBalanceDto {
+    balance: number;
 }
 interface ITransactionDto$1 {
     _id: string;
@@ -702,7 +786,7 @@ type ITransactionStatsFormat = "weekly" | "monthly" | "yearly";
 interface ITransactionStatsDto {
     _id: number;
     count: number;
-    date: string;
+    date?: string;
 }
 interface AggTxns {
     type: string;
@@ -715,21 +799,22 @@ interface WalletModuleType {
     getATransaction(authToken: string, id: string): Promise<ResponseDto<ITransactionDto$1>>;
     getTransactionStats(authToken: string, format: ITransactionStatsFormat): Promise<ResponseDto<ITransactionStatsDto[]>>;
     getAggregateTransactionStats(authToken: string): Promise<ResponseDto<AggTxns[]>>;
-    getWallets(authToken: string): Promise<ResponseDto<IWalletDto[]>>;
-    getSingleWallet(authToken: string, coin: string): Promise<ResponseDto<IWalletDto>>;
+    getWallets(authToken: string): Promise<ResponseDto<IWalletResponseDto>>;
+    getSingleWalletById(authToken: string, id: string): Promise<ResponseDto<ISingleWalletDto>>;
+    getSingleWalletByCoin(authToken: string, coin: string): Promise<ResponseDto<ISingleWalletDto>>;
 }
 
 declare class WalletModule implements WalletModuleType {
     private id;
-    private coin;
     private connector;
-    constructor(id: string, coin?: string);
+    constructor(id: string);
     getTransactions(authToken: string): Promise<ResponseDto<FindTransactionsDto>>;
     getATransaction(authToken: string, id: string): Promise<ResponseDto<ITransactionDto$1>>;
     getTransactionStats(authToken: string): Promise<ResponseDto<ITransactionStatsDto[]>>;
     getAggregateTransactionStats(authToken: string): Promise<ResponseDto<AggTxns[]>>;
-    getWallets(authToken: string): Promise<ResponseDto<IWalletDto[]>>;
-    getSingleWallet(authToken: string, coin: string): Promise<ResponseDto<IWalletDto>>;
+    getWallets(authToken: string): Promise<ResponseDto<IWalletResponseDto>>;
+    getSingleWalletById(authToken: string, id: string): Promise<ResponseDto<ISingleWalletDto>>;
+    getSingleWalletByCoin(authToken: string, coin: string): Promise<ResponseDto<ISingleWalletDto>>;
     getExchange(authToken: string): Promise<ResponseDto<IWalletExchangeDto>>;
 }
 
@@ -1396,4 +1481,4 @@ declare class PaktSDK {
     private static generateRandomString;
 }
 
-export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, BookmarkEnumType, BookmarkType, CHARACTERS, ChangePasswordDto, ChatModule, ChatModuleType, CollectionModule, CollectionModuleType, ConnectionFilterModule, ConnectionFilterModuleType, CreateCollectionDto, CreateFeedDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, ErrorUtils, FEED_TYPES, FEED_TYPES_ENUM, FeedModule, FeedModuleType, FilterFeedDto, FilterInviteDto, FilterReviewDto, FilterUploadDto, FilterUserDto, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindFeedDto, FindInvitesDto, FindNotificationDto, FindReviewDto, FindTransactionsDto, FindUploadDto, FindUsers, FindWithdrawalsDto, IBlockchainCoinDto, IChatConversation, IChatMessage, ICollectionBookmarkDto, ICollectionDto, ICollectionStatus, ICollectionTypeDto, IConnectionEvents, IConnectionFilter, IConnectionFilterDecider, IConnectionKeys, ICreatePaymentDto, ICreateSessionPayload, IFeed, IFile, IInviteDto, IInviteStatus, INotificationDto, IPaymentCoins, IPaymentDataDto, IPaymentStatusEnum, IPaymentStatusType, IRPCDto, IReleasePaymentDto, IReviewDto, ISendSessionMedia, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, ITransactionStatsFormat, ITransactionType, IUploadDto, IUser, IUserTwoFaType, IValidatePaymentDto, IVerification, IVerificationStatus, IWalletDto, IWalletExchangeDto, IWithdrawalDto, IWithdrawalStatus, InviteModule, InviteModuleType, LoginDto, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, PaymentModule, PaymentModuleType, RegisterDto, RegisterPayload, ResendVerifyDto, ResetDto, ResponseDto, ReviewModule, ReviewModuleType, SendInviteDto, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UpdateCollectionDto, UpdateManyCollectionsDto, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, ValidateReferralDto, VerificationDocumentTypes, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelCollectionDto, createBookMarkDto, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, isEmpty, parseUrlWithQuery, updateUserDto };
+export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, BookmarkEnumType, BookmarkType, CHARACTERS, ChangePasswordDto, ChangeAuthenticationPasswordPayload, ChatModule, ChatModuleType, CollectionModule, CollectionModuleType, ConnectionFilterModule, ConnectionFilterModuleType, CreateCollectionDto, CreateFeedDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, ErrorUtils, FEED_TYPES, FEED_TYPES_ENUM, FeedModule, FeedModuleType, FilterFeedDto, FilterInviteDto, FilterReviewDto, FilterUploadDto, FilterUserDto, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindFeedDto, FindInvitesDto, FindNotificationDto, FindReviewDto, FindTransactionsDto, FindUploadDto, FindUsers, FindWithdrawalsDto, GoogleOAuthGenerateDto, GoogleOAuthValdatePayload, GoogleOAuthValidateDto, IBlockchainCoinDto, IChatConversation, IChatMessage, ICollectionBookmarkDto, ICollectionDto, ICollectionStatus, ICollectionTypeDto, IConnectionEvents, IConnectionFilter, IConnectionFilterDecider, IConnectionKeys, ICreatePaymentDto, ICreateSessionPayload, IFeed, IFile, IInviteDto, IInviteStatus, INotificationDto, IPaymentCoins, IPaymentDataDto, IPaymentStatusEnum, IPaymentStatusType, IRPCDto, IReleasePaymentDto, IReviewDto, IResendVerifyLink, IReviewDto, ISendSessionMedia, ISingleWalletDto, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, ITransactionStatsFormat, ITransactionType, IUploadDto, IUser, IUserTwoFaType, IValidatePaymentDto, IVerification, IVerificationStatus, IWalletBalanceDto, IWalletDto, IWithdrawalDto, IWalletExchangeDto, IWalletResponseDto, IWithdrawalDto, IWithdrawalStatus, InviteModule, InviteModuleType, LoginDto, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, PaymentModule, PaymentModuleType, RegisterDto, RegisterPayload, ResendVerifyDto, ResetDto, ResponseDto, ReviewModule, ReviewModuleType, SendInviteDto, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UpdateCollectionDto, UpdateManyCollectionsDto, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, ValidateReferralDto, VerificationDocumentTypes, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelCollectionDto, createBookMarkDto, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, isEmpty, parseUrlWithQuery, updateUserDto };
