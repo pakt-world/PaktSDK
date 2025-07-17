@@ -5,28 +5,27 @@ import { ErrorUtils, ResponseDto, Status } from "../../utils/response";
 import {
   AggTxns,
   FindTransactionsDto,
+  ISingleWalletDto,
   ITransactionDto,
   ITransactionStatsDto,
-  IWalletDto,
   IWalletExchangeDto,
+  IWalletResponseDto,
   WalletModuleType,
 } from "./wallet.dto";
 export * from "./wallet.dto";
 
 @Service({
-  factory: (data: { id: string; coin?: string }) => {
-    return new WalletModule(data.id, data.coin);
+  factory: (data: { id: string }) => {
+    return new WalletModule(data.id);
   },
 })
 export class WalletModule implements WalletModuleType {
   private id: string;
-  private coin: string | undefined;
   private connector: PaktConnector;
 
-  constructor(id: string, coin?: string) {
+  constructor(id: string) {
     this.id = id;
     this.connector = Container.of(this.id).get(PaktConnector);
-    this.coin = coin;
   }
 
   getTransactions(authToken: string): Promise<ResponseDto<FindTransactionsDto>> {
@@ -69,9 +68,9 @@ export class WalletModule implements WalletModuleType {
       return response;
     });
   }
-  getWallets(authToken: string): Promise<ResponseDto<IWalletDto[]>> {
+  getWallets(authToken: string): Promise<ResponseDto<IWalletResponseDto>> {
     return ErrorUtils.newTryFail(async () => {
-      const response: ResponseDto<IWalletDto[]> = await this.connector.get({
+      const response: ResponseDto<IWalletResponseDto> = await this.connector.get({
         path: API_PATHS.WALLETS,
         authToken,
       });
@@ -79,10 +78,20 @@ export class WalletModule implements WalletModuleType {
       return response;
     });
   }
-  getSingleWallet(authToken: string, coin: string): Promise<ResponseDto<IWalletDto>> {
+  getSingleWalletById(authToken: string, id: string): Promise<ResponseDto<ISingleWalletDto>> {
     return ErrorUtils.newTryFail(async () => {
-      const response: ResponseDto<IWalletDto> = await this.connector.get({
-        path: API_PATHS.SINGLE_WALLET + "/" + coin,
+      const response: ResponseDto<ISingleWalletDto> = await this.connector.get({
+        path: `${API_PATHS.SINGLE_WALLET_BY_ID}/${id}`,
+        authToken,
+      });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
+    });
+  }
+  getSingleWalletByCoin(authToken: string, coin: string): Promise<ResponseDto<ISingleWalletDto>> {
+    return ErrorUtils.newTryFail(async () => {
+      const response: ResponseDto<ISingleWalletDto> = await this.connector.get({
+        path: `${API_PATHS.SINGLE_WALLET_BY_COIN}/${coin}`,
         authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
