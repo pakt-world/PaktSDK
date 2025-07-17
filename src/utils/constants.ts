@@ -14,6 +14,8 @@ export const API_PATHS = {
   RESET_PASSWORD: "/auth/password/reset",
   CHANGE_PASSWORD: "/auth/password/change",
   VALIDATE_REFERRAL: "/auth/referral/validate/",
+  GOOGLE_OAUTH_GENERATE_STATE: "/auth/google/oauth/generate-state",
+  GOOGLE_OAUTH_VALIDATE_STATE: "/auth/google/oauth/validate-state",
 
   // Collection endpoints
   COLLECTION: "/collection",
