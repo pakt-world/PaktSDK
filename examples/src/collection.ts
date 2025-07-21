@@ -2,7 +2,7 @@ import { CreateCollectionDto, CreateManyCollectionDto } from "../../src/services
 import PaktSDKInit from "./helper";
 
 // How to create a new collection
-const CreateCollection = async () => {
+const CreateCollection = async (authToken: string) => {
   try {
     const sdk = await PaktSDKInit();
     // test payload for login
@@ -12,7 +12,7 @@ const CreateCollection = async () => {
       isPrivate: false,
       type: "job",
     };
-    const collection = await sdk.collection.create(collectionPayload);
+    const collection = await sdk.collection.create(authToken, collectionPayload);
     console.log({ collection });
   } catch (error) {
     // handle error response here....
@@ -20,7 +20,7 @@ const CreateCollection = async () => {
   }
 };
 
-const createCollections = async () => {
+const createCollections = async (authToken: string) => {
   try {
     const sdk = await PaktSDKInit();
     const collectionList: CreateCollectionDto[] = [
@@ -42,7 +42,7 @@ const createCollections = async () => {
       parent: "job",
       collections: collectionList,
     };
-    const collections = await sdk.collection.createMany(manyCollections);
+    const collections = await sdk.collection.createMany(authToken, manyCollections);
     console.log({ collections });
   } catch (error) {
     // handle error response here....
