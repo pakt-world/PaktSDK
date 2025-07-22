@@ -12,6 +12,8 @@ export interface ResponseDto<T> {
   validation?: Record<string, any>;
 }
 
+export type IAny = any;
+
 type ErrorWithMessage = {
   message: string[] | object[] | any;
   code?: string;

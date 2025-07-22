@@ -9,6 +9,7 @@ export interface ITagCategory {
   isParent?: boolean;
   parent: ITagCategory | string;
   categories: ITagCategory[] | string[];
+  entryCount?: number;
 }
 
 export interface FindTagCategories {

@@ -18,6 +18,7 @@ interface ResponseDto<T> {
     statusCode?: number;
     validation?: Record<string, any>;
 }
+type IAny = any;
 type ErrorWithMessage = {
     message: string[] | object[] | any;
     code?: string;
@@ -104,7 +105,17 @@ declare const API_PATHS: {
     SEND_REFERRALS_INVITE: string;
     FETCH_CATEGORIES: string;
     FETCH_CATEGORIES_BY_ID: string;
+    CREATE_DIRECT_DEPOSIT: string;
+    VALIDATE_DIRECT_DEPOSIT: string;
+    FETCH_PAYMENT_METHODS: string;
+    FETCH_ACTIVE_RPC: string;
 };
+interface IModel {
+    _id?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    deletedAt?: string;
+}
 type expectedISOCountries = "AW" | "AF" | "AO" | "AI" | "AX" | "AL" | "AD" | "AE" | "AR" | "AM" | "AS" | "AG" | "AU" | "AT" | "AZ" | "BI" | "BE" | "BJ" | "BF" | "BD" | "BG" | "BH" | "BS" | "BA" | "BL" | "BY" | "BZ" | "BM" | "BO" | "BR" | "BB" | "BN" | "BT" | "BW" | "CF" | "CA" | "CC" | "CH" | "CL" | "CN" | "CI" | "CM" | "CD" | "CD" | "CG" | "CK" | "CO" | "KM" | "CI" | "CV" | "CR" | "CU" | "CW" | "CX" | "KY" | "CY" | "CZ" | "DE" | "DJ" | "DM" | "DK" | "DO" | "DO" | "DO" | "DZ" | "EC" | "EG" | "ER" | "EH" | "ES" | "EE" | "ET" | "FI" | "FJ" | "FK" | "FR" | "FO" | "FM" | "GA" | "GB" | "GE" | "GG" | "GH" | "GI" | "GN" | "GP" | "GM" | "GW" | "GQ" | "GR" | "GD" | "GL" | "GT" | "GF" | "GU" | "GY" | "HK" | "HN" | "HR" | "HT" | "HU" | "ID" | "IM" | "IN" | "IO" | "IE" | "IR" | "IQ" | "IS" | "IL" | "IT" | "JM" | "JE" | "JO" | "JP" | "KZ" | "KZ" | "KE" | "KG" | "KH" | "KI" | "KN" | "KR" | "XK" | "KW" | "LA" | "LB" | "LR" | "LY" | "LC" | "LI" | "LK" | "LS" | "LT" | "LU" | "LV" | "MO" | "MF" | "MA" | "MC" | "MD" | "MG" | "MV" | "MX" | "MH" | "MK" | "ML" | "MT" | "MM" | "ME" | "MN" | "MP" | "MZ" | "MR" | "MS" | "MQ" | "MU" | "MW" | "MY" | "YT" | "NA" | "NC" | "NE" | "NF" | "NG" | "NI" | "NU" | "NL" | "NO" | "NP" | "NR" | "NZ" | "OM" | "PK" | "PA" | "PN" | "PE" | "PH" | "PW" | "PG" | "PL" | "PR" | "PR" | "KP" | "PT" | "PY" | "PS" | "PF" | "QA" | "RE" | "RO" | "RU" | "RW" | "SA" | "SD" | "SN" | "SG" | "GS" | "SJ" | "SB" | "SL" | "SV" | "SM" | "SO" | "PM" | "RS" | "SS" | "ST" | "SR" | "SK" | "SI" | "SE" | "SZ" | "SX" | "SC" | "SY" | "TC" | "TD" | "TG" | "TH" | "TJ" | "TK" | "TM" | "TL" | "TO" | "TT" | "TN" | "TR" | "TV" | "TW" | "TZ" | "UG" | "UA" | "UY" | "US" | "UZ" | "VA" | "VA" | "VC" | "VE" | "VG" | "VI" | "VN" | "VU" | "WF" | "WS" | "YE" | "ZA" | "ZM" | "ZW";
 
 declare const PAKT_CONFIG: Token<PaktConfig>;
@@ -628,6 +639,18 @@ declare class ReviewModule implements ReviewModuleType {
     addReview(authToken: string, payload: AddReviewDto): Promise<ResponseDto<void>>;
 }
 
+interface ITagCategory {
+    name: string;
+    description: string;
+    type: string;
+    icon?: string;
+    color?: string;
+    isParent?: boolean;
+    parent: ITagCategory | string;
+    categories: ITagCategory[] | string[];
+    entryCount?: number;
+}
+
 interface UploadedUser {
     profile: {
         talent: {
@@ -832,8 +855,8 @@ interface IAttachmentDto {
 }
 interface ICollectionDto {
     _id?: string;
-    creator: IUser;
-    owner?: IUser;
+    creator: string | IUser;
+    owner?: string | IUser;
     receiver?: IUser;
     owners?: IUser[];
     name: string;
@@ -869,7 +892,53 @@ interface ICollectionDto {
     completed?: boolean;
     payoutTransactions?: string[];
     failedPayoutCount?: number;
-    meta?: Record<string, any>;
+    releaseFundAmount?: string;
+    tagsData?: string[];
+    tags?: string[] | ITagCategory[];
+    payoutStatus?: string;
+    paymentStatus?: string;
+    feePayoutStatus?: string;
+    paktFeePayoutStatus?: string;
+    escrowPaid?: boolean;
+    paymentFee?: number;
+    earlyBonus?: string;
+    latePenaltyFee?: string;
+    failureFee?: string;
+    encodeKey?: string;
+    paymentCoin?: string;
+    paymentAddress?: string;
+    payoutResponse?: string;
+    feePayoutResponse?: string;
+    isFundingRequest?: boolean;
+    isOpenFundingRequest?: boolean;
+    paymentWebHook?: string;
+    webHookAmount?: string;
+    emailToken?: string;
+    deliveryDate?: string;
+    completedDate?: string;
+    recipientCompletedJob?: boolean;
+    paktCharges?: string;
+    usdExpectedAdminFee?: string;
+    usdExpectedPaktFee?: string;
+    feePercentage?: string;
+    paktFeePercentage?: string;
+    issue?: string;
+    failedFeePayoutCount?: number;
+    failedPaktFeePayoutCount?: number;
+    meta?: Record<string, IAny>;
+    chainId?: string;
+    isParentFunded?: boolean;
+    isEscrow?: boolean;
+    issuePayoutAmount?: number;
+    escrowReleased?: {
+        creatorReleased: boolean;
+        creatorAmount: number;
+        ownerReleased: boolean;
+        ownerAmount: number;
+    };
+    indexedData?: Record<string, IAny>;
+    lastIndexedTime?: string;
+    indexerId?: string;
     createdAt?: string | Date;
     deletedAt?: string | Date;
     updatedAt?: string | Date;
@@ -1433,6 +1502,83 @@ interface WithdrawalModuleType {
     fetchWithdrawal(authToken: string, filter: FilterWithdrawal): Promise<ResponseDto<FindWithdrawalsDto>>;
 }
 
+interface ICreateDirectDepositPayload {
+    collectionType: string;
+    amount: number;
+    coin: string;
+    name: string;
+    description: string;
+    owner: string;
+}
+interface IValidateDirectDepositPayload {
+    collection: string;
+    method?: "stripe" | "crypto";
+    status?: string;
+    owner?: string;
+    meta?: Record<string, IAny>;
+    release?: boolean;
+}
+interface ICreateDirectDepositResponse {
+    coin: string;
+    address: string;
+    collectionAmount: number;
+    collectionAmountCoin: number;
+    expectedFee: number;
+    amountToPay: number;
+    usdFee: number;
+    usdAmount: number;
+    feePercentage: number;
+    rate: number;
+    chainId: string;
+    contractAddress: string;
+    paymentMethods: string[];
+    collectionId: string;
+}
+interface IValidateDirectDepositResponse extends ICollectionDto {
+    isFundingRequest: boolean;
+    creator: string | IUser;
+}
+interface IBlockchainCoin extends IModel {
+    name: string;
+    symbol: string;
+    icon: string;
+    reference: string;
+    priceTag: string;
+    contractAddress: string;
+    decimal: string;
+    rpcChainId: string;
+    isToken: boolean;
+    active: boolean;
+    order?: number;
+}
+interface IRPCServer extends IModel {
+    rpcName: string;
+    rpcChainId: string;
+    rpcUrls: string[];
+    blockExplorerUrls: string[];
+    rpcNativeCurrency: {
+        name: string;
+        symbol: string;
+        decimals: string;
+    };
+    active: boolean;
+    authlock?: boolean;
+    username?: string;
+    password?: string;
+}
+interface DirectDepositModuleType {
+    createDirectDeposit(props: {
+        authToken: string;
+        payload: ICreateDirectDepositPayload;
+    }): Promise<ResponseDto<ICreateDirectDepositResponse>>;
+    validateDirectDeposit(props: {
+        authToken: string;
+        payload: IValidateDirectDepositPayload;
+    }): Promise<ResponseDto<IValidateDirectDepositResponse>>;
+    fetchPaymentMethods(authToken: string): Promise<ResponseDto<IBlockchainCoin[]>>;
+    fetchActiveRPC(authToken: string): Promise<ResponseDto<IRPCServer>>;
+}
+
 declare class ConnectionFilterModule implements ConnectionFilterModuleType {
     private id;
     private connector;
@@ -1466,6 +1612,7 @@ declare class PaktSDK {
     invite: InviteModuleType;
     feed: FeedModuleType;
     payment: PaymentModuleType;
+    directDeposit: DirectDepositModuleType;
     constructor(id: string);
     /**
      * Initialize Pakt SDK. This method must be called before any other method.
@@ -1480,4 +1627,4 @@ declare class PaktSDK {
     private static generateRandomString;
 }
 
-export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, BookmarkEnumType, BookmarkType, CHARACTERS, ChangeAuthenticationPasswordPayload, ChangePasswordDto, ChatModule, ChatModuleType, CollectionModule, CollectionModuleType, ConnectionFilterModule, ConnectionFilterModuleType, CreateCollectionDto, CreateFeedDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, ErrorUtils, FEED_TYPES, FEED_TYPES_ENUM, FeedModule, FeedModuleType, FilterFeedDto, FilterInviteDto, FilterReviewDto, FilterUploadDto, FilterUserDto, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindFeedDto, FindInvitesDto, FindNotificationDto, FindReviewDto, FindTransactionsDto, FindUploadDto, FindUsers, FindWithdrawalsDto, GoogleOAuthGenerateDto, GoogleOAuthValdatePayload, GoogleOAuthValidateDto, IBlockchainCoinDto, IChatConversation, IChatMessage, ICollectionBookmarkDto, ICollectionDto, ICollectionStatus, ICollectionTypeDto, IConnectionEvents, IConnectionFilter, IConnectionFilterDecider, IConnectionKeys, ICreatePaymentDto, ICreateSessionPayload, IFeed, IFile, IInviteDto, IInviteStatus, INotificationDto, IPaymentCoins, IPaymentDataDto, IPaymentStatusEnum, IPaymentStatusType, IRPCDto, IRegisterResponse, IReleasePaymentDto, IResendVerifyLink, IReviewDto, ISendSessionMedia, ISingleWalletDto, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, ITransactionStatsFormat, ITransactionType, IUploadDto, IUser, IUserTwoFaType, IValidatePaymentDto, IVerification, IVerificationStatus, IWalletBalanceDto, IWalletDto, IWalletExchangeDto, IWalletResponseDto, IWithdrawalDto, IWithdrawalStatus, InviteModule, InviteModuleType, LoginDto, LoginPayload, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, PaymentModule, PaymentModuleType, RegisterDto, RegisterPayload, ResendVerifyDto, ResendVerifyPayload, ResetDto, ResetPasswordPayload, ResponseDto, ReviewModule, ReviewModuleType, SendInviteDto, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UpdateCollectionDto, UpdateManyCollectionsDto, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, ValidateReferralDto, VerificationDocumentTypes, VerifyAccountPayload, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelCollectionDto, createBookMarkDto, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, isEmpty, parseUrlWithQuery, updateUserDto };
+export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, BookmarkEnumType, BookmarkType, CHARACTERS, ChangeAuthenticationPasswordPayload, ChangePasswordDto, ChatModule, ChatModuleType, CollectionModule, CollectionModuleType, ConnectionFilterModule, ConnectionFilterModuleType, CreateCollectionDto, CreateFeedDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, ErrorUtils, FEED_TYPES, FEED_TYPES_ENUM, FeedModule, FeedModuleType, FilterFeedDto, FilterInviteDto, FilterReviewDto, FilterUploadDto, FilterUserDto, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindFeedDto, FindInvitesDto, FindNotificationDto, FindReviewDto, FindTransactionsDto, FindUploadDto, FindUsers, FindWithdrawalsDto, GoogleOAuthGenerateDto, GoogleOAuthValdatePayload, GoogleOAuthValidateDto, IAny, IBlockchainCoinDto, IChatConversation, IChatMessage, ICollectionBookmarkDto, ICollectionDto, ICollectionStatus, ICollectionTypeDto, IConnectionEvents, IConnectionFilter, IConnectionFilterDecider, IConnectionKeys, ICreatePaymentDto, ICreateSessionPayload, IFeed, IFile, IInviteDto, IInviteStatus, IModel, INotificationDto, IPaymentCoins, IPaymentDataDto, IPaymentStatusEnum, IPaymentStatusType, IRPCDto, IRegisterResponse, IReleasePaymentDto, IResendVerifyLink, IReviewDto, ISendSessionMedia, ISingleWalletDto, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, ITransactionStatsFormat, ITransactionType, IUploadDto, IUser, IUserTwoFaType, IValidatePaymentDto, IVerification, IVerificationStatus, IWalletBalanceDto, IWalletDto, IWalletExchangeDto, IWalletResponseDto, IWithdrawalDto, IWithdrawalStatus, InviteModule, InviteModuleType, LoginDto, LoginPayload, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, PaymentModule, PaymentModuleType, RegisterDto, RegisterPayload, ResendVerifyDto, ResendVerifyPayload, ResetDto, ResetPasswordPayload, ResponseDto, ReviewModule, ReviewModuleType, SendInviteDto, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UpdateCollectionDto, UpdateManyCollectionsDto, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, ValidateReferralDto, VerificationDocumentTypes, VerifyAccountPayload, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelCollectionDto, createBookMarkDto, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, isEmpty, parseUrlWithQuery, updateUserDto };
