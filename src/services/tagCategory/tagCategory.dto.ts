@@ -1,4 +1,4 @@
-import { ResponseDto } from "src/utils";
+import { ResponseDto } from "../../utils";
 
 export interface ITagCategory {
   name: string;

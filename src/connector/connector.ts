@@ -114,9 +114,6 @@ export class PaktConnector {
       "x-pkt-sdk-retry": `${retry}`,
       ...authHeader,
     });
-    if (config.token) {
-      headers.append("x-api-key", config.token);
-    }
     return headers;
   }
 }
