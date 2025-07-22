@@ -110,7 +110,19 @@ export const API_PATHS = {
   //Tags-category endpoint
   FETCH_CATEGORIES: "/tag-category/",
   FETCH_CATEGORIES_BY_ID: "/tag-category",
+
+  //Direct Deposit endpoints
+  CREATE_DIRECT_DEPOSIT: "/payment-public/direct-deposit",
+  VALIDATE_DIRECT_DEPOSIT: "/payment-public/validate",
+  FETCH_PAYMENT_METHODS: "/payment-public/coins",
+  FETCH_ACTIVE_RPC: "/payment-public/rpc",
 };
+export interface IModel {
+  _id?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  deletedAt?: string;
+}
 
 export type expectedISOCountries =
   | "AW"
