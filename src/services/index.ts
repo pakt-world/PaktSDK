@@ -20,6 +20,8 @@ import { UserVerificationModule, UserVerificationModuleType } from "./userVerifi
 import { WalletModule, WalletModuleType } from "./wallet/wallet";
 import { WithdrawalModule } from "./withdrawal/withdrawal";
 import { WithdrawalModuleType } from "./withdrawal/withdrawal.dto";
+import { DirectDepositModuleType } from "./direct-deposit/direct-deposit.dto";
+import { DirectDepositModule } from "./direct-deposit";
 
 export * from "./account";
 export * from "./auth";
@@ -54,6 +56,7 @@ export class PaktSDK {
   invite: InviteModuleType;
   feed: FeedModuleType;
   payment: PaymentModuleType;
+  directDeposit: DirectDepositModuleType;
 
   constructor(id: string) {
     this.auth = Container.of(id).get(AuthenticationModule);
@@ -71,6 +74,7 @@ export class PaktSDK {
     this.invite = Container.of(id).get(InviteModule);
     this.feed = Container.of(id).get(FeedModule);
     this.payment = Container.of(id).get(PaymentModule);
+    this.directDeposit = Container.of(id).get(DirectDepositModule);
   }
   /**
    * Initialize Pakt SDK. This method must be called before any other method.

@@ -1,7 +1,8 @@
-import { ResponseDto } from "../../utils/response";
+import { IAny, ResponseDto } from "../../utils/response";
 import { IUser } from "../auth";
 import { IInviteDto } from "../invite";
 import { IReviewDto } from "../review";
+import { ITagCategory } from "../tagCategory/tagCategory.dto";
 import { IUploadDto } from "../upload";
 import { IWalletDto } from "../wallet";
 
@@ -22,8 +23,8 @@ interface IAttachmentDto {
 }
 export interface ICollectionDto {
   _id?: string;
-  creator: IUser;
-  owner?: IUser;
+  creator: string | IUser;
+  owner?: string | IUser;
   receiver?: IUser;
   owners?: IUser[];
   name: string;
@@ -59,7 +60,53 @@ export interface ICollectionDto {
   completed?: boolean;
   payoutTransactions?: string[];
   failedPayoutCount?: number;
-  meta?: Record<string, any>;
+  releaseFundAmount?: string;
+  tagsData?: string[];
+  tags?: string[] | ITagCategory[];
+  payoutStatus?: string;
+  paymentStatus?: string;
+  feePayoutStatus?: string;
+  paktFeePayoutStatus?: string;
+  escrowPaid?: boolean;
+  paymentFee?: number;
+  earlyBonus?: string;
+  latePenaltyFee?: string;
+  failureFee?: string;
+  encodeKey?: string;
+  paymentCoin?: string;
+  paymentAddress?: string;
+  payoutResponse?: string;
+  feePayoutResponse?: string;
+  isFundingRequest?: boolean;
+  isOpenFundingRequest?: boolean;
+  paymentWebHook?: string;
+  webHookAmount?: string;
+  emailToken?: string;
+  deliveryDate?: string;
+  completedDate?: string;
+  recipientCompletedJob?: boolean;
+  paktCharges?: string;
+  usdExpectedAdminFee?: string;
+  usdExpectedPaktFee?: string;
+  feePercentage?: string;
+  paktFeePercentage?: string;
+  issue?: string; //TODO add IIssuesDTO
+  failedFeePayoutCount?: number;
+  failedPaktFeePayoutCount?: number;
+  meta?: Record<string, IAny>;
+  chainId?: string;
+  isParentFunded?: boolean;
+  isEscrow?: boolean;
+  issuePayoutAmount?: number;
+  escrowReleased?: {
+    creatorReleased: boolean;
+    creatorAmount: number;
+    ownerReleased: boolean;
+    ownerAmount: number;
+  };
+  indexedData?: Record<string, IAny>;
+  lastIndexedTime?: string;
+  indexerId?: string;
   createdAt?: string | Date;
   deletedAt?: string | Date;
   updatedAt?: string | Date;
