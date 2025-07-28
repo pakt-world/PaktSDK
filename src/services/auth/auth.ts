@@ -107,7 +107,7 @@ export class AuthenticationModule implements AuthenticationModuleType {
 
       Container.of(this.id).set(AUTH_TOKEN, response.data.token);
 
-      return response;
+      return { ...response, data: { ...response.data, code: response.data.token } };
     });
   }
 

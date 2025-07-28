@@ -123,6 +123,7 @@ export interface ResetPasswordPayload {
 
 export type AccountVerifyDto = {
   token: string;
+  code: string;
   expiresIn: number;
 } & IUser;
 
