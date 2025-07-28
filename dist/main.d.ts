@@ -275,6 +275,7 @@ interface ResetPasswordPayload {
 }
 type AccountVerifyDto = {
     token: string;
+    code: string;
     expiresIn: number;
 } & IUser;
 interface IResendVerifyLink {
