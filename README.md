@@ -17,8 +17,6 @@ yarn add pakt-sdk
 pnpm add pakt-sdk
 ```
 
-> ⚠️ **Important**: Ensure you are registered on [www.pakt.world](https://www.pakt.world) with a paid and activated chainsite.
-
 ## Quick Start
 
 ```typescript
@@ -47,6 +45,8 @@ const loginResponse = await sdk.auth.login({
 - [Communication](#communication)
 - [File Management](#file-management)
 - [User Verification](#user-verification)
+- [Bookmarks](#bookmarks)
+- [Reviews & Ratings](#reviews--ratings)
 - [Additional Features](#additional-features)
 - [Error Handling](#error-handling)
 - [TypeScript Support](#typescript-support)
@@ -498,12 +498,12 @@ const directDepositData: ICreateDirectDepositPayload = {
   coin: "usdc", // or "avax"
   name: "Project Direct Funding",
   description: "Direct deposit for project completion",
-  owner: "user-id"
+  owner: "user-id",
 };
 
 const directDeposit = await sdk.directDeposit.createDirectDeposit({
   authToken: "your-auth-token",
-  payload: directDepositData
+  payload: directDepositData,
 });
 
 if (directDeposit.status === "success") {
@@ -528,14 +528,14 @@ const validationData: IValidateDirectDepositPayload = {
   owner: "owner-user-id",
   meta: {
     transactionHash: "0x...",
-    blockNumber: 123456
+    blockNumber: 123456,
   },
-  release: true // whether to release funds immediately
+  release: true, // whether to release funds immediately
 };
 
 const validation = await sdk.directDeposit.validateDirectDeposit({
   authToken: "your-auth-token",
-  payload: validationData
+  payload: validationData,
 });
 
 if (validation.status === "success") {
@@ -550,7 +550,7 @@ if (validation.status === "success") {
 // Get available blockchain payment methods for direct deposits
 const paymentMethods = await sdk.directDeposit.fetchPaymentMethods("your-auth-token");
 
-paymentMethods.data.forEach(coin => {
+paymentMethods.data.forEach((coin) => {
   console.log(`${coin.name} (${coin.symbol})`);
   console.log(`Contract: ${coin.contractAddress}`);
   console.log(`Chain ID: ${coin.rpcChainId}`);
@@ -583,6 +583,7 @@ Direct deposits offer several advantages over regular escrow payments:
 - **Simplified Workflow**: Direct collection funding without complex escrow management
 
 Use direct deposits when:
+
 - You have established trust with the collection owner
 - The project requires immediate funding
 - You want to minimize transaction fees and complexity
@@ -787,9 +788,7 @@ verifications.data.forEach((verification) => {
 
 ---
 
-## Additional Features
-
-### Bookmarks
+## Bookmarks
 
 ```typescript
 import { createBookMarkDto } from "pakt-sdk";
@@ -812,7 +811,9 @@ const bookmarks = await sdk.bookmark.getAll({
 await sdk.bookmark.delete("bookmark-id");
 ```
 
-### Reviews & Ratings
+---
+
+## Reviews & Ratings
 
 ```typescript
 import { AddReviewDto } from "pakt-sdk";
@@ -833,6 +834,10 @@ const reviews = await sdk.review.viewAll({
   limit: 10,
 });
 ```
+
+---
+
+## Additional Features
 
 ### Connection Filtering
 
