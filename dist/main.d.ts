@@ -24,8 +24,7 @@ type ErrorWithMessage = {
     code?: string;
 };
 declare const ErrorUtils: {
-    tryFail: <T>(f: (() => Promise<T>) | (() => T)) => Promise<ResponseDto<T>>;
-    newTryFail: <T_1>(f: (() => Promise<T_1>) | (() => T_1)) => Promise<T_1>;
+    newTryFail: <T>(f: (() => Promise<T>) | (() => T)) => Promise<T>;
     formatErrorMsg: (message: string) => string;
     toErrorWithMessage: (maybeError: unknown) => ErrorWithMessage;
     isErrorWithMessage(e: unknown): e is ErrorWithMessage;
@@ -746,7 +745,7 @@ interface IWalletExchangeDto {
 interface IWalletDto {
     _id: string;
     owner: WalletUser;
-    amount: number;
+    amount: number | string;
     ledger: number;
     lock: number;
     lockedUsd: number;
