@@ -48,7 +48,7 @@ export interface IWalletExchangeDto {
 export interface IWalletDto {
   _id: string;
   owner: WalletUser;
-  amount: number;
+  amount: number | string;
   ledger: number;
   lock: number;
   lockedUsd: number;

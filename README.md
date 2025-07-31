@@ -1,4 +1,4 @@
-![Alt PAKT](./PAKT_SDK.png)
+![Alt PAKT](https://s3.amazonaws.com/storage-paktbuild.chain.site/public/mdrvr2d2_pakt_sdk.png)
 
 # PAKT SDK
 
