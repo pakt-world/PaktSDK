@@ -1,3 +1,4 @@
+import { BackoffOptions } from "../../utils/backOff/options";
 import { ResponseDto } from "../../utils/response";
 import { IUser } from "../auth";
 import { ICollectionDto } from "../collection";
@@ -76,9 +77,13 @@ export interface FindFeedDto {
 }
 
 export interface FeedModuleType {
-  create(authToken: string, payload: CreateFeedDto): Promise<ResponseDto<{}>>;
-  getAll(authToken: string, filter?: FilterFeedDto): Promise<ResponseDto<FindFeedDto>>;
-  getById(authToken: string, filterId: string): Promise<ResponseDto<IFeed>>;
-  dismissAllFeeds(authToken: string): Promise<ResponseDto<{}>>;
-  dismissAFeed(authToken: string, filterId: string): Promise<ResponseDto<{}>>;
+  create(props: { authToken: string; payload: CreateFeedDto; options?: BackoffOptions }): Promise<ResponseDto<{}>>;
+  getAll(props: {
+    authToken: string;
+    filter?: FilterFeedDto;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<FindFeedDto>>;
+  getById(props: { authToken: string; filterId: string; options?: BackoffOptions }): Promise<ResponseDto<IFeed>>;
+  dismissAllFeeds(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<{}>>;
+  dismissAFeed(props: { authToken: string; filterId: string; options?: BackoffOptions }): Promise<ResponseDto<{}>>;
 }

@@ -1,3 +1,4 @@
+import { BackoffOptions } from "../../utils/backOff/options";
 import { ResponseDto } from "../../utils/response";
 import { IUser } from "../auth";
 
@@ -69,20 +70,39 @@ export interface FindUsers {
 }
 
 export interface AccountModuleType {
-  getUser(authToken: string): Promise<ResponseDto<fetchAccountDto>>;
-  onboardEndpoint(
-    tagCategory: string,
-    profileImage: string,
-    type: string,
-    authToken: string,
-  ): Promise<ResponseDto<fetchAccountDto>>;
-  updateAccount(payload: updateUserDto, authToken: string): Promise<ResponseDto<fetchAccountDto>>;
-  changePassword(oldPassword: string, newPassword: string, authToken: string): Promise<ResponseDto<fetchAccountDto>>;
-  initate2FA(type: TwoFATypeDto, authToken: string): Promise<ResponseDto<TwoFAresponse>>;
-  activate2FA(code: string, authToken: string): Promise<ResponseDto<void>>;
-  deactivate2FA(code: string, authToken: string): Promise<ResponseDto<void>>;
-  sendEmailTwoFA(authToken: string): Promise<ResponseDto<{}>>;
-  getAUser(id: string, authToken: string): Promise<ResponseDto<fetchAccountDto>>;
-  getUsers(authToken: string, filter?: FilterUserDto): Promise<ResponseDto<FindUsers>>;
-  logout(authToken: string): Promise<ResponseDto<void>>;
+  getUser(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<fetchAccountDto>>;
+  onboardEndpoint(props: {
+    tagCategory: string;
+    skillCategory: string;
+    profileImage: string;
+    type: string;
+    authToken: string;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<fetchAccountDto>>;
+  updateAccount(props: {
+    payload: updateUserDto;
+    authToken: string;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<fetchAccountDto>>;
+  changePassword(props: {
+    oldPassword: string;
+    newPassword: string;
+    authToken: string;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<fetchAccountDto>>;
+  initate2FA(props: {
+    type: TwoFATypeDto;
+    authToken: string;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<TwoFAresponse>>;
+  activate2FA(props: { code: string; authToken: string; options?: BackoffOptions }): Promise<ResponseDto<void>>;
+  deactivate2FA(props: { code: string; authToken: string; options?: BackoffOptions }): Promise<ResponseDto<void>>;
+  sendEmailTwoFA(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<{}>>;
+  getAUser(props: { id: string; authToken: string; options?: BackoffOptions }): Promise<ResponseDto<fetchAccountDto>>;
+  getUsers(props: {
+    filter?: FilterUserDto;
+    authToken: string;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<FindUsers>>;
+  logout(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<void>>;
 }

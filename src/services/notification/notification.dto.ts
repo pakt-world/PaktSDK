@@ -1,3 +1,4 @@
+import { BackoffOptions } from "../../utils/backOff/options";
 import { ResponseDto } from "../../utils/response";
 
 enum INotificationType {
@@ -67,7 +68,16 @@ export type filterNotificationDto =
   | any;
 
 export interface NotificationModuleType {
-  getAll(authToken: string, filter?: filterNotificationDto): Promise<ResponseDto<FindNotificationDto>>;
-  markOneAsRead(authToken: string, id: string, filter?: filterNotificationDto): Promise<ResponseDto<void>>;
-  markAll(authToken: string): Promise<ResponseDto<void>>;
+  getAll(props: {
+    authToken: string;
+    filter?: filterNotificationDto;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<FindNotificationDto>>;
+  markOneAsRead(props: {
+    authToken: string;
+    notificationId: string;
+    filter?: filterNotificationDto;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<void>>;
+  markAll(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<void>>;
 }

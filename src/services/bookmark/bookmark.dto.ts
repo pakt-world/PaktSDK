@@ -1,3 +1,4 @@
+import { BackoffOptions } from "../../utils/backOff/options";
 import { ResponseDto } from "../../utils/response";
 import { IUser } from "../auth";
 import { ICollectionDto } from "../collection/collection.dto";
@@ -49,12 +50,21 @@ export enum BookmarkEnumType {
 export type BookmarkType = "feed" | "collection" | "invite" | "user";
 
 export interface BookMarkModuleType {
-  getAll(authToken: string, filter?: filterBookmarkDto): Promise<ResponseDto<FindCollectionBookMarkDto>>;
-  getById(
-    authToken: string,
-    id: string,
-    filter?: Record<string, any> | ICollectionBookmarkDto,
-  ): Promise<ResponseDto<ICollectionBookmarkDto>>;
-  create(authToken: string, payload: createBookMarkDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
-  delete(authToken: string, id: string): Promise<ResponseDto<any>>;
+  getAll(props: {
+    authToken: string;
+    filter?: filterBookmarkDto;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<FindCollectionBookMarkDto>>;
+  getById(props: {
+    authToken: string;
+    id: string;
+    filter?: Record<string, any> | ICollectionBookmarkDto;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<ICollectionBookmarkDto>>;
+  create(props: {
+    authToken: string;
+    payload: createBookMarkDto;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<ICollectionBookmarkDto>>;
+  delete(props: { authToken: string; id: string; options: BackoffOptions }): Promise<ResponseDto<any>>;
 }

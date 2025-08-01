@@ -1,3 +1,4 @@
+import { BackoffOptions } from "../../utils/backOff/options";
 import { ResponseDto } from "../../utils";
 
 export type IPaymentCoins = "usdc" | "avax";
@@ -69,9 +70,21 @@ export interface IRPCDto {
 }
 
 export interface PaymentModuleType {
-  create(authToken: string, payload: ICreatePaymentDto): Promise<ResponseDto<IPaymentDataDto>>;
-  validate(authToken: string, payload: IValidatePaymentDto): Promise<ResponseDto<{}>>;
-  release(authToken: string, payload: IReleasePaymentDto): Promise<ResponseDto<{}>>;
-  paymentMethods(authToken: string): Promise<ResponseDto<IBlockchainCoinDto[]>>;
-  activeRpc(authToken: string): Promise<ResponseDto<IRPCDto>>;
+  create(props: {
+    authToken: string;
+    payload: ICreatePaymentDto;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<IPaymentDataDto>>;
+  validate(props: {
+    authToken: string;
+    payload: IValidatePaymentDto;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<{}>>;
+  release(props: {
+    authToken: string;
+    payload: IReleasePaymentDto;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<{}>>;
+  paymentMethods(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<IBlockchainCoinDto[]>>;
+  activeRpc(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<IRPCDto>>;
 }

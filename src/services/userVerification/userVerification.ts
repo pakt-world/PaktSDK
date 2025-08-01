@@ -1,6 +1,6 @@
 import Container, { Service } from "typedi";
 import { PaktConnector } from "../../connector/connector";
-import { API_PATHS, ErrorUtils, ResponseDto, Status, parseUrlWithQuery } from "../../utils";
+import { API_PATHS, ErrorUtils, PAKT_BACKOFF_OPTIONS, ResponseDto, Status, parseUrlWithQuery } from "../../utils";
 import {
   CreateSessionResponse,
   ICreateSessionPayload,
@@ -10,6 +10,7 @@ import {
   SessionAttempts,
   UserVerificationModuleType,
 } from "./userVerification.dto";
+import { BackoffOptions } from "../../utils/backOff/options";
 
 export * from "./userVerification.dto";
 
@@ -22,13 +23,20 @@ export * from "./userVerification.dto";
 export class UserVerificationModule implements UserVerificationModuleType {
   private id: string;
   private connector: PaktConnector;
+  private configBackOff: BackoffOptions;
 
   constructor(id: string) {
     this.id = id;
     this.connector = Container.of(this.id).get(PaktConnector);
+    this.configBackOff = Container.of(this.id).get(PAKT_BACKOFF_OPTIONS);
   }
 
-  createSession(authToken: string, payload: ICreateSessionPayload): Promise<ResponseDto<CreateSessionResponse>> {
+  createSession(props: {
+    authToken: string;
+    payload: ICreateSessionPayload;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<CreateSessionResponse>> {
+    const { authToken, payload, options } = props;
     const credentials = { ...payload };
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<CreateSessionResponse> = await this.connector.post({
@@ -38,10 +46,15 @@ export class UserVerificationModule implements UserVerificationModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
-  sendSessionMedia(authToken: string, payload: ISendSessionMedia): Promise<ResponseDto<SendSessionMediaResponse>> {
+  sendSessionMedia(props: {
+    authToken: string;
+    payload: ISendSessionMedia;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<SendSessionMediaResponse>> {
+    const { authToken, payload, options } = props;
     const credentials = { ...payload };
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<SendSessionMediaResponse> = await this.connector.post({
@@ -51,10 +64,11 @@ export class UserVerificationModule implements UserVerificationModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options);
   }
 
-  getSessionAttempts(authToken: string): Promise<ResponseDto<SessionAttempts>> {
+  getSessionAttempts(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<SessionAttempts>> {
+    const { authToken, options } = props;
     const fetchUrl = parseUrlWithQuery(API_PATHS.SESSION_ATTEMPTS, null);
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<SessionAttempts> = await this.connector.get({
@@ -63,10 +77,11 @@ export class UserVerificationModule implements UserVerificationModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
-  getUserVerifications(authToken: string): Promise<ResponseDto<IVerification[]>> {
+  getUserVerifications(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<IVerification[]>> {
+    const { authToken, options } = props;
     const fetchUrl = parseUrlWithQuery(API_PATHS.USER_VERIFICATION, null);
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IVerification[]> = await this.connector.get({
@@ -75,6 +90,6 @@ export class UserVerificationModule implements UserVerificationModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 }

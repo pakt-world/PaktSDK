@@ -2,7 +2,7 @@ import { Container, Service } from "typedi";
 import { PaktConnector } from "../../connector";
 import { API_PATHS } from "../../utils/constants";
 import { ErrorUtils, parseUrlWithQuery, ResponseDto, Status } from "../../utils/response";
-import { AUTH_TOKEN, TEMP_TOKEN } from "../../utils/token";
+import { AUTH_TOKEN, PAKT_BACKOFF_OPTIONS, TEMP_TOKEN } from "../../utils/token";
 import {
   AccountVerifyDto,
   AuthenticationModuleType,
@@ -24,6 +24,7 @@ import {
   ValidateReferralDto,
   VerifyAccountPayload,
 } from "./auth.dto";
+import { BackoffOptions } from "../../utils/backOff/options";
 
 // Export all Types to Service
 export * from "./auth.dto";
@@ -37,9 +38,12 @@ export * from "./auth.dto";
 export class AuthenticationModule implements AuthenticationModuleType {
   private id: string;
   private connector: PaktConnector;
+  private configBackOff: BackoffOptions;
+
   constructor(id: string) {
     this.id = id;
     this.connector = Container.of(this.id).get(PaktConnector);
+    this.configBackOff = Container.of(this.id).get(PAKT_BACKOFF_OPTIONS);
   }
 
   /**
@@ -47,7 +51,7 @@ export class AuthenticationModule implements AuthenticationModuleType {
    * @param email
    * @param password
    */
-  async login(payload: LoginPayload): Promise<ResponseDto<LoginDto>> {
+  async login(payload: LoginPayload, options?: BackoffOptions): Promise<ResponseDto<LoginDto>> {
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<LoginDto> = await this.connector.post({ path: API_PATHS.LOGIN, body: payload });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
@@ -57,7 +61,7 @@ export class AuthenticationModule implements AuthenticationModuleType {
         Container.of(this.id).set(AUTH_TOKEN, response.data.token);
       }
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
   /**
@@ -67,7 +71,7 @@ export class AuthenticationModule implements AuthenticationModuleType {
    * @param email
    * @param password
    */
-  async register(payload: RegisterPayload): Promise<ResponseDto<RegisterDto>> {
+  async register(payload: RegisterPayload, options?: BackoffOptions): Promise<ResponseDto<RegisterDto>> {
     return ErrorUtils.newTryFail(async () => {
       const credentials = { ...payload };
       const response: ResponseDto<IRegisterResponse> = await this.connector.post({
@@ -87,7 +91,7 @@ export class AuthenticationModule implements AuthenticationModuleType {
           expiresIn: response.data.tempToken.expiresIn,
         },
       };
-    });
+    }, options || this.configBackOff);
   }
 
   /**
@@ -115,7 +119,10 @@ export class AuthenticationModule implements AuthenticationModuleType {
    * resetPassword. This method sends an email for account password reset
    * @param email
    */
-  async resendVerifyLink(payload: ResendVerifyPayload): Promise<ResponseDto<IResendVerifyLink>> {
+  async resendVerifyLink(
+    payload: ResendVerifyPayload,
+    options?: BackoffOptions,
+  ): Promise<ResponseDto<IResendVerifyLink>> {
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<ResetDto> = await this.connector.post({
         path: API_PATHS.RESEND_VERIFY_LINK,
@@ -127,14 +134,14 @@ export class AuthenticationModule implements AuthenticationModuleType {
         Container.of(this.id).set(TEMP_TOKEN, response.data.tempToken.token);
       }
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
   /**
    * resetPassword. This method sends an email for account password reset
    * @param email
    */
-  async resetPassword(payload: ResetPasswordPayload): Promise<ResponseDto<ResetDto>> {
+  async resetPassword(payload: ResetPasswordPayload, options?: BackoffOptions): Promise<ResponseDto<ResetDto>> {
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<ResetDto> = await this.connector.post({
         path: API_PATHS.RESET_PASSWORD,
@@ -142,7 +149,7 @@ export class AuthenticationModule implements AuthenticationModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
   /**
@@ -150,7 +157,10 @@ export class AuthenticationModule implements AuthenticationModuleType {
    * @param token
    * @param password
    */
-  async changePassword(payload: ChangeAuthenticationPasswordPayload): Promise<ResponseDto<ChangePasswordDto>> {
+  async changePassword(
+    payload: ChangeAuthenticationPasswordPayload,
+    options?: BackoffOptions,
+  ): Promise<ResponseDto<ChangePasswordDto>> {
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<ChangePasswordDto> = await this.connector.post({
         path: API_PATHS.CHANGE_PASSWORD,
@@ -158,13 +168,16 @@ export class AuthenticationModule implements AuthenticationModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
-  async validatePasswordToken(props: {
-    token: string;
-    tempToken: string;
-  }): Promise<ResponseDto<ValidatePasswordToken>> {
+  async validatePasswordToken(
+    props: {
+      token: string;
+      tempToken: string;
+    },
+    options?: BackoffOptions,
+  ): Promise<ResponseDto<ValidatePasswordToken>> {
     return ErrorUtils.newTryFail(async () => {
       const { token, tempToken } = props;
       const response: ResponseDto<ChangePasswordDto> = await this.connector.post({
@@ -173,10 +186,10 @@ export class AuthenticationModule implements AuthenticationModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
-  async validateReferral(token: string): Promise<ResponseDto<ValidateReferralDto>> {
+  async validateReferral(token: string, options?: BackoffOptions): Promise<ResponseDto<ValidateReferralDto>> {
     return ErrorUtils.newTryFail(async () => {
       const credentials = { token };
       const response: ResponseDto<ValidateReferralDto> = await this.connector.post({
@@ -185,19 +198,22 @@ export class AuthenticationModule implements AuthenticationModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
-  async googleOAuthGenerateState(): Promise<ResponseDto<GoogleOAuthGenerateDto>> {
+  async googleOAuthGenerateState(options?: BackoffOptions): Promise<ResponseDto<GoogleOAuthGenerateDto>> {
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<GoogleOAuthGenerateDto> = await this.connector.get({
         path: `${API_PATHS.GOOGLE_OAUTH_GENERATE_STATE}`,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
-  googleOAuthValidateState(props: GoogleOAuthValdatePayload): Promise<ResponseDto<GoogleOAuthValidateDto>> {
+  googleOAuthValidateState(
+    props: GoogleOAuthValdatePayload,
+    options?: BackoffOptions,
+  ): Promise<ResponseDto<GoogleOAuthValidateDto>> {
     return ErrorUtils.newTryFail(async () => {
       const { state, code } = props;
       const query = parseUrlWithQuery(API_PATHS.GOOGLE_OAUTH_VALIDATE_STATE, { state, code });
@@ -206,6 +222,6 @@ export class AuthenticationModule implements AuthenticationModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 }

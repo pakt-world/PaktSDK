@@ -1,3 +1,4 @@
+import { BackoffOptions } from "../../utils/backOff/backoff";
 import { ResponseDto } from "../../utils";
 import { IUser } from "../auth/auth.dto";
 
@@ -42,5 +43,5 @@ export interface IFile {
 }
 
 export interface ChatModuleType {
-  getUserMessages(authToken: string): Promise<ResponseDto<IChatConversation[]>>;
+  getUserMessages(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<IChatConversation[]>>;
 }

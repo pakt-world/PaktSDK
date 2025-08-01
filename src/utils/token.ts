@@ -1,9 +1,11 @@
 import { Token } from "typedi";
 import { PaktConfig } from "./config";
+import { BackoffOptions } from "./backOff/options";
 
 export const PAKT_CONFIG = new Token<PaktConfig>("PAKT_CONFIG");
 export const AUTH_TOKEN = new Token<string>("AUTH_TOKEN");
 export const TEMP_TOKEN = new Token<string>("TEMP_TOKEN");
+export const PAKT_BACKOFF_OPTIONS = new Token<BackoffOptions>("PAKT_BACKOFF_OPTIONS");
 
 export const isEmpty = (value: unknown) => {
   return (

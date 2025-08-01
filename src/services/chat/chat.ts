@@ -1,7 +1,8 @@
 import Container, { Service } from "typedi";
 import { PaktConnector } from "../../connector";
-import { API_PATHS, ErrorUtils, ResponseDto, Status } from "../../utils";
+import { API_PATHS, ErrorUtils, PAKT_BACKOFF_OPTIONS, ResponseDto, Status } from "../../utils";
 import { ChatModuleType, IChatConversation } from "./chat.dto";
+import { BackoffOptions } from "../../utils/backOff/backoff";
 
 // Export all Types to Service
 export * from "./chat.dto";
@@ -15,13 +16,16 @@ export * from "./chat.dto";
 export class ChatModule implements ChatModuleType {
   private id: string;
   private connector: PaktConnector;
+  private configBackOff: BackoffOptions;
 
   constructor(id: string) {
     this.id = id;
     this.connector = Container.of(this.id).get(PaktConnector);
+    this.configBackOff = Container.of(this.id).get(PAKT_BACKOFF_OPTIONS);
   }
 
-  getUserMessages(authToken: string): Promise<ResponseDto<IChatConversation[]>> {
+  getUserMessages(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<IChatConversation[]>> {
+    const { authToken, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IChatConversation[]> = await this.connector.get({
         path: API_PATHS.GET_USER_MESSAGES,
@@ -29,6 +33,6 @@ export class ChatModule implements ChatModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 }

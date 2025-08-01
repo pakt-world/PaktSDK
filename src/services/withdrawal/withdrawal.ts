@@ -9,6 +9,8 @@ import {
   IWithdrawalDto,
   WithdrawalModuleType,
 } from "./withdrawal.dto";
+import { BackoffOptions } from "../../utils/backOff/options";
+import { PAKT_BACKOFF_OPTIONS } from "../../utils/token";
 
 export * from "./withdrawal.dto";
 
@@ -20,13 +22,20 @@ export * from "./withdrawal.dto";
 export class WithdrawalModule implements WithdrawalModuleType {
   private id: string;
   private connector: PaktConnector;
+  private configBackOff: BackoffOptions;
 
   constructor(id: string) {
     this.id = id;
     this.connector = Container.of(this.id).get(PaktConnector);
+    this.configBackOff = Container.of(this.id).get(PAKT_BACKOFF_OPTIONS);
   }
 
-  createWithdrawal(authToken: string, payload: CreateWithdrawal): Promise<ResponseDto<IWithdrawalDto>> {
+  createWithdrawal(props: {
+    authToken: string;
+    payload: CreateWithdrawal;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<IWithdrawalDto>> {
+    const { authToken, payload, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const requestBody = { ...payload };
       const response: ResponseDto<IWithdrawalDto> = await this.connector.post({
@@ -35,10 +44,15 @@ export class WithdrawalModule implements WithdrawalModuleType {
         authToken,
       });
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
-  fetchWithdrawal(authToken: string, filter: FilterWithdrawal): Promise<ResponseDto<FindWithdrawalsDto>> {
+  fetchWithdrawal(props: {
+    authToken: string;
+    filter: FilterWithdrawal;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<FindWithdrawalsDto>> {
+    const { authToken, filter, options } = props;
     const fetchUrl = parseUrlWithQuery(API_PATHS.FETCH_WITHDRAWALS, filter);
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<FindWithdrawalsDto> = await this.connector.get({
@@ -47,6 +61,6 @@ export class WithdrawalModule implements WithdrawalModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 }

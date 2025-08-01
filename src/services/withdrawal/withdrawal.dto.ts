@@ -1,3 +1,4 @@
+import { BackoffOptions } from "../../utils/backOff/options";
 import { ResponseDto } from "../../utils/response";
 import { IUser } from "../auth";
 
@@ -57,6 +58,14 @@ export interface IWithdrawalDto {
 }
 
 export interface WithdrawalModuleType {
-  createWithdrawal(authToken: string, payload: CreateWithdrawal): Promise<ResponseDto<IWithdrawalDto>>;
-  fetchWithdrawal(authToken: string, filter: FilterWithdrawal): Promise<ResponseDto<FindWithdrawalsDto>>;
+  createWithdrawal(props: {
+    authToken: string;
+    payload: CreateWithdrawal;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<IWithdrawalDto>>;
+  fetchWithdrawal(props: {
+    authToken: string;
+    filter: FilterWithdrawal;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<FindWithdrawalsDto>>;
 }

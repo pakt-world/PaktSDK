@@ -1,3 +1,4 @@
+import { BackoffOptions } from "../../utils/backOff/options";
 import { ResponseDto } from "../../utils/response";
 
 interface UploadedUser {
@@ -45,7 +46,19 @@ export type FilterUploadDto =
   | any;
 
 export interface UploadModuleType {
-  fileUpload(authToken: string, payload: CreateFileUpload): Promise<ResponseDto<IUploadDto>>;
-  getFileUploads(authToken: string, filter?: FilterUploadDto): Promise<ResponseDto<FindUploadDto>>;
-  getAFileUpload(authToken: string, id: string): Promise<ResponseDto<IUploadDto>>;
+  fileUpload(props: {
+    authToken: string;
+    payload: CreateFileUpload;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<IUploadDto>>;
+  getFileUploads(props: {
+    authToken: string;
+    filter?: FilterUploadDto;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<FindUploadDto>>;
+  getAFileUpload(props: {
+    authToken: string;
+    fileId: string;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<IUploadDto>>;
 }

@@ -1,8 +1,9 @@
 import Container, { Service } from "typedi";
 import { PaktConnector } from "../../connector";
-import { API_PATHS } from "../../utils";
+import { API_PATHS, PAKT_BACKOFF_OPTIONS } from "../../utils";
 import { ErrorUtils, ResponseDto, Status, parseUrlWithQuery } from "../../utils/response";
 import { AddReviewDto, FilterReviewDto, FindReviewDto, IReviewDto, ReviewModuleType } from "./review.dto";
+import { BackoffOptions } from "../../utils/backOff/options";
 
 export * from "./review.dto";
 
@@ -15,12 +16,20 @@ export * from "./review.dto";
 export class ReviewModule implements ReviewModuleType {
   private id: string;
   private connector: PaktConnector;
+  private configBackOff: BackoffOptions;
+
   constructor(id: string) {
     this.id = id;
     this.connector = Container.of(this.id).get(PaktConnector);
+    this.configBackOff = Container.of(this.id).get(PAKT_BACKOFF_OPTIONS);
   }
 
-  viewAll(authToken: string, filter?: FilterReviewDto | undefined): Promise<ResponseDto<FindReviewDto>> {
+  viewAll(props: {
+    authToken: string;
+    filter?: FilterReviewDto | undefined;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<FindReviewDto>> {
+    const { authToken, filter, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const fetchUrl = parseUrlWithQuery(API_PATHS.GET_REVIEW, filter);
 
@@ -30,10 +39,15 @@ export class ReviewModule implements ReviewModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
-  viewAReview(authToken: string, reviewId: string): Promise<ResponseDto<IReviewDto>> {
+  viewAReview(props: {
+    authToken: string;
+    reviewId: string;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<IReviewDto>> {
+    const { authToken, reviewId, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IReviewDto> = await this.connector.get({
         path: `${API_PATHS.GET_REVIEW}${reviewId}`,
@@ -41,10 +55,11 @@ export class ReviewModule implements ReviewModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
-  addReview(authToken: string, payload: AddReviewDto): Promise<ResponseDto<void>> {
+  addReview(props: { authToken: string; payload: AddReviewDto; options?: BackoffOptions }): Promise<ResponseDto<void>> {
+    const { authToken, payload, options } = props;
     const reviewPayload = { ...payload };
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<void> = await this.connector.post({
@@ -54,6 +69,6 @@ export class ReviewModule implements ReviewModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 }
