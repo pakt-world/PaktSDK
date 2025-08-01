@@ -20,19 +20,34 @@ pnpm add pakt-sdk
 ## Quick Start
 
 ```typescript
-import PaktSDK from "pakt-sdk";
+import PaktSDK, { ResponseDto, LoginDto, BackoffOptions } from "pakt-sdk";
 
+// Initialize SDK with default backoff configuration
 const sdk = await PaktSDK.init({
   baseUrl: "https://api.pakt.world", // Required: API base URL
   verbose: true, // Optional: Enable detailed logging
   testnet: false, // Optional: Use testnet environment
+  defaultBackoff: { // Optional: Default backoff configuration
+    numOfAttempts: 5,
+    startingDelay: 200,
+    timeMultiple: 2,
+    maxDelay: 5000,
+    jitter: "full",
+    delayFirstAttempt: false
+  }
 });
 
-// Now you can use all SDK features
-const loginResponse = await sdk.auth.login({
+// Now you can use all SDK features with typed responses
+const loginResponse: ResponseDto<LoginDto> = await sdk.auth.login({
   email: "user@example.com",
   password: "yourpassword",
 });
+
+if (loginResponse.status === "success") {
+  console.log("User ID:", loginResponse.data._id);
+  console.log("Token:", loginResponse.data.token);
+  console.log("User verified:", loginResponse.data.isVerified);
+}
 ```
 
 ## Table of Contents
@@ -60,19 +75,30 @@ The authentication module provides complete user registration, login, password m
 ### Login
 
 ```typescript
-import { LoginPayload } from "pakt-sdk";
+import { LoginPayload, ResponseDto, LoginDto, BackoffOptions } from "pakt-sdk";
 
 const loginData: LoginPayload = {
   email: "user@example.com",
   password: "yourpassword",
 };
 
-const sdkInit = await PaktSDK.init(configData);
-const response = await sdk.auth.login(loginData);
+// Optional: Custom backoff for this specific call
+const customBackoff: BackoffOptions = {
+  numOfAttempts: 3,
+  startingDelay: 500,
+  maxDelay: 2000
+};
+
+const response: ResponseDto<LoginDto> = await sdk.auth.login(loginData, customBackoff);
 
 if (response.status === "success") {
   console.log("Logged in successfully");
-  console.log("User data:", response.data);
+  console.log("User ID:", response.data._id);
+  console.log("Email:", response.data.email);
+  console.log("Token:", response.data.token);
+  console.log("Onboarded:", response.data.onboarded);
+  console.log("Verified:", response.data.isVerified);
+  console.log("Profile completeness:", response.data.profileCompleteness);
   // Token is automatically stored for subsequent requests
 }
 ```
@@ -80,7 +106,7 @@ if (response.status === "success") {
 ### Registration
 
 ```typescript
-import { RegisterPayload } from "pakt-sdk";
+import { RegisterPayload, ResponseDto, RegisterDto } from "pakt-sdk";
 
 const registrationData: RegisterPayload = {
   firstName: "John",
@@ -92,13 +118,13 @@ const registrationData: RegisterPayload = {
   type: "talent", // Optional: "talent" or "business"
 };
 
-const sdkInit = await PaktSDK.init(configData);
-
-const response = await sdk.auth.register(registrationData);
+const response: ResponseDto<RegisterDto> = await sdk.auth.register(registrationData);
 
 if (response.status === "success") {
-  // Registration successful, but account needs verification
   console.log("Registration successful, check email for verification");
+  console.log("Token:", response.data.token);
+  console.log("Token type:", response.data.token_type);
+  console.log("Expires in:", response.data.expiresIn);
 }
 ```
 
@@ -107,13 +133,20 @@ if (response.status === "success") {
 After registration, users need to verify their account:
 
 ```typescript
-const verificationResponse = await sdk.auth.verifyAccount({
+import { ResponseDto, AccountVerifyDto } from "pakt-sdk";
+
+const verificationResponse: ResponseDto<AccountVerifyDto> = await sdk.auth.verifyAccount({
   tempToken: "token-from-registration",
   token: "verification-token-from-email",
 });
 
 if (verificationResponse.status === "success") {
   console.log("Account verified successfully");
+  console.log("User ID:", verificationResponse.data._id);
+  console.log("Email:", verificationResponse.data.email);
+  console.log("Token:", verificationResponse.data.token);
+  console.log("Code:", verificationResponse.data.code);
+  console.log("Expires in:", verificationResponse.data.expiresIn);
   // User is now fully authenticated
 }
 ```
@@ -139,32 +172,48 @@ await sdk.auth.changePassword({
 ### Google OAuth Integration
 
 ```typescript
+import { ResponseDto, GoogleOAuthValidateDto, GoogleOAuthState } from "pakt-sdk";
+
 // Step 1: Generate OAuth URL
-const oauthResponse = await sdk.auth.googleOAuthGenerateState();
+const oauthResponse: ResponseDto<GoogleOAuthState> = await sdk.auth.googleOAuthGenerateState();
 const { googleAuthUrl, state } = oauthResponse.data;
 
 // Redirect user to googleAuthUrl
 
 // Step 2: Validate OAuth callback
-const validationResponse = await sdk.auth.googleOAuthValidateState({
+const validationResponse: ResponseDto<GoogleOAuthValidateDto> = await sdk.auth.googleOAuthValidateState({
   state: "state-from-step-1",
   code: "authorization-code-from-callback",
 });
 
-if (validationResponse.data.type === "sign_up") {
-  // New user registered via Google
-} else {
-  // Existing user signed in
+if (validationResponse.status === "success") {
+  console.log("OAuth validation successful");
+  console.log("Token:", validationResponse.data.token);
+  console.log("Token type:", validationResponse.data.token_type);
+  console.log("Expires in:", validationResponse.data.expiresIn);
+  console.log("Verified:", validationResponse.data.isVerified);
+  console.log("Timezone:", validationResponse.data.timeZone);
+  
+  if (validationResponse.data.type === "sign_up") {
+    console.log("New user registered via Google");
+  } else {
+    console.log("Existing user signed in");
+  }
 }
 ```
 
 ### Referral Validation
 
 ```typescript
-const referralResponse = await sdk.auth.validateReferral("referral-token");
+import { ResponseDto, ValidateReferralDto } from "pakt-sdk";
 
-if (referralResponse.data.valid) {
+const referralResponse: ResponseDto<ValidateReferralDto> = await sdk.auth.validateReferral("referral-token");
+
+if (referralResponse.status === "success" && referralResponse.data.valid) {
   console.log(`Valid referral from user ${referralResponse.data.userId}`);
+  console.log(`Referral ID: ${referralResponse.data.referralId}`);
+  console.log(`Role: ${referralResponse.data.role}`);
+  console.log(`KYC status: ${referralResponse.data.isKyc}`);
   console.log(
     `Referral counts: ${referralResponse.data.referralCounts}/${referralResponse.data.totalAllowedReferrals}`,
   );
@@ -178,14 +227,27 @@ if (referralResponse.data.valid) {
 ### Get Current User Profile
 
 ```typescript
-const userProfile = await sdk.account.getUser();
-console.log("Current user:", userProfile.data);
+import { ResponseDto, IUser } from "pakt-sdk";
+
+const userProfile: ResponseDto<IUser> = await sdk.account.getUser();
+
+if (userProfile.status === "success") {
+  console.log("User ID:", userProfile.data._id);
+  console.log("Name:", `${userProfile.data.firstName} ${userProfile.data.lastName}`);
+  console.log("Email:", userProfile.data.email);
+  console.log("Type:", userProfile.data.type);
+  console.log("Score:", userProfile.data.score);
+  console.log("Profile completeness:", userProfile.data.profileCompleteness);
+  if (userProfile.data.profileImage) {
+    console.log("Profile image:", userProfile.data.profileImage.url);
+  }
+}
 ```
 
 ### Update User Profile
 
 ```typescript
-import { UpdateUserDto } from "pakt-sdk";
+import { UpdateUserDto, ResponseDto, IUser } from "pakt-sdk";
 
 const profileUpdate: UpdateUserDto = {
   profile: {
@@ -215,7 +277,12 @@ const profileUpdate: UpdateUserDto = {
   isPrivate: false,
 };
 
-const response = await sdk.account.updateAccount(profileUpdate);
+const response: ResponseDto<IUser> = await sdk.account.updateAccount(profileUpdate);
+
+if (response.status === "success") {
+  console.log("Profile updated successfully");
+  console.log("Updated user:", response.data);
+}
 ```
 
 ### User Onboarding
@@ -223,7 +290,7 @@ const response = await sdk.account.updateAccount(profileUpdate);
 Complete the initial onboarding process:
 
 ```typescript
-import { UserOnboardDto } from "pakt-sdk";
+import { UserOnboardDto, ResponseDto, IUser } from "pakt-sdk";
 
 const onboardingData: UserOnboardDto = {
   profile: {
@@ -239,7 +306,12 @@ const onboardingData: UserOnboardDto = {
   },
 };
 
-await sdk.account.onboardEndpoint(onboardingData);
+const response: ResponseDto<IUser> = await sdk.account.onboardEndpoint(onboardingData);
+
+if (response.status === "success") {
+  console.log("Onboarding completed successfully");
+  console.log("User profile:", response.data);
+}
 ```
 
 ### Two-Factor Authentication (2FA)
@@ -247,20 +319,35 @@ await sdk.account.onboardEndpoint(onboardingData);
 #### Setup 2FA
 
 ```typescript
+import { ResponseDto, TwoFAresponse } from "pakt-sdk";
+
 // Initiate 2FA setup
-const twoFAResponse = await sdk.account.initate2FA({
+const twoFAResponse: ResponseDto<TwoFAresponse> = await sdk.account.initate2FA({
   type: "google_auth", // or "email"
   password: "current-password",
 });
 
-// For Google Authenticator, use the provided QR code
-console.log("QR Code:", twoFAResponse.data.qrCode);
+if (twoFAResponse.status === "success") {
+  console.log("2FA Type:", twoFAResponse.data.type);
+  // For Google Authenticator, use the provided QR code
+  if (twoFAResponse.data.qrCodeUrl) {
+    console.log("QR Code URL:", twoFAResponse.data.qrCodeUrl);
+  }
+  if (twoFAResponse.data.tempToken) {
+    console.log("Temp token:", twoFAResponse.data.tempToken.token);
+    console.log("Expires in:", twoFAResponse.data.tempToken.expiresIn);
+  }
+}
 
 // Activate 2FA with verification code
-await sdk.account.activate2FA({
+const activateResponse: ResponseDto<any> = await sdk.account.activate2FA({
   code: "123456", // Code from authenticator app
   type: "google_auth",
 });
+
+if (activateResponse.status === "success") {
+  console.log("2FA activated successfully");
+}
 ```
 
 #### Use 2FA for Login
@@ -275,8 +362,8 @@ await sdk.account.sendEmailTwoFA({
 
 ### User Search and Discovery
 
-````typescript
-import { FilterUserDto } from "pakt-sdk";
+```typescript
+import { FilterUserDto, ResponseDto, FindUsers } from "pakt-sdk";
 
 const searchFilters: FilterUserDto = {
   tags: ["React", "Node.js"],
@@ -286,8 +373,19 @@ const searchFilters: FilterUserDto = {
   offset: 0,
 };
 
-const users = await sdk.account.getUsers(searchFilters);
-`````
+const users: ResponseDto<FindUsers> = await sdk.account.getUsers(searchFilters);
+
+if (users.status === "success") {
+  console.log(`Found ${users.data.total} users`);
+  console.log(`Page ${users.data.page} of ${users.data.pages}`);
+  console.log(`Limit: ${users.data.limit}`);
+  
+  users.data.data.forEach((user: any) => {
+    console.log(`User: ${user.firstName} ${user.lastName} (${user.email})`);
+    console.log(`Score: ${user.score}`);
+  });
+}
+```
 
 ---
 
@@ -298,7 +396,7 @@ Collections are the core entity representing projects, jobs, or collaborative wo
 ### Create a Collection
 
 ```typescript
-import { CreateCollectionDto } from "pakt-sdk";
+import { CreateCollectionDto, ResponseDto, ICollectionDto } from "pakt-sdk";
 
 const newCollection: CreateCollectionDto = {
   name: "E-commerce Website Development",
@@ -314,28 +412,50 @@ const newCollection: CreateCollectionDto = {
   },
 };
 
-const collection = await sdk.collection.create(newCollection);
-console.log("Collection created:", collection.data._id);
+const collection: ResponseDto<ICollectionDto> = await sdk.collection.create(newCollection);
+
+if (collection.status === "success") {
+  console.log("Collection created successfully");
+  console.log("Collection ID:", collection.data._id);
+  console.log("Name:", collection.data.name);
+  console.log("Status:", collection.data.status);
+}
 ```
 
 ### Get Collections
 
 ```typescript
+import { ResponseDto, FindCollectionsDto, ICollectionDto } from "pakt-sdk";
+
 // Get all collections with filters
-const collections = await sdk.collection.getAll({
+const collections: ResponseDto<FindCollectionsDto> = await sdk.collection.getAll({
   status: "ongoing",
   limit: 10,
   offset: 0,
 });
 
+if (collections.status === "success") {
+  console.log(`Found ${collections.data.total} collections`);
+  console.log(`Page ${collections.data.page} of ${collections.data.pages}`);
+  collections.data.data.forEach((col: any) => {
+    console.log(`Collection: ${col.name} (${col.status})`);
+  });
+}
+
 // Get specific collection
-const collection = await sdk.collection.getById("collectionId");
+const collection: ResponseDto<ICollectionDto> = await sdk.collection.getById("collectionId");
+
+if (collection.status === "success") {
+  console.log("Collection name:", collection.data.name);
+  console.log("Description:", collection.data.description);
+  console.log("Status:", collection.data.status);
+}
 ```
 
 ### Update Collection
 
-`````typescript
-import { UpdateCollectionDto } from "pakt-sdk";
+```typescript
+import { UpdateCollectionDto, ResponseDto, ICollectionDto } from "pakt-sdk";
 
 const updates: UpdateCollectionDto = {
   description: "Updated project description",
@@ -343,33 +463,63 @@ const updates: UpdateCollectionDto = {
   deliveryDate: new Date("2024-12-31"),
 };
 
-await sdk.collection.updateCollection("collection-id", updates);
+const response: ResponseDto<ICollectionDto> = await sdk.collection.updateCollection("collection-id", updates);
+
+if (response.status === "success") {
+  console.log("Collection updated successfully");
+  console.log("Updated description:", response.data.description);
+  console.log("Status:", response.data.status);
+}
 ```
 
 ### Collection Types
 
-````typescript
+```typescript
+import { ResponseDto, ICollectionTypeDto } from "pakt-sdk";
+
 // Get all available collection types
-const types = await sdk.collection.getTypes();
+const types: ResponseDto<ICollectionTypeDto[]> = await sdk.collection.getTypes();
+
+if (types.status === "success") {
+  console.log("Available collection types:");
+  types.data.forEach((type: ICollectionTypeDto) => {
+    console.log(`- ${type.name}: ${type.description}`);
+  });
+}
 
 // Get specific collection type
-const type = await sdk.collection.getACollectionType("_id");
-`````
+const type: ResponseDto<ICollectionTypeDto> = await sdk.collection.getACollectionType("_id");
+
+if (type.status === "success") {
+  console.log("Type name:", type.data.name);
+  console.log("Description:", type.data.description);
+}
+```
 
 ### Bulk Operations
 
 ```typescript
+import { CreateCollectionDto, ResponseDto } from "pakt-sdk";
+
 // Create multiple collections
-const collectionsData = [
+const collectionsData: CreateCollectionDto[] = [
   /* array of CreateCollectionDto */
 ];
-await sdk.collection.createMany(collectionsData);
+const createResponse: ResponseDto<any> = await sdk.collection.createMany(collectionsData);
+
+if (createResponse.status === "success") {
+  console.log("Multiple collections created successfully");
+}
 
 // Update multiple collections
 const updates = [
   /* array of updates with IDs */
 ];
-await sdk.collection.updateManyCollections(updates);
+const updateResponse: ResponseDto<any> = await sdk.collection.updateManyCollections(updates);
+
+if (updateResponse.status === "success") {
+  console.log("Multiple collections updated successfully");
+}
 ```
 
 ---
@@ -381,23 +531,37 @@ Comprehensive blockchain-based payment system with multi-cryptocurrency support.
 ### Wallet Management
 
 ```typescript
-// Get all user wallets
-const wallets = await sdk.wallet.getWallets();
+import { ResponseDto, IWalletResponseDto, IWalletDto } from "pakt-sdk";
 
-wallets.data.forEach((wallet) => {
-  console.log(`${wallet.coin.toUpperCase()}: $${wallet.balance.spendable} available`);
-  console.log(`Locked: $${wallet.balance.locked}`);
-});
+// Get all user wallets
+const wallets: ResponseDto<IWalletResponseDto> = await sdk.wallet.getWallets();
+
+if (wallets.status === "success") {
+  console.log("Total balance:", wallets.data.totalBalance);
+  console.log("Total value:", wallets.data.value);
+  
+  wallets.data.wallets.forEach((wallet: IWalletDto) => {
+    console.log(`${wallet.coin.toUpperCase()}: $${wallet.spendable} available`);
+    console.log(`Locked: $${wallet.lock}`);
+    console.log(`USD Value: $${wallet.usdValue}`);
+    console.log(`Status: ${wallet.status}`);
+  });
+}
 
 // Get specific wallet by cryptocurrency
-const usdcWallet = await sdk.wallet.getSingleWalletByCoin("usdc");
-const avaxWallet = await sdk.wallet.getSingleWalletByCoin("avax");
+const usdcWallet: ResponseDto<IWalletDto> = await sdk.wallet.getSingleWalletByCoin("usdc");
+const avaxWallet: ResponseDto<IWalletDto> = await sdk.wallet.getSingleWalletByCoin("avax");
+
+if (usdcWallet.status === "success") {
+  console.log("USDC Wallet:", usdcWallet.data.address);
+  console.log("Spendable:", usdcWallet.data.spendable);
+}
 ```
 
 ### Payment Processing
 
 ```typescript
-import { ICreatePaymentDto } from "pakt-sdk";
+import { ICreatePaymentDto, ResponseDto, IPaymentDataDto } from "pakt-sdk";
 
 // Create payment order
 const paymentOrder: ICreatePaymentDto = {
@@ -405,65 +569,107 @@ const paymentOrder: ICreatePaymentDto = {
   collectionId: "collectionId",
 };
 
-const payment = await sdk.payment.create(paymentOrder);
+const payment: ResponseDto<IPaymentDataDto> = await sdk.payment.create(paymentOrder);
 
 if (payment.status === "success") {
   console.log("Payment order created");
-  console.log("Amount to pay:", payment.data.amount);
+  console.log("Coin:", payment.data.coin);
+  console.log("Amount to pay:", payment.data.amountToPay);
   console.log("Blockchain address:", payment.data.address);
-  console.log("Required confirmations:", payment.data.confirmation);
+  console.log("Collection amount:", payment.data.collectionAmount);
+  console.log("Expected fee:", payment.data.expectedFee);
+  console.log("USD amount:", payment.data.usdAmount);
+  console.log("Chain ID:", payment.data.chainId);
 }
 ```
 
 ### Payment Validation & Release
 
 ```typescript
+import { ResponseDto } from "pakt-sdk";
+
 // Validate payment transaction
-const validation = await sdk.payment.validate({
+const validation: ResponseDto<any> = await sdk.payment.validate({
   paymentId: "payment-id",
   transactionHash: "blockchain-tx-hash",
 });
 
+if (validation.status === "success") {
+  console.log("Payment validated successfully");
+  console.log("Validation data:", validation.data);
+}
+
 // Release escrowed payment (for collection completion)
-await sdk.payment.release({
+const release: ResponseDto<any> = await sdk.payment.release({
   collectionId: "collectionId",
   recipientId: "user-id",
 });
+
+if (release.status === "success") {
+  console.log("Payment released successfully");
+}
 ```
 
 ### Transaction History
 
 ```typescript
+import { ResponseDto, FindTransactionsDto, ITransactionDto } from "pakt-sdk";
+
 // Get all transactions
-const transactions = await sdk.wallet.getTransactions({
+const transactions: ResponseDto<FindTransactionsDto> = await sdk.wallet.getTransactions({
   limit: 50,
   offset: 0,
   type: "sent", // Optional: filter by transaction type
 });
 
+if (transactions.status === "success") {
+  console.log(`Found ${transactions.data.total} transactions`);
+  console.log(`Page ${transactions.data.page} of ${transactions.data.pages}`);
+  
+  transactions.data.transactions.forEach((tx: ITransactionDto) => {
+    console.log(`Transaction: ${tx._id}`);
+    console.log(`Amount: ${tx.amount} ${tx.currency}`);
+    console.log(`Type: ${tx.type}`);
+    console.log(`Status: ${tx.status}`);
+    console.log(`Hash: ${tx.hash}`);
+  });
+}
+
 // Get specific transaction
-const transaction = await sdk.wallet.getATransaction("transaction-id");
+const transaction: ResponseDto<ITransactionDto> = await sdk.wallet.getATransaction("transaction-id");
+
+if (transaction.status === "success") {
+  console.log("Transaction details:", transaction.data);
+}
 
 // Get transaction statistics
-const stats = await sdk.wallet.getTransactionStats("usdc");
-console.log("Total sent:", stats.data.totalSent);
-console.log("Total received:", stats.data.totalReceived);
+const stats: ResponseDto<any> = await sdk.wallet.getTransactionStats("usdc");
+
+if (stats.status === "success") {
+  console.log("Total sent:", stats.data.totalSent);
+  console.log("Total received:", stats.data.totalReceived);
+}
 ```
 
 ### Cryptocurrency Exchange Rates
 
 ```typescript
-// Get current exchange rates
-const exchange = await sdk.wallet.getExchange();
+import { ResponseDto } from "pakt-sdk";
 
-console.log("USDC to USD:", exchange.data.usdc.usd);
-console.log("AVAX to USD:", exchange.data.avax.usd);
+// Get current exchange rates
+const exchange: ResponseDto<any> = await sdk.wallet.getExchange();
+
+if (exchange.status === "success") {
+  console.log("USDC to USD:", exchange.data.usdc.usd);
+  console.log("AVAX to USD:", exchange.data.avax.usd);
+  console.log("Exchange data:", exchange.data);
+}
 ```
 
 ### Withdrawals
 
 ```typescript
-import { CreateWithdrawal } from "pakt-sdk";
+import { CreateWithdrawal, ResponseDto, IWithdrawalDto, FindWithdrawalsDto } from "pakt-sdk";
 
 const withdrawalRequest: CreateWithdrawal = {
   coin: "usdc",
@@ -472,13 +678,27 @@ const withdrawalRequest: CreateWithdrawal = {
   password: "account-password",
 };
 
-const withdrawal = await sdk.withdrawal.createWithdrawal(withdrawalRequest);
+const withdrawal: ResponseDto<IWithdrawalDto> = await sdk.withdrawal.createWithdrawal(withdrawalRequest);
+
+if (withdrawal.status === "success") {
+  console.log("Withdrawal created successfully");
+  console.log("Withdrawal ID:", withdrawal.data._id);
+  console.log("Amount:", withdrawal.data.amount);
+  console.log("Status:", withdrawal.data.status);
+}
 
 // Check withdrawal status
-const withdrawals = await sdk.withdrawal.fetchWithdrawal({
+const withdrawals: ResponseDto<FindWithdrawalsDto> = await sdk.withdrawal.fetchWithdrawal({
   limit: 10,
   offset: 0,
 });
+
+if (withdrawals.status === "success") {
+  console.log(`Found ${withdrawals.data.total} withdrawals`);
+  withdrawals.data.data.forEach((w: any) => {
+    console.log(`Withdrawal: ${w._id} - ${w.status}`);
+  });
+}
 ```
 
 ---
@@ -490,7 +710,7 @@ Direct deposits allow for streamlined collection funding and validation without 
 ### Create Direct Deposit
 
 ```typescript
-import { ICreateDirectDepositPayload } from "pakt-sdk";
+import { ICreateDirectDepositPayload, ResponseDto, IDirectDepositDto } from "pakt-sdk";
 
 const directDepositData: ICreateDirectDepositPayload = {
   collectionType: "development-project",
@@ -501,13 +721,13 @@ const directDepositData: ICreateDirectDepositPayload = {
   owner: "user-id",
 };
 
-const directDeposit = await sdk.directDeposit.createDirectDeposit({
+const directDeposit: ResponseDto<IDirectDepositDto> = await sdk.directDeposit.createDirectDeposit({
   authToken: "your-auth-token",
   payload: directDepositData,
 });
 
 if (directDeposit.status === "success") {
-  console.log("Direct deposit created");
+  console.log("Direct deposit created successfully");
   console.log("Collection ID:", directDeposit.data.collectionId);
   console.log("Payment address:", directDeposit.data.address);
   console.log("Amount to pay:", directDeposit.data.amountToPay);
@@ -519,7 +739,7 @@ if (directDeposit.status === "success") {
 ### Validate Direct Deposit
 
 ```typescript
-import { IValidateDirectDepositPayload } from "pakt-sdk";
+import { IValidateDirectDepositPayload, ResponseDto } from "pakt-sdk";
 
 const validationData: IValidateDirectDepositPayload = {
   collection: "collection-id",
@@ -533,13 +753,13 @@ const validationData: IValidateDirectDepositPayload = {
   release: true, // whether to release funds immediately
 };
 
-const validation = await sdk.directDeposit.validateDirectDeposit({
+const validation: ResponseDto<any> = await sdk.directDeposit.validateDirectDeposit({
   authToken: "your-auth-token",
   payload: validationData,
 });
 
 if (validation.status === "success") {
-  console.log("Direct deposit validated");
+  console.log("Direct deposit validated successfully");
   console.log("Collection updated:", validation.data);
 }
 ```
@@ -547,22 +767,30 @@ if (validation.status === "success") {
 ### Get Payment Methods
 
 ```typescript
-// Get available blockchain payment methods for direct deposits
-const paymentMethods = await sdk.directDeposit.fetchPaymentMethods("your-auth-token");
+import { ResponseDto, IBlockchainCoinDto } from "pakt-sdk";
 
-paymentMethods.data.forEach((coin) => {
-  console.log(`${coin.name} (${coin.symbol})`);
-  console.log(`Contract: ${coin.contractAddress}`);
-  console.log(`Chain ID: ${coin.rpcChainId}`);
-  console.log(`Active: ${coin.active}`);
-});
+// Get available blockchain payment methods for direct deposits
+const paymentMethods: ResponseDto<IBlockchainCoinDto[]> = await sdk.directDeposit.fetchPaymentMethods("your-auth-token");
+
+if (paymentMethods.status === "success") {
+  console.log("Available payment methods:");
+  paymentMethods.data.forEach((coin: IBlockchainCoinDto) => {
+    console.log(`${coin.name} (${coin.symbol})`);
+    console.log(`Contract: ${coin.contractAddress}`);
+    console.log(`Chain ID: ${coin.rpcChainId}`);
+    console.log(`Active: ${coin.active}`);
+    console.log(`Is Token: ${coin.isToken}`);
+  });
+}
 ```
 
 ### Get Active RPC Configuration
 
 ```typescript
+import { ResponseDto, IRpcConfigDto } from "pakt-sdk";
+
 // Get current blockchain RPC server configuration
-const rpcConfig = await sdk.directDeposit.fetchActiveRPC("your-auth-token");
+const rpcConfig: ResponseDto<IRpcConfigDto> = await sdk.directDeposit.fetchActiveRPC("your-auth-token");
 
 if (rpcConfig.status === "success") {
   console.log("RPC Name:", rpcConfig.data.rpcName);
@@ -597,7 +825,7 @@ Use direct deposits when:
 Send and manage project collaboration invites:
 
 ```typescript
-import { SendInviteDto } from "pakt-sdk";
+import { SendInviteDto, ResponseDto, IInviteDto, FindInvitesDto } from "pakt-sdk";
 
 // Send invite
 const inviteData: SendInviteDto = {
@@ -605,55 +833,88 @@ const inviteData: SendInviteDto = {
   collectionId: "project-id",
 };
 
-const invite = await sdk.invite.sendInvite(inviteData);
+const invite: ResponseDto<IInviteDto> = await sdk.invite.sendInvite(inviteData);
+
+if (invite.status === "success") {
+  console.log("Invite sent successfully");
+  console.log("Invite ID:", invite.data._id);
+  console.log("Status:", invite.data.status);
+}
 
 // Manage invites
-await sdk.invite.acceptInvite("invite-id");
-await sdk.invite.declineInvite("invite-id");
-await sdk.invite.cancelInvite("invite-id");
+const acceptResponse: ResponseDto<any> = await sdk.invite.acceptInvite("invite-id");
+const declineResponse: ResponseDto<any> = await sdk.invite.declineInvite("invite-id");
+const cancelResponse: ResponseDto<any> = await sdk.invite.cancelInvite("invite-id");
 
 // Get all invites
-const invites = await sdk.invite.getAll({
+const invites: ResponseDto<FindInvitesDto> = await sdk.invite.getAll({
   status: "pending",
   limit: 10,
 });
+
+if (invites.status === "success") {
+  console.log(`Found ${invites.data.total} invites`);
+  invites.data.data.forEach((inv: any) => {
+    console.log(`Invite: ${inv._id} - ${inv.status}`);
+  });
+}
 ```
 
 ### Chat System
 
 ```typescript
+import { ResponseDto, FindMessagesDto } from "pakt-sdk";
+
 // Get user messages/conversations
-const messages = await sdk.chat.getUserMessages({
+const messages: ResponseDto<FindMessagesDto> = await sdk.chat.getUserMessages({
   limit: 50,
   offset: 0,
 });
 
-messages.data.forEach((conversation) => {
-  console.log("Conversation with:", conversation.recipients);
-  conversation.messages.forEach((message) => {
-    console.log(`${message.sender}: ${message.content}`);
+if (messages.status === "success") {
+  console.log(`Found ${messages.data.total} conversations`);
+  messages.data.data.forEach((conversation: any) => {
+    console.log("Conversation with:", conversation.recipients);
+    if (conversation.messages) {
+      conversation.messages.forEach((message: any) => {
+        console.log(`${message.sender}: ${message.content}`);
+      });
+    }
   });
-});
+}
 ```
 
 ### Notifications
 
 ```typescript
+import { ResponseDto, FindNotificationsDto } from "pakt-sdk";
+
 // Get all notifications
-const notifications = await sdk.notifications.getAll({
+const notifications: ResponseDto<FindNotificationsDto> = await sdk.notifications.getAll({
   limit: 20,
   offset: 0,
 });
 
+if (notifications.status === "success") {
+  console.log(`Found ${notifications.data.total} notifications`);
+  notifications.data.data.forEach((notif: any) => {
+    console.log(`Notification: ${notif.title} - ${notif.read ? 'Read' : 'Unread'}`);
+  });
+}
+
 // Mark notifications as read
-await sdk.notifications.markAll(); // Mark all as read
-await sdk.notifications.markOneAsRead("notification-id"); // Mark specific notification
+const markAllResponse: ResponseDto<any> = await sdk.notifications.markAll();
+const markOneResponse: ResponseDto<any> = await sdk.notifications.markOneAsRead("notification-id");
+
+if (markAllResponse.status === "success") {
+  console.log("All notifications marked as read");
+}
 ```
 
 ### Activity Feeds
 
 ```typescript
-import { CreateFeedDto } from "pakt-sdk";
+import { CreateFeedDto, ResponseDto, IFeedDto, FindFeedsDto } from "pakt-sdk";
 
 // Create feed entry
 const feedEntry: CreateFeedDto = {
@@ -664,17 +925,33 @@ const feedEntry: CreateFeedDto = {
   data: "collectionId",
 };
 
-await sdk.feed.create(feedEntry);
+const createResponse: ResponseDto<IFeedDto> = await sdk.feed.create(feedEntry);
+
+if (createResponse.status === "success") {
+  console.log("Feed entry created successfully");
+  console.log("Feed ID:", createResponse.data._id);
+}
 
 // Get activity feeds
-const feeds = await sdk.feed.getAll({
+const feeds: ResponseDto<FindFeedsDto> = await sdk.feed.getAll({
   limit: 10,
   isPublic: true,
 });
 
+if (feeds.status === "success") {
+  console.log(`Found ${feeds.data.total} feeds`);
+  feeds.data.data.forEach((feed: any) => {
+    console.log(`Feed: ${feed.title} - ${feed.type}`);
+  });
+}
+
 // Dismiss feeds
-await sdk.feed.dismissAFeed("feed-id");
-await sdk.feed.dismissAllFeeds();
+const dismissOneResponse: ResponseDto<any> = await sdk.feed.dismissAFeed("feed-id");
+const dismissAllResponse: ResponseDto<any> = await sdk.feed.dismissAllFeeds();
+
+if (dismissAllResponse.status === "success") {
+  console.log("All feeds dismissed successfully");
+}
 ```
 
 ---
@@ -684,7 +961,7 @@ await sdk.feed.dismissAllFeeds();
 ### File Upload
 
 ```typescript
-import { CreateFileUpload } from "pakt-sdk";
+import { CreateFileUpload, ResponseDto, IUploadDto } from "pakt-sdk";
 
 const fileData: CreateFileUpload = {
   file: fileBuffer, // or file data
@@ -692,21 +969,43 @@ const fileData: CreateFileUpload = {
   fileType: "application/pdf",
 };
 
-const upload = await sdk.file.fileUpload(fileData);
-console.log("File uploaded:", upload.data.url);
+const upload: ResponseDto<IUploadDto> = await sdk.file.fileUpload(fileData);
+
+if (upload.status === "success") {
+  console.log("File uploaded successfully");
+  console.log("File ID:", upload.data._id);
+  console.log("File name:", upload.data.name);
+  console.log("File URL:", upload.data.url);
+  console.log("Upload status:", upload.data.status);
+}
 ```
 
 ### File Management
 
 ```typescript
+import { ResponseDto, FindUploadDto, IUploadDto } from "pakt-sdk";
+
 // Get all uploaded files
-const files = await sdk.file.getFileUploads({
+const files: ResponseDto<FindUploadDto> = await sdk.file.getFileUploads({
   limit: 20,
   offset: 0,
 });
 
+if (files.status === "success") {
+  console.log(`Found ${files.data.count} files`);
+  console.log(`Pages: ${files.data.pages}`);
+  files.data.data.forEach((file: IUploadDto) => {
+    console.log(`File: ${file.name} - ${file.url}`);
+    console.log(`Status: ${file.status}`);
+  });
+}
+
 // Get specific file
-const file = await sdk.file.getAFileUpload("file-id");
+const file: ResponseDto<IUploadDto> = await sdk.file.getAFileUpload("file-id");
+
+if (file.status === "success") {
+  console.log("File details:", file.data);
+}
 ```
 
 ---
@@ -718,7 +1017,7 @@ Complete identity verification system using third-party verification services.
 ### Start Verification Session
 
 ```typescript
-import { ICreateSessionPayload } from "pakt-sdk";
+import { ICreateSessionPayload, ResponseDto, ISessionDto } from "pakt-sdk";
 
 const verificationData: ICreateSessionPayload = {
   firstName: "John",
@@ -735,14 +1034,19 @@ const verificationData: ICreateSessionPayload = {
   documentCountry: "US",
 };
 
-const session = await sdk.userVerification.createSession(verificationData);
-console.log("Verification session created:", session.data.sessionId);
+const session: ResponseDto<ISessionDto> = await sdk.userVerification.createSession(verificationData);
+
+if (session.status === "success") {
+  console.log("Verification session created successfully");
+  console.log("Session ID:", session.data.sessionId);
+  console.log("Status:", session.data.status);
+}
 ```
 
 ### Upload Verification Documents
 
 ```typescript
-import { ISendSessionMedia } from "pakt-sdk";
+import { ISendSessionMedia, ResponseDto } from "pakt-sdk";
 
 // Upload document photo
 const documentMedia: ISendSessionMedia = {
@@ -751,7 +1055,11 @@ const documentMedia: ISendSessionMedia = {
   file: documentImageBuffer,
 };
 
-await sdk.userVerification.sendSessionMedia(documentMedia);
+const documentUpload: ResponseDto<any> = await sdk.userVerification.sendSessionMedia(documentMedia);
+
+if (documentUpload.status === "success") {
+  console.log("Document uploaded successfully");
+}
 
 // Upload face photo for verification
 const faceMedia: ISendSessionMedia = {
@@ -760,30 +1068,46 @@ const faceMedia: ISendSessionMedia = {
   file: facePhotoBuffer,
 };
 
-await sdk.userVerification.sendSessionMedia(faceMedia);
+const faceUpload: ResponseDto<any> = await sdk.userVerification.sendSessionMedia(faceMedia);
+
+if (faceUpload.status === "success") {
+  console.log("Face photo uploaded successfully");
+}
 ```
 
 ### Check Verification Status
 
 ```typescript
+import { ResponseDto, FindSessionAttemptsDto, FindUserVerificationsDto } from "pakt-sdk";
+
 // Get verification attempts
-const attempts = await sdk.userVerification.getSessionAttempts({
+const attempts: ResponseDto<FindSessionAttemptsDto> = await sdk.userVerification.getSessionAttempts({
   limit: 10,
   offset: 0,
 });
 
+if (attempts.status === "success") {
+  console.log(`Found ${attempts.data.total} attempts`);
+  attempts.data.data.forEach((attempt: any) => {
+    console.log(`Attempt: ${attempt._id} - ${attempt.status}`);
+  });
+}
+
 // Get user verification status
-const verifications = await sdk.userVerification.getUserVerifications({
+const verifications: ResponseDto<FindUserVerificationsDto> = await sdk.userVerification.getUserVerifications({
   limit: 5,
   offset: 0,
 });
 
-verifications.data.forEach((verification) => {
-  console.log("Status:", verification.status);
-  console.log("Provider:", verification.provider);
-  console.log("Document verified:", verification.documentVerified);
-  console.log("Face verified:", verification.faceVerified);
-});
+if (verifications.status === "success") {
+  console.log(`Found ${verifications.data.total} verifications`);
+  verifications.data.data.forEach((verification: any) => {
+    console.log("Status:", verification.status);
+    console.log("Provider:", verification.provider);
+    console.log("Document verified:", verification.documentVerified);
+    console.log("Face verified:", verification.faceVerified);
+  });
+}
 ```
 
 ---
@@ -791,7 +1115,7 @@ verifications.data.forEach((verification) => {
 ## Bookmarks
 
 ```typescript
-import { createBookMarkDto } from "pakt-sdk";
+import { createBookMarkDto, ResponseDto, IBookmarkDto, FindBookmarksDto } from "pakt-sdk";
 
 // Create bookmark
 const bookmark: createBookMarkDto = {
@@ -799,16 +1123,32 @@ const bookmark: createBookMarkDto = {
   type: "collection", // or "feed", "user", "invite"
 };
 
-await sdk.bookmark.create(bookmark);
+const createResponse: ResponseDto<IBookmarkDto> = await sdk.bookmark.create(bookmark);
+
+if (createResponse.status === "success") {
+  console.log("Bookmark created successfully");
+  console.log("Bookmark ID:", createResponse.data._id);
+}
 
 // Get bookmarks
-const bookmarks = await sdk.bookmark.getAll({
+const bookmarks: ResponseDto<FindBookmarksDto> = await sdk.bookmark.getAll({
   type: "collection",
   limit: 10,
 });
 
+if (bookmarks.status === "success") {
+  console.log(`Found ${bookmarks.data.total} bookmarks`);
+  bookmarks.data.data.forEach((bm: any) => {
+    console.log(`Bookmark: ${bm._id} - ${bm.type}`);
+  });
+}
+
 // Delete bookmark
-await sdk.bookmark.delete("bookmark-id");
+const deleteResponse: ResponseDto<any> = await sdk.bookmark.delete("bookmark-id");
+
+if (deleteResponse.status === "success") {
+  console.log("Bookmark deleted successfully");
+}
 ```
 
 ---
@@ -816,7 +1156,7 @@ await sdk.bookmark.delete("bookmark-id");
 ## Reviews & Ratings
 
 ```typescript
-import { AddReviewDto } from "pakt-sdk";
+import { AddReviewDto, ResponseDto, IReviewDto, FindReviewsDto } from "pakt-sdk";
 
 // Add review for completed collection
 const reviewData: AddReviewDto = {
@@ -826,13 +1166,26 @@ const reviewData: AddReviewDto = {
   text: "Excellent work, highly recommended!",
 };
 
-await sdk.review.addReview(reviewData);
+const addResponse: ResponseDto<IReviewDto> = await sdk.review.addReview(reviewData);
+
+if (addResponse.status === "success") {
+  console.log("Review added successfully");
+  console.log("Review ID:", addResponse.data._id);
+  console.log("Rating:", addResponse.data.rating);
+}
 
 // Get reviews
-const reviews = await sdk.review.viewAll({
+const reviews: ResponseDto<FindReviewsDto> = await sdk.review.viewAll({
   collectionId: "collection-id",
   limit: 10,
 });
+
+if (reviews.status === "success") {
+  console.log(`Found ${reviews.data.total} reviews`);
+  reviews.data.data.forEach((review: any) => {
+    console.log(`Review: ${review.rating}/5 - ${review.text}`);
+  });
+}
 ```
 
 ---
@@ -842,7 +1195,7 @@ const reviews = await sdk.review.viewAll({
 ### Connection Filtering
 
 ```typescript
-import { CreateConnectionFilterDto } from "pakt-sdk";
+import { CreateConnectionFilterDto, ResponseDto, IConnectionFilterDto } from "pakt-sdk";
 
 // Create automatic connection filter
 const filter: CreateConnectionFilterDto = {
@@ -852,10 +1205,23 @@ const filter: CreateConnectionFilterDto = {
   decider: "greater_than", // Only connect with users having score > 80
 };
 
-await sdk.connectionFilter.create(filter);
+const createResponse: ResponseDto<IConnectionFilterDto> = await sdk.connectionFilter.create(filter);
+
+if (createResponse.status === "success") {
+  console.log("Connection filter created successfully");
+  console.log("Filter ID:", createResponse.data._id);
+  console.log("Event:", createResponse.data.event);
+}
 
 // Get user's connection filters
-const filters = await sdk.connectionFilter.getForAUser("user-id");
+const filters: ResponseDto<IConnectionFilterDto[]> = await sdk.connectionFilter.getForAUser("user-id");
+
+if (filters.status === "success") {
+  console.log(`Found ${filters.data.length} connection filters`);
+  filters.data.forEach((filter: IConnectionFilterDto) => {
+    console.log(`Filter: ${filter.key} ${filter.decider} ${filter.value}`);
+  });
+}
 ```
 
 ---
@@ -896,7 +1262,20 @@ try {
 The SDK is built with TypeScript and provides comprehensive type definitions:
 
 ```typescript
-import { PaktSDK, LoginPayload, RegisterPayload, CreateCollectionDto, IUser, IWalletDto, ResponseDto } from "pakt-sdk";
+import { 
+  PaktSDK, 
+  LoginPayload, 
+  RegisterPayload, 
+  CreateCollectionDto, 
+  IUser, 
+  IWalletDto, 
+  ResponseDto,
+  LoginDto,
+  BackoffOptions,
+  IBackOffOptions,
+  JitterType,
+  Status
+} from "pakt-sdk";
 
 // All interfaces and types are available for import
 const loginPayload: LoginPayload = {
@@ -904,7 +1283,19 @@ const loginPayload: LoginPayload = {
   password: "password",
 };
 
-const response: ResponseDto<LoginDto> = await sdk.auth.login(loginPayload);
+// Custom backoff options for this specific call
+const customBackoff: BackoffOptions = {
+  numOfAttempts: 3,
+  startingDelay: 500,
+  jitter: "full"
+};
+
+const response: ResponseDto<LoginDto> = await sdk.auth.login(loginPayload, customBackoff);
+
+if (response.status === Status.SUCCESS) {
+  console.log("Login successful");
+  console.log("User data:", response.data);
+}
 ```
 
 ---
@@ -912,16 +1303,27 @@ const response: ResponseDto<LoginDto> = await sdk.auth.login(loginPayload);
 ## Configuration Options
 
 ```typescript
+import { PaktConfig, BackoffOptions } from "pakt-sdk";
+
 interface PaktConfig {
   baseUrl: string; // Required: API base URL
   testnet?: boolean; // Optional: Use testnet environment (default: false)
   verbose?: boolean; // Optional: Enable detailed logging (default: false)
+  defaultBackoff?: BackoffOptions; // Optional: Default backoff configuration
 }
 
 const sdk = await PaktSDK.init({
   baseUrl: "https://api.pakt.world",
   testnet: false,
   verbose: true,
+  defaultBackoff: {
+    numOfAttempts: 5,
+    startingDelay: 200,
+    timeMultiple: 2,
+    maxDelay: 5000,
+    jitter: "full",
+    delayFirstAttempt: false
+  }
 });
 ```
 
