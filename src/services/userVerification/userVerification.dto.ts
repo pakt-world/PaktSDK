@@ -1,3 +1,4 @@
+import { BackoffOptions } from "../../utils/backOff/options";
 import { ResponseDto } from "../../utils";
 import { expectedISOCountries } from "../../utils/constants";
 
@@ -90,8 +91,16 @@ export interface SessionAttempts {
 }
 
 export interface UserVerificationModuleType {
-  createSession(authToken: string, payload: ICreateSessionPayload): Promise<ResponseDto<CreateSessionResponse>>;
-  sendSessionMedia(authToken: string, payload: ISendSessionMedia): Promise<ResponseDto<SendSessionMediaResponse>>;
-  getSessionAttempts(authToken: string): Promise<ResponseDto<SessionAttempts>>;
-  getUserVerifications(authToken: string): Promise<ResponseDto<IVerification[]>>;
+  createSession(props: {
+    authToken: string;
+    payload: ICreateSessionPayload;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<CreateSessionResponse>>;
+  sendSessionMedia(props: {
+    authToken: string;
+    payload: ISendSessionMedia;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<SendSessionMediaResponse>>;
+  getSessionAttempts(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<SessionAttempts>>;
+  getUserVerifications(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<IVerification[]>>;
 }

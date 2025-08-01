@@ -1,5 +1,6 @@
 import { ResponseDto } from "src/utils";
 import { IUser } from "../auth";
+import { BackoffOptions } from "../../utils/backOff/options";
 
 type IReferralProgramType = "unlimited" | "expiring" | "time_period_reset" | "conditional" | "system" | "limited";
 
@@ -49,10 +50,18 @@ export interface IUserReferralStats {
 }
 
 export interface UserReferralModule {
-  fetchUserReferrals(
-    authToken: string,
-    filter?: { page?: number; limit?: number } & Record<string, any>,
-  ): Promise<ResponseDto<FindUserReferrals>>;
-  fetchUserReferralsStats(authToken: string): Promise<ResponseDto<IUserReferralStats>>;
-  sendReferrralsInvite(authToken: string, emails: string[]): Promise<ResponseDto<{}>>;
+  fetchUserReferrals(props: {
+    authToken: string;
+    filter?: { page?: number; limit?: number } & Record<string, any>;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<FindUserReferrals>>;
+  fetchUserReferralsStats(props: {
+    authToken: string;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<IUserReferralStats>>;
+  sendReferrralsInvite(props: {
+    authToken: string;
+    emails: string[];
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<{}>>;
 }

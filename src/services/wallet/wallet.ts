@@ -12,6 +12,8 @@ import {
   IWalletResponseDto,
   WalletModuleType,
 } from "./wallet.dto";
+import { BackoffOptions } from "../../utils/backOff/options";
+import { PAKT_BACKOFF_OPTIONS } from "../../utils/token";
 export * from "./wallet.dto";
 
 @Service({
@@ -22,13 +24,16 @@ export * from "./wallet.dto";
 export class WalletModule implements WalletModuleType {
   private id: string;
   private connector: PaktConnector;
+  private configBackOff: BackoffOptions;
 
   constructor(id: string) {
     this.id = id;
     this.connector = Container.of(this.id).get(PaktConnector);
+    this.configBackOff = Container.of(this.id).get(PAKT_BACKOFF_OPTIONS);
   }
 
-  getTransactions(authToken: string): Promise<ResponseDto<FindTransactionsDto>> {
+  getTransactions(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<FindTransactionsDto>> {
+    const { authToken, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<FindTransactionsDto> = await this.connector.get({
         path: API_PATHS.TRANSACTIONS,
@@ -36,9 +41,14 @@ export class WalletModule implements WalletModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
-  getATransaction(authToken: string, id: string): Promise<ResponseDto<ITransactionDto>> {
+  getATransaction(props: {
+    authToken: string;
+    options?: BackoffOptions;
+    id: string;
+  }): Promise<ResponseDto<ITransactionDto>> {
+    const { authToken, id, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<ITransactionDto> = await this.connector.get({
         path: `${API_PATHS.A_TRANSACTION}/${id}`,
@@ -46,9 +56,13 @@ export class WalletModule implements WalletModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
-  getTransactionStats(authToken: string): Promise<ResponseDto<ITransactionStatsDto[]>> {
+  getTransactionStats(props: {
+    authToken: string;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<ITransactionStatsDto[]>> {
+    const { authToken, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<ITransactionStatsDto[]> = await this.connector.get({
         path: API_PATHS.TRANSACTION_STATS,
@@ -56,9 +70,13 @@ export class WalletModule implements WalletModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
-  getAggregateTransactionStats(authToken: string): Promise<ResponseDto<AggTxns[]>> {
+  getAggregateTransactionStats(props: {
+    authToken: string;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<AggTxns[]>> {
+    const { authToken, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<AggTxns[]> = await this.connector.get({
         path: API_PATHS.TRANSACTION_AGGREGATE_STATS,
@@ -66,9 +84,10 @@ export class WalletModule implements WalletModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
-  getWallets(authToken: string): Promise<ResponseDto<IWalletResponseDto>> {
+  getWallets(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<IWalletResponseDto>> {
+    const { authToken, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IWalletResponseDto> = await this.connector.get({
         path: API_PATHS.WALLETS,
@@ -76,9 +95,14 @@ export class WalletModule implements WalletModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
-  getSingleWalletById(authToken: string, id: string): Promise<ResponseDto<ISingleWalletDto>> {
+  getSingleWalletById(props: {
+    authToken: string;
+    id: string;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<ISingleWalletDto>> {
+    const { authToken, id, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<ISingleWalletDto> = await this.connector.get({
         path: `${API_PATHS.SINGLE_WALLET_BY_ID}/${id}`,
@@ -86,9 +110,14 @@ export class WalletModule implements WalletModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
-  getSingleWalletByCoin(authToken: string, coin: string): Promise<ResponseDto<ISingleWalletDto>> {
+  getSingleWalletByCoin(props: {
+    authToken: string;
+    coin: string;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<ISingleWalletDto>> {
+    const { authToken, coin, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<ISingleWalletDto> = await this.connector.get({
         path: `${API_PATHS.SINGLE_WALLET_BY_COIN}/${coin}`,
@@ -96,10 +125,12 @@ export class WalletModule implements WalletModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
-  async getExchange(authToken: string): Promise<ResponseDto<IWalletExchangeDto>> {
+  async getExchange(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<IWalletExchangeDto>> {
+    const { authToken, options } = props;
+
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IWalletExchangeDto> = await this.connector.get({
         path: API_PATHS.TRANSACTION_EXCHANGE,
@@ -107,6 +138,6 @@ export class WalletModule implements WalletModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 }

@@ -1,3 +1,4 @@
+import { BackoffOptions } from "../../utils/backOff/options";
 import { ResponseDto } from "../../utils";
 
 export type IConnectionKeys = "tags" | "tagCount" | "afroScore";
@@ -18,7 +19,15 @@ export interface IConnectionFilter {
 }
 
 export interface ConnectionFilterModuleType {
-  create(authToken: string, payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>>;
-  getForAUser(authToken: string): Promise<ResponseDto<IConnectionFilter>>;
-  update(authToken: string, payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>>;
+  create(props: {
+    authToken: string;
+    payload: IConnectionFilter;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<IConnectionFilter>>;
+  getForAUser(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<IConnectionFilter>>;
+  update(props: {
+    authToken: string;
+    payload: IConnectionFilter;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<IConnectionFilter>>;
 }

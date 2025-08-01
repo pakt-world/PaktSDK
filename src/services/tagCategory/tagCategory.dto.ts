@@ -1,3 +1,4 @@
+import { BackoffOptions } from "src/utils/backOff/options";
 import { ResponseDto } from "../../utils";
 
 export interface ITagCategory {
@@ -29,6 +30,14 @@ export interface FilterTagCategories {
 }
 
 export interface TagCategoriesModule {
-  fetchCategories(authToken: string, filter?: FilterTagCategories): Promise<ResponseDto<FindTagCategories>>;
-  fetchACategory(authToken: string, id: string): Promise<ResponseDto<ITagCategory>>;
+  fetchCategories(props: {
+    authToken: string;
+    filter?: FilterTagCategories;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<FindTagCategories>>;
+  fetchACategory(props: {
+    authToken: string;
+    id: string;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<ITagCategory>>;
 }

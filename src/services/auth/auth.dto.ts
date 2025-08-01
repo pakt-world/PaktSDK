@@ -1,3 +1,4 @@
+import { BackoffOptions } from "../../utils/backOff/options";
 import { ResponseDto } from "../../utils/response";
 import { IChatConversation } from "../chat/chat.dto";
 
@@ -175,14 +176,23 @@ export interface GoogleOAuthValidateDto {
 }
 
 export interface AuthenticationModuleType {
-  login(payload: LoginPayload): Promise<ResponseDto<LoginDto>>;
-  register(payload: RegisterPayload): Promise<ResponseDto<RegisterDto>>;
-  verifyAccount(payload: VerifyAccountPayload): Promise<ResponseDto<AccountVerifyDto>>;
-  resendVerifyLink(payload: ResendVerifyPayload): Promise<ResponseDto<IResendVerifyLink>>;
-  resetPassword(payload: ResetPasswordPayload): Promise<ResponseDto<ResetDto>>;
-  changePassword(payload: ChangeAuthenticationPasswordPayload): Promise<ResponseDto<ChangePasswordDto>>;
-  validatePasswordToken(props: { token: string; tempToken: string }): Promise<ResponseDto<ValidatePasswordToken>>;
-  validateReferral(token: string): Promise<ResponseDto<ValidateReferralDto>>;
-  googleOAuthGenerateState(): Promise<ResponseDto<GoogleOAuthGenerateDto>>;
-  googleOAuthValidateState(props: GoogleOAuthValdatePayload): Promise<ResponseDto<GoogleOAuthValidateDto>>;
+  login(payload: LoginPayload, options?: BackoffOptions): Promise<ResponseDto<LoginDto>>;
+  register(payload: RegisterPayload, options?: BackoffOptions): Promise<ResponseDto<RegisterDto>>;
+  verifyAccount(payload: VerifyAccountPayload, options?: BackoffOptions): Promise<ResponseDto<AccountVerifyDto>>;
+  resendVerifyLink(payload: ResendVerifyPayload, options?: BackoffOptions): Promise<ResponseDto<IResendVerifyLink>>;
+  resetPassword(payload: ResetPasswordPayload, options?: BackoffOptions): Promise<ResponseDto<ResetDto>>;
+  changePassword(
+    payload: ChangeAuthenticationPasswordPayload,
+    options?: BackoffOptions,
+  ): Promise<ResponseDto<ChangePasswordDto>>;
+  validatePasswordToken(
+    props: { token: string; tempToken: string },
+    options?: BackoffOptions,
+  ): Promise<ResponseDto<ValidatePasswordToken>>;
+  validateReferral(token: string, options?: BackoffOptions): Promise<ResponseDto<ValidateReferralDto>>;
+  googleOAuthGenerateState(options?: BackoffOptions): Promise<ResponseDto<GoogleOAuthGenerateDto>>;
+  googleOAuthValidateState(
+    props: GoogleOAuthValdatePayload,
+    options?: BackoffOptions,
+  ): Promise<ResponseDto<GoogleOAuthValidateDto>>;
 }

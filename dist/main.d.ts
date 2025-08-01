@@ -1,9 +1,65 @@
 import { Token } from 'typedi';
 
+/**
+ * Type of jitter to apply to the delay.
+ * - `"none"`: no jitter is applied
+ * - `"full"`: full jitter is applied (random value between `0` and `delay`)
+ */
+type JitterType = "none" | "full";
+type BackoffOptions = Partial<IBackOffOptions>;
+interface IBackOffOptions {
+    /**
+     * Decides whether the `startingDelay` should be applied before the first call.
+     * If `false`, the first call will occur without a delay.
+     * @defaultValue `false`
+     */
+    delayFirstAttempt: boolean;
+    /**
+     * Decides whether a [jitter](https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/)
+     * should be applied to the delay. Possible values are `"full"` and `"none"`.
+     * @defaultValue `"none"`
+     */
+    jitter: JitterType;
+    /**
+     * The maximum delay, in milliseconds, between two consecutive attempts.
+     * @defaultValue `Infinity`
+     */
+    maxDelay: number;
+    /**
+     * The maximum number of times to attempt the function.
+     * Must be at least `1`.
+     * @defaultValue `10`
+     */
+    numOfAttempts: number;
+    /**
+     * The `retry` function can be used to run logic after every failed attempt (e.g. logging a message,
+     * assessing the last error, etc.).
+     * It is called with the last error and the upcoming attempt number.
+     * Returning `true` will retry the function as long as the `numOfAttempts` has not been exceeded.
+     * Returning `false` will end the execution.
+     * @defaultValue a function that always returns `true`.
+     * @param e The last error thrown by the function.
+     * @param attemptNumber The upcoming attempt number.
+     * @returns `true` to retry the function, `false` to end the execution
+     */
+    retry: (e: any, attemptNumber: number) => boolean | Promise<boolean>;
+    /**
+     * The delay, in milliseconds, before executing the function for the first time.
+     * @defaultValue `100`
+     */
+    startingDelay: number;
+    /**
+     * The `startingDelay` is multiplied by the `timeMultiple` to increase the delay between reattempts.
+     * @defaultValue `2`
+     */
+    timeMultiple: number;
+}
+
 interface PaktConfig {
     baseUrl: string;
     testnet?: boolean;
     verbose?: boolean;
+    defaultBackoff?: BackoffOptions;
 }
 
 declare enum Status {
@@ -24,10 +80,11 @@ type ErrorWithMessage = {
     code?: string;
 };
 declare const ErrorUtils: {
-    newTryFail: <T>(f: (() => Promise<T>) | (() => T)) => Promise<T>;
+    newTryFail: <T>(f: (() => Promise<T>) | (() => T), options?: BackoffOptions) => Promise<T>;
     formatErrorMsg: (message: string) => string;
     toErrorWithMessage: (maybeError: unknown) => ErrorWithMessage;
     isErrorWithMessage(e: unknown): e is ErrorWithMessage;
+    defaultBackOffOptions(): BackoffOptions;
 };
 declare const parseUrlWithQuery: (url: string, filter: object | any) => string;
 
@@ -120,6 +177,7 @@ type expectedISOCountries = "AW" | "AF" | "AO" | "AI" | "AX" | "AL" | "AD" | "AE
 declare const PAKT_CONFIG: Token<PaktConfig>;
 declare const AUTH_TOKEN: Token<string>;
 declare const TEMP_TOKEN: Token<string>;
+declare const PAKT_BACKOFF_OPTIONS: Token<Partial<IBackOffOptions>>;
 declare const isEmpty: (value: unknown) => boolean;
 
 interface IChatMessage {
@@ -160,7 +218,10 @@ interface IFile {
     updatedAt?: string | Date;
 }
 interface ChatModuleType {
-    getUserMessages(authToken: string): Promise<ResponseDto<IChatConversation[]>>;
+    getUserMessages(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IChatConversation[]>>;
 }
 
 type IUserTwoFaType = "email" | "google_auth" | "security_answer";
@@ -320,31 +381,32 @@ interface GoogleOAuthValidateDto {
     type: "sign_in" | "sign_up";
 }
 interface AuthenticationModuleType {
-    login(payload: LoginPayload): Promise<ResponseDto<LoginDto>>;
-    register(payload: RegisterPayload): Promise<ResponseDto<RegisterDto>>;
-    verifyAccount(payload: VerifyAccountPayload): Promise<ResponseDto<AccountVerifyDto>>;
-    resendVerifyLink(payload: ResendVerifyPayload): Promise<ResponseDto<IResendVerifyLink>>;
-    resetPassword(payload: ResetPasswordPayload): Promise<ResponseDto<ResetDto>>;
-    changePassword(payload: ChangeAuthenticationPasswordPayload): Promise<ResponseDto<ChangePasswordDto>>;
+    login(payload: LoginPayload, options?: BackoffOptions): Promise<ResponseDto<LoginDto>>;
+    register(payload: RegisterPayload, options?: BackoffOptions): Promise<ResponseDto<RegisterDto>>;
+    verifyAccount(payload: VerifyAccountPayload, options?: BackoffOptions): Promise<ResponseDto<AccountVerifyDto>>;
+    resendVerifyLink(payload: ResendVerifyPayload, options?: BackoffOptions): Promise<ResponseDto<IResendVerifyLink>>;
+    resetPassword(payload: ResetPasswordPayload, options?: BackoffOptions): Promise<ResponseDto<ResetDto>>;
+    changePassword(payload: ChangeAuthenticationPasswordPayload, options?: BackoffOptions): Promise<ResponseDto<ChangePasswordDto>>;
     validatePasswordToken(props: {
         token: string;
         tempToken: string;
-    }): Promise<ResponseDto<ValidatePasswordToken>>;
-    validateReferral(token: string): Promise<ResponseDto<ValidateReferralDto>>;
-    googleOAuthGenerateState(): Promise<ResponseDto<GoogleOAuthGenerateDto>>;
-    googleOAuthValidateState(props: GoogleOAuthValdatePayload): Promise<ResponseDto<GoogleOAuthValidateDto>>;
+    }, options?: BackoffOptions): Promise<ResponseDto<ValidatePasswordToken>>;
+    validateReferral(token: string, options?: BackoffOptions): Promise<ResponseDto<ValidateReferralDto>>;
+    googleOAuthGenerateState(options?: BackoffOptions): Promise<ResponseDto<GoogleOAuthGenerateDto>>;
+    googleOAuthValidateState(props: GoogleOAuthValdatePayload, options?: BackoffOptions): Promise<ResponseDto<GoogleOAuthValidateDto>>;
 }
 
 declare class AuthenticationModule implements AuthenticationModuleType {
     private id;
     private connector;
+    private configBackOff;
     constructor(id: string);
     /**
      * login. This method authenticates a user.
      * @param email
      * @param password
      */
-    login(payload: LoginPayload): Promise<ResponseDto<LoginDto>>;
+    login(payload: LoginPayload, options?: BackoffOptions): Promise<ResponseDto<LoginDto>>;
     /**
      * register. This method creates a new user account.
      * @param firstName
@@ -352,7 +414,7 @@ declare class AuthenticationModule implements AuthenticationModuleType {
      * @param email
      * @param password
      */
-    register(payload: RegisterPayload): Promise<ResponseDto<RegisterDto>>;
+    register(payload: RegisterPayload, options?: BackoffOptions): Promise<ResponseDto<RegisterDto>>;
     /**
      * verifyAccount. This method verifies a new user account
      * @param tempToken
@@ -363,25 +425,25 @@ declare class AuthenticationModule implements AuthenticationModuleType {
      * resetPassword. This method sends an email for account password reset
      * @param email
      */
-    resendVerifyLink(payload: ResendVerifyPayload): Promise<ResponseDto<IResendVerifyLink>>;
+    resendVerifyLink(payload: ResendVerifyPayload, options?: BackoffOptions): Promise<ResponseDto<IResendVerifyLink>>;
     /**
      * resetPassword. This method sends an email for account password reset
      * @param email
      */
-    resetPassword(payload: ResetPasswordPayload): Promise<ResponseDto<ResetDto>>;
+    resetPassword(payload: ResetPasswordPayload, options?: BackoffOptions): Promise<ResponseDto<ResetDto>>;
     /**
      * changePassword. This method changes account password
      * @param token
      * @param password
      */
-    changePassword(payload: ChangeAuthenticationPasswordPayload): Promise<ResponseDto<ChangePasswordDto>>;
+    changePassword(payload: ChangeAuthenticationPasswordPayload, options?: BackoffOptions): Promise<ResponseDto<ChangePasswordDto>>;
     validatePasswordToken(props: {
         token: string;
         tempToken: string;
-    }): Promise<ResponseDto<ValidatePasswordToken>>;
-    validateReferral(token: string): Promise<ResponseDto<ValidateReferralDto>>;
-    googleOAuthGenerateState(): Promise<ResponseDto<GoogleOAuthGenerateDto>>;
-    googleOAuthValidateState(props: GoogleOAuthValdatePayload): Promise<ResponseDto<GoogleOAuthValidateDto>>;
+    }, options?: BackoffOptions): Promise<ResponseDto<ValidatePasswordToken>>;
+    validateReferral(token: string, options?: BackoffOptions): Promise<ResponseDto<ValidateReferralDto>>;
+    googleOAuthGenerateState(options?: BackoffOptions): Promise<ResponseDto<GoogleOAuthGenerateDto>>;
+    googleOAuthValidateState(props: GoogleOAuthValdatePayload, options?: BackoffOptions): Promise<ResponseDto<GoogleOAuthValidateDto>>;
 }
 
 type fetchAccountDto = {} & IUser;
@@ -446,69 +508,159 @@ interface FindUsers {
     data: Record<string, any>[] | IUser[];
 }
 interface AccountModuleType {
-    getUser(authToken: string): Promise<ResponseDto<fetchAccountDto>>;
-    onboardEndpoint(tagCategory: string, profileImage: string, type: string, authToken: string): Promise<ResponseDto<fetchAccountDto>>;
-    updateAccount(payload: updateUserDto, authToken: string): Promise<ResponseDto<fetchAccountDto>>;
-    changePassword(oldPassword: string, newPassword: string, authToken: string): Promise<ResponseDto<fetchAccountDto>>;
-    initate2FA(type: TwoFATypeDto, authToken: string): Promise<ResponseDto<TwoFAresponse>>;
-    activate2FA(code: string, authToken: string): Promise<ResponseDto<void>>;
-    deactivate2FA(code: string, authToken: string): Promise<ResponseDto<void>>;
-    sendEmailTwoFA(authToken: string): Promise<ResponseDto<{}>>;
-    getAUser(id: string, authToken: string): Promise<ResponseDto<fetchAccountDto>>;
-    getUsers(authToken: string, filter?: FilterUserDto): Promise<ResponseDto<FindUsers>>;
-    logout(authToken: string): Promise<ResponseDto<void>>;
+    getUser(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<fetchAccountDto>>;
+    onboardEndpoint(props: {
+        tagCategory: string;
+        skillCategory: string;
+        profileImage: string;
+        type: string;
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<fetchAccountDto>>;
+    updateAccount(props: {
+        payload: updateUserDto;
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<fetchAccountDto>>;
+    changePassword(props: {
+        oldPassword: string;
+        newPassword: string;
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<fetchAccountDto>>;
+    initate2FA(props: {
+        type: TwoFATypeDto;
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<TwoFAresponse>>;
+    activate2FA(props: {
+        code: string;
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<void>>;
+    deactivate2FA(props: {
+        code: string;
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<void>>;
+    sendEmailTwoFA(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<{}>>;
+    getAUser(props: {
+        id: string;
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<fetchAccountDto>>;
+    getUsers(props: {
+        filter?: FilterUserDto;
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<FindUsers>>;
+    logout(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<void>>;
 }
 
 declare class AccountModule implements AccountModuleType {
     private id;
     private connector;
+    private configBackOff;
     constructor(id: string);
     /**
      * getUser.
      */
-    getUser(authToken: string): Promise<ResponseDto<fetchAccountDto>>;
+    getUser(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<fetchAccountDto>>;
     /**
      * onboardEndpoint.
      * @param skillCategory string
      * @param profileImage string
      * @param type string
      */
-    onboardEndpoint(skillCategory: string, profileImage: string, type: string, authToken: string): Promise<ResponseDto<fetchAccountDto>>;
+    onboardEndpoint(props: {
+        skillCategory: string;
+        profileImage: string;
+        type: string;
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<fetchAccountDto>>;
     /**
      * onboardEndpoint.
      * @param skillCategory string
      * @param profileImage string
      * @param type string
      */
-    updateAccount(payload: updateUserDto, authToken: string): Promise<ResponseDto<fetchAccountDto>>;
+    updateAccount(props: {
+        payload: updateUserDto;
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<fetchAccountDto>>;
     /**
      * change Password.
      * @param oldPassword string
      * @param newPassword string
      */
-    changePassword(oldPassword: string, newPassword: string, authToken: string): Promise<ResponseDto<fetchAccountDto>>;
+    changePassword(props: {
+        oldPassword: string;
+        newPassword: string;
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<fetchAccountDto>>;
     /**
      * initate2FA.
      * @param type TwoFATypeDto
      */
-    initate2FA(type: TwoFATypeDto, authToken: string): Promise<ResponseDto<TwoFAresponse>>;
+    initate2FA(props: {
+        type: TwoFATypeDto;
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<TwoFAresponse>>;
     /**
      * active2FA.
      * @param code string
      */
-    activate2FA(code: string, authToken: string): Promise<ResponseDto<void>>;
+    activate2FA(props: {
+        code: string;
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<void>>;
     /**
      * active2FA.
      * @param code string
      */
-    deactivate2FA(code: string, authToken: string): Promise<ResponseDto<void>>;
-    sendEmailTwoFA(authToken: string): Promise<ResponseDto<{}>>;
-    getAUser(id: string, authToken: string): Promise<ResponseDto<fetchAccountDto>>;
-    getUsers(authToken: string, filter?: FilterUserDto | undefined): Promise<ResponseDto<FindUsers>>;
+    deactivate2FA(props: {
+        code: string;
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<void>>;
+    sendEmailTwoFA(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<{}>>;
+    getAUser(props: {
+        id: string;
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<fetchAccountDto>>;
+    getUsers(props: {
+        authToken: string;
+        filter?: FilterUserDto | undefined;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<FindUsers>>;
     /**
      * Logout.
      */
-    logout(authToken: string): Promise<ResponseDto<void>>;
+    logout(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<void>>;
 }
 
 type IInviteStatus = "pending" | "accepted" | "rejected";
@@ -542,59 +694,146 @@ interface FindInvitesDto {
     limit: number;
 }
 interface InviteModuleType {
-    sendInvite(authToken: string, payload: SendInviteDto): Promise<ResponseDto<{}>>;
-    acceptInvite(authToken: string, inviteId: string): Promise<ResponseDto<{}>>;
-    declineInvite(authToken: string, inviteId: string): Promise<ResponseDto<{}>>;
-    cancelInvite(authToken: string, inviteId: string): Promise<ResponseDto<{}>>;
-    getAll(authToken: string, filter?: FilterInviteDto): Promise<ResponseDto<FindInvitesDto>>;
-    getAnInvite(authToken: string, id: string): Promise<ResponseDto<IInviteDto>>;
+    sendInvite(props: {
+        authToken: string;
+        payload: SendInviteDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<{}>>;
+    acceptInvite(props: {
+        authToken: string;
+        inviteId: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<{}>>;
+    declineInvite(props: {
+        authToken: string;
+        inviteId: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<{}>>;
+    cancelInvite(props: {
+        authToken: string;
+        inviteId: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<{}>>;
+    getAll(props: {
+        authToken: string;
+        filter?: FilterInviteDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<FindInvitesDto>>;
+    getAnInvite(props: {
+        authToken: string;
+        inviteId: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IInviteDto>>;
 }
 
 declare class InviteModule implements InviteModuleType {
     private id;
     private connector;
+    private configBackOff;
     constructor(id: string);
-    sendInvite(authToken: string, payload: SendInviteDto): Promise<ResponseDto<{}>>;
-    acceptInvite(authToken: string, inviteId: string): Promise<ResponseDto<{}>>;
-    declineInvite(authToken: string, inviteId: string): Promise<ResponseDto<{}>>;
-    getAll(authToken: string, filter?: FilterInviteDto): Promise<ResponseDto<FindInvitesDto>>;
-    getAnInvite(authToken: string, id: string): Promise<ResponseDto<IInviteDto>>;
-    cancelInvite(authToken: string, inviteId: string): Promise<ResponseDto<{}>>;
+    sendInvite(props: {
+        authToken: string;
+        payload: SendInviteDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<{}>>;
+    acceptInvite(props: {
+        authToken: string;
+        inviteId: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<{}>>;
+    declineInvite(props: {
+        authToken: string;
+        inviteId: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<{}>>;
+    getAll(props: {
+        authToken: string;
+        filter?: FilterInviteDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<FindInvitesDto>>;
+    getAnInvite(props: {
+        authToken: string;
+        inviteId: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IInviteDto>>;
+    cancelInvite(props: {
+        authToken: string;
+        inviteId: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<{}>>;
 }
 
 declare class CollectionModule implements CollectionModuleType {
     private id;
     private connector;
+    private configBackOff;
     constructor(id: string);
     /**
      * findall. This method finds all logged User's Jobs both created and assigned.
      * @param filter filterDto
      */
-    getAll(authToken: string, filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionDto>>;
+    getAll(props: {
+        authToken: string;
+        filter?: filterCollectionDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<FindCollectionDto>>;
     /**
      * findall. This method finds all logged User's Jobs both created and assigned.
      * @param filter filterCollectionDto
      */
-    getById(authToken: string, id: string): Promise<ResponseDto<ICollectionDto>>;
+    getById(props: {
+        authToken: string;
+        id: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<ICollectionDto>>;
     /**
      * getTypes. This method finds collection types accepted for creating collection
      * @param filter filterDto
      */
-    getTypes(authToken: string, filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionTypeDto>>;
+    getTypes(props: {
+        authToken: string;
+        filter?: filterCollectionDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<FindCollectionTypeDto>>;
     /**
      * create. This method creates a new Job.
      * @param payload CreateCollectionDto
      */
-    create(authToken: string, payload: CreateCollectionDto): Promise<ResponseDto<ICollectionDto>>;
+    create(props: {
+        authToken: string;
+        payload: CreateCollectionDto;
+        options: BackoffOptions;
+    }): Promise<ResponseDto<ICollectionDto>>;
     /**
      * createMany. This method creates multiple collections for a type
      * @param filter CreateManyCollectionDto
      */
-    createMany(authToken: string, payload: CreateManyCollectionDto): Promise<ResponseDto<ICollectionDto[]>>;
-    updateCollection(authToken: string, id: string, payload: UpdateCollectionDto): Promise<ResponseDto<{}>>;
-    getACollectionType(authToken: string, typeId: string): Promise<ResponseDto<ICollectionTypeDto>>;
-    deleteACollection(authToken: string, collectionId: string): Promise<ResponseDto<{}>>;
-    updateManyCollections(authToken: string, collections: UpdateManyCollectionsDto): Promise<ResponseDto<{}>>;
+    createMany(props: {
+        authToken: string;
+        payload: CreateManyCollectionDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<ICollectionDto[]>>;
+    updateCollection(props: {
+        authToken: string;
+        id: string;
+        payload: UpdateCollectionDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<{}>>;
+    getACollectionType(props: {
+        authToken: string;
+        typeId: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<ICollectionTypeDto>>;
+    deleteACollection(props: {
+        authToken: string;
+        collectionId: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<{}>>;
+    updateManyCollections(props: {
+        authToken: string;
+        collections: UpdateManyCollectionsDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<{}>>;
 }
 
 interface AddReviewDto {
@@ -625,18 +864,43 @@ interface IReviewDto {
     updatedAt?: string | Date;
 }
 interface ReviewModuleType {
-    addReview(authToken: string, payload: AddReviewDto): Promise<ResponseDto<void>>;
-    viewAll(authToken: string, filter?: FilterReviewDto): Promise<ResponseDto<FindReviewDto>>;
-    viewAReview(authToken: string, reviewId: string): Promise<ResponseDto<IReviewDto>>;
+    addReview(props: {
+        authToken: string;
+        payload: AddReviewDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<void>>;
+    viewAll(props: {
+        authToken: string;
+        filter?: FilterReviewDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<FindReviewDto>>;
+    viewAReview(props: {
+        authToken: string;
+        reviewId: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IReviewDto>>;
 }
 
 declare class ReviewModule implements ReviewModuleType {
     private id;
     private connector;
+    private configBackOff;
     constructor(id: string);
-    viewAll(authToken: string, filter?: FilterReviewDto | undefined): Promise<ResponseDto<FindReviewDto>>;
-    viewAReview(authToken: string, reviewId: string): Promise<ResponseDto<IReviewDto>>;
-    addReview(authToken: string, payload: AddReviewDto): Promise<ResponseDto<void>>;
+    viewAll(props: {
+        authToken: string;
+        filter?: FilterReviewDto | undefined;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<FindReviewDto>>;
+    viewAReview(props: {
+        authToken: string;
+        reviewId: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IReviewDto>>;
+    addReview(props: {
+        authToken: string;
+        payload: AddReviewDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<void>>;
 }
 
 interface ITagCategory {
@@ -689,18 +953,43 @@ type FilterUploadDto = ({
     limit?: string;
 } & IUploadDto) | any;
 interface UploadModuleType {
-    fileUpload(authToken: string, payload: CreateFileUpload): Promise<ResponseDto<IUploadDto>>;
-    getFileUploads(authToken: string, filter?: FilterUploadDto): Promise<ResponseDto<FindUploadDto>>;
-    getAFileUpload(authToken: string, id: string): Promise<ResponseDto<IUploadDto>>;
+    fileUpload(props: {
+        authToken: string;
+        payload: CreateFileUpload;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IUploadDto>>;
+    getFileUploads(props: {
+        authToken: string;
+        filter?: FilterUploadDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<FindUploadDto>>;
+    getAFileUpload(props: {
+        authToken: string;
+        fileId: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IUploadDto>>;
 }
 
 declare class UploadModule implements UploadModuleType {
     private id;
     private connector;
+    private configBackOff;
     constructor(id: string);
-    fileUpload(authToken: string, payload: CreateFileUpload): Promise<ResponseDto<IUploadDto>>;
-    getFileUploads(authToken: string, filter: FilterUploadDto): Promise<ResponseDto<FindUploadDto>>;
-    getAFileUpload(authToken: string, id: string): Promise<ResponseDto<IUploadDto>>;
+    fileUpload(props: {
+        authToken: string;
+        payload: CreateFileUpload;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IUploadDto>>;
+    getFileUploads(props: {
+        authToken: string;
+        filter: FilterUploadDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<FindUploadDto>>;
+    getAFileUpload(props: {
+        authToken: string;
+        fileId: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IUploadDto>>;
 }
 
 interface WalletUser {
@@ -816,28 +1105,84 @@ interface AggTxns {
     date: string;
 }
 interface WalletModuleType {
-    getExchange(authToken: string): Promise<ResponseDto<IWalletExchangeDto>>;
-    getTransactions(authToken: string): Promise<ResponseDto<FindTransactionsDto>>;
-    getATransaction(authToken: string, id: string): Promise<ResponseDto<ITransactionDto$1>>;
-    getTransactionStats(authToken: string, format: ITransactionStatsFormat): Promise<ResponseDto<ITransactionStatsDto[]>>;
-    getAggregateTransactionStats(authToken: string): Promise<ResponseDto<AggTxns[]>>;
-    getWallets(authToken: string): Promise<ResponseDto<IWalletResponseDto>>;
-    getSingleWalletById(authToken: string, id: string): Promise<ResponseDto<ISingleWalletDto>>;
-    getSingleWalletByCoin(authToken: string, coin: string): Promise<ResponseDto<ISingleWalletDto>>;
+    getExchange(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IWalletExchangeDto>>;
+    getTransactions(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<FindTransactionsDto>>;
+    getATransaction(props: {
+        authToken: string;
+        id: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<ITransactionDto$1>>;
+    getTransactionStats(props: {
+        authToken: string;
+        format: ITransactionStatsFormat;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<ITransactionStatsDto[]>>;
+    getAggregateTransactionStats(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<AggTxns[]>>;
+    getWallets(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IWalletResponseDto>>;
+    getSingleWalletById(props: {
+        authToken: string;
+        id: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<ISingleWalletDto>>;
+    getSingleWalletByCoin(props: {
+        authToken: string;
+        coin: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<ISingleWalletDto>>;
 }
 
 declare class WalletModule implements WalletModuleType {
     private id;
     private connector;
+    private configBackOff;
     constructor(id: string);
-    getTransactions(authToken: string): Promise<ResponseDto<FindTransactionsDto>>;
-    getATransaction(authToken: string, id: string): Promise<ResponseDto<ITransactionDto$1>>;
-    getTransactionStats(authToken: string): Promise<ResponseDto<ITransactionStatsDto[]>>;
-    getAggregateTransactionStats(authToken: string): Promise<ResponseDto<AggTxns[]>>;
-    getWallets(authToken: string): Promise<ResponseDto<IWalletResponseDto>>;
-    getSingleWalletById(authToken: string, id: string): Promise<ResponseDto<ISingleWalletDto>>;
-    getSingleWalletByCoin(authToken: string, coin: string): Promise<ResponseDto<ISingleWalletDto>>;
-    getExchange(authToken: string): Promise<ResponseDto<IWalletExchangeDto>>;
+    getTransactions(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<FindTransactionsDto>>;
+    getATransaction(props: {
+        authToken: string;
+        options?: BackoffOptions;
+        id: string;
+    }): Promise<ResponseDto<ITransactionDto$1>>;
+    getTransactionStats(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<ITransactionStatsDto[]>>;
+    getAggregateTransactionStats(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<AggTxns[]>>;
+    getWallets(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IWalletResponseDto>>;
+    getSingleWalletById(props: {
+        authToken: string;
+        id: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<ISingleWalletDto>>;
+    getSingleWalletByCoin(props: {
+        authToken: string;
+        coin: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<ISingleWalletDto>>;
+    getExchange(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IWalletExchangeDto>>;
 }
 
 interface ICollectionTypeDto {
@@ -1034,15 +1379,52 @@ interface UpdateManyCollectionsDto {
     }[];
 }
 interface CollectionModuleType {
-    getAll(authToken: string, filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionDto>>;
-    getById(authToken: string, id: string): Promise<ResponseDto<ICollectionDto>>;
-    getTypes(authToken: string, filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionTypeDto>>;
-    getACollectionType(authToken: string, typeId: string): Promise<ResponseDto<ICollectionTypeDto>>;
-    create(authToken: string, payload: CreateCollectionDto): Promise<ResponseDto<ICollectionDto>>;
-    createMany(authToken: string, payload: CreateManyCollectionDto): Promise<ResponseDto<ICollectionDto[]>>;
-    updateCollection(authToken: string, id: string, payload: UpdateCollectionDto): Promise<ResponseDto<{}>>;
-    deleteACollection(authToken: string, id: string): Promise<ResponseDto<{}>>;
-    updateManyCollections(authToken: string, collections: UpdateManyCollectionsDto): Promise<ResponseDto<{}>>;
+    getAll(props: {
+        authToken: string;
+        filter?: filterCollectionDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<FindCollectionDto>>;
+    getById(props: {
+        authToken: string;
+        id: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<ICollectionDto>>;
+    getTypes(props: {
+        authToken: string;
+        filter?: filterCollectionDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<FindCollectionTypeDto>>;
+    getACollectionType(props: {
+        authToken: string;
+        typeId: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<ICollectionTypeDto>>;
+    create(props: {
+        authToken: string;
+        payload: CreateCollectionDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<ICollectionDto>>;
+    createMany(props: {
+        authToken: string;
+        payload: CreateManyCollectionDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<ICollectionDto[]>>;
+    updateCollection(props: {
+        authToken: string;
+        id: string;
+        payload: UpdateCollectionDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<{}>>;
+    deleteACollection(props: {
+        authToken: string;
+        collectionId: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<{}>>;
+    updateManyCollections(props: {
+        authToken: string;
+        collections: UpdateManyCollectionsDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<{}>>;
 }
 
 interface IFeed {
@@ -1100,22 +1482,61 @@ interface FindFeedDto {
     limit: number;
 }
 interface FeedModuleType {
-    create(authToken: string, payload: CreateFeedDto): Promise<ResponseDto<{}>>;
-    getAll(authToken: string, filter?: FilterFeedDto): Promise<ResponseDto<FindFeedDto>>;
-    getById(authToken: string, filterId: string): Promise<ResponseDto<IFeed>>;
-    dismissAllFeeds(authToken: string): Promise<ResponseDto<{}>>;
-    dismissAFeed(authToken: string, filterId: string): Promise<ResponseDto<{}>>;
+    create(props: {
+        authToken: string;
+        payload: CreateFeedDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<{}>>;
+    getAll(props: {
+        authToken: string;
+        filter?: FilterFeedDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<FindFeedDto>>;
+    getById(props: {
+        authToken: string;
+        filterId: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IFeed>>;
+    dismissAllFeeds(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<{}>>;
+    dismissAFeed(props: {
+        authToken: string;
+        filterId: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<{}>>;
 }
 
 declare class FeedModule implements FeedModuleType {
     private id;
     private connector;
+    private configBackOff;
     constructor(id: string);
-    create(authToken: string, payload: CreateFeedDto): Promise<ResponseDto<{}>>;
-    getAll(authToken: string, filter?: FilterFeedDto): Promise<ResponseDto<FindFeedDto>>;
-    getById(authToken: string, filterId: string): Promise<ResponseDto<IFeed>>;
-    dismissAllFeeds(authToken: string): Promise<ResponseDto<{}>>;
-    dismissAFeed(authToken: string, filterId: string): Promise<ResponseDto<{}>>;
+    create(props: {
+        authToken: string;
+        payload: CreateFeedDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<{}>>;
+    getAll(props: {
+        authToken: string;
+        filter?: FilterFeedDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<FindFeedDto>>;
+    getById(props: {
+        authToken: string;
+        filterId: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IFeed>>;
+    dismissAllFeeds(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<{}>>;
+    dismissAFeed(props: {
+        authToken: string;
+        filterId: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<{}>>;
 }
 
 interface ICollectionBookmarkDto {
@@ -1155,43 +1576,82 @@ declare enum BookmarkEnumType {
 }
 type BookmarkType = "feed" | "collection" | "invite" | "user";
 interface BookMarkModuleType {
-    getAll(authToken: string, filter?: filterBookmarkDto): Promise<ResponseDto<FindCollectionBookMarkDto>>;
-    getById(authToken: string, id: string, filter?: Record<string, any> | ICollectionBookmarkDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
-    create(authToken: string, payload: createBookMarkDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
-    delete(authToken: string, id: string): Promise<ResponseDto<any>>;
+    getAll(props: {
+        authToken: string;
+        filter?: filterBookmarkDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<FindCollectionBookMarkDto>>;
+    getById(props: {
+        authToken: string;
+        id: string;
+        filter?: Record<string, any> | ICollectionBookmarkDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<ICollectionBookmarkDto>>;
+    create(props: {
+        authToken: string;
+        payload: createBookMarkDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<ICollectionBookmarkDto>>;
+    delete(props: {
+        authToken: string;
+        id: string;
+        options: BackoffOptions;
+    }): Promise<ResponseDto<any>>;
 }
 
 declare class BookMarkModule {
     private id;
     private connector;
+    private configBackOff;
     constructor(id: string);
     /**
      * findall. This method finds all logged User's Bookmark collections.
      * @param filter filterBookmarkDto
      */
-    getAll(authToken: string, filter?: filterBookmarkDto): Promise<ResponseDto<FindCollectionBookMarkDto>>;
+    getAll(props: {
+        authToken: string;
+        filter?: filterBookmarkDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<FindCollectionBookMarkDto>>;
     /**
      * findall. This method finds bookmarked collection by id.
      * @param filter Record<string, any> | ICollectionBookmarkDto
      */
-    getById(authToken: string, id: string, filter?: Record<string, any> | ICollectionBookmarkDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
+    getById(props: {
+        authToken: string;
+        id: string;
+        filter?: Record<string, any> | ICollectionBookmarkDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<ICollectionBookmarkDto>>;
     /**
      * create. This method creates a new collection bookmark.
      * @param payload createBookMarkDto
      */
-    create(authToken: string, payload: createBookMarkDto): Promise<ResponseDto<ICollectionBookmarkDto>>;
+    create(props: {
+        authToken: string;
+        payload: createBookMarkDto;
+        options: BackoffOptions;
+    }): Promise<ResponseDto<ICollectionBookmarkDto>>;
     /**
      * delete. This method deleted a collection bookmark.
      * @param payload is, the bookmark id
      */
-    delete(authToken: string, id: string): Promise<ResponseDto<ICollectionBookmarkDto>>;
+    delete(props: {
+        authToken: string;
+        id: string;
+        options: BackoffOptions;
+    }): Promise<ResponseDto<ICollectionBookmarkDto>>;
 }
 
 declare class ChatModule implements ChatModuleType {
     private id;
     private connector;
+    private configBackOff;
     constructor(id: string);
-    getUserMessages(authToken: string): Promise<ResponseDto<IChatConversation[]>>;
+    getUserMessages(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IChatConversation[]>>;
 }
 
 type IConnectionKeys = "tags" | "tagCount" | "afroScore";
@@ -1208,9 +1668,20 @@ interface IConnectionFilter {
     updatedAt?: string | Date;
 }
 interface ConnectionFilterModuleType {
-    create(authToken: string, payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>>;
-    getForAUser(authToken: string): Promise<ResponseDto<IConnectionFilter>>;
-    update(authToken: string, payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>>;
+    create(props: {
+        authToken: string;
+        payload: IConnectionFilter;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IConnectionFilter>>;
+    getForAUser(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IConnectionFilter>>;
+    update(props: {
+        authToken: string;
+        payload: IConnectionFilter;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IConnectionFilter>>;
 }
 
 declare enum INotificationType {
@@ -1273,18 +1744,42 @@ type filterNotificationDto = ({
     limit?: string;
 } & INotificationDto) | any;
 interface NotificationModuleType {
-    getAll(authToken: string, filter?: filterNotificationDto): Promise<ResponseDto<FindNotificationDto>>;
-    markOneAsRead(authToken: string, id: string, filter?: filterNotificationDto): Promise<ResponseDto<void>>;
-    markAll(authToken: string): Promise<ResponseDto<void>>;
+    getAll(props: {
+        authToken: string;
+        filter?: filterNotificationDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<FindNotificationDto>>;
+    markOneAsRead(props: {
+        authToken: string;
+        notificationId: string;
+        filter?: filterNotificationDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<void>>;
+    markAll(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<void>>;
 }
 
 declare class NotificationModule implements NotificationModuleType {
     private id;
     private connector;
+    private configBackOff;
     constructor(id: string);
-    getAll(authToken: string, filter?: filterNotificationDto): Promise<ResponseDto<FindNotificationDto>>;
-    markAll(authToken: string): Promise<ResponseDto<void>>;
-    markOneAsRead(authToken: string, id: string): Promise<ResponseDto<void>>;
+    getAll(props: {
+        authToken: string;
+        filter?: filterNotificationDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<FindNotificationDto>>;
+    markAll(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<void>>;
+    markOneAsRead(props: {
+        authToken: string;
+        notificationId: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<void>>;
 }
 
 type IPaymentCoins = "usdc" | "avax";
@@ -1347,22 +1842,59 @@ interface IRPCDto {
     active: boolean;
 }
 interface PaymentModuleType {
-    create(authToken: string, payload: ICreatePaymentDto): Promise<ResponseDto<IPaymentDataDto>>;
-    validate(authToken: string, payload: IValidatePaymentDto): Promise<ResponseDto<{}>>;
-    release(authToken: string, payload: IReleasePaymentDto): Promise<ResponseDto<{}>>;
-    paymentMethods(authToken: string): Promise<ResponseDto<IBlockchainCoinDto[]>>;
-    activeRpc(authToken: string): Promise<ResponseDto<IRPCDto>>;
+    create(props: {
+        authToken: string;
+        payload: ICreatePaymentDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IPaymentDataDto>>;
+    validate(props: {
+        authToken: string;
+        payload: IValidatePaymentDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<{}>>;
+    release(props: {
+        authToken: string;
+        payload: IReleasePaymentDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<{}>>;
+    paymentMethods(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IBlockchainCoinDto[]>>;
+    activeRpc(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IRPCDto>>;
 }
 
 declare class PaymentModule implements PaymentModuleType {
     private id;
     private connector;
+    private configBackOff;
     constructor(id: string);
-    create(authToken: string, payload: ICreatePaymentDto): Promise<ResponseDto<IPaymentDataDto>>;
-    validate(authToken: string, payload: IValidatePaymentDto): Promise<ResponseDto<{}>>;
-    release(authToken: string, payload: IReleasePaymentDto): Promise<ResponseDto<{}>>;
-    paymentMethods(authToken: string): Promise<ResponseDto<IBlockchainCoinDto[]>>;
-    activeRpc(authToken: string): Promise<ResponseDto<IRPCDto>>;
+    create(props: {
+        authToken: string;
+        payload: ICreatePaymentDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IPaymentDataDto>>;
+    validate(props: {
+        authToken: string;
+        payload: IValidatePaymentDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<{}>>;
+    release(props: {
+        authToken: string;
+        payload: IReleasePaymentDto;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<{}>>;
+    paymentMethods(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IBlockchainCoinDto[]>>;
+    activeRpc(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IRPCDto>>;
 }
 
 type VerificationDocumentTypes = "PASSPORT" | "ID_CARD" | "RESIDENCE_PERMIT" | "DRIVERS_LICENSE" | "VISA" | "OTHER";
@@ -1432,20 +1964,49 @@ interface SessionAttempts {
     verifications: IVerification[];
 }
 interface UserVerificationModuleType {
-    createSession(authToken: string, payload: ICreateSessionPayload): Promise<ResponseDto<CreateSessionResponse>>;
-    sendSessionMedia(authToken: string, payload: ISendSessionMedia): Promise<ResponseDto<SendSessionMediaResponse>>;
-    getSessionAttempts(authToken: string): Promise<ResponseDto<SessionAttempts>>;
-    getUserVerifications(authToken: string): Promise<ResponseDto<IVerification[]>>;
+    createSession(props: {
+        authToken: string;
+        payload: ICreateSessionPayload;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<CreateSessionResponse>>;
+    sendSessionMedia(props: {
+        authToken: string;
+        payload: ISendSessionMedia;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<SendSessionMediaResponse>>;
+    getSessionAttempts(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<SessionAttempts>>;
+    getUserVerifications(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IVerification[]>>;
 }
 
 declare class UserVerificationModule implements UserVerificationModuleType {
     private id;
     private connector;
+    private configBackOff;
     constructor(id: string);
-    createSession(authToken: string, payload: ICreateSessionPayload): Promise<ResponseDto<CreateSessionResponse>>;
-    sendSessionMedia(authToken: string, payload: ISendSessionMedia): Promise<ResponseDto<SendSessionMediaResponse>>;
-    getSessionAttempts(authToken: string): Promise<ResponseDto<SessionAttempts>>;
-    getUserVerifications(authToken: string): Promise<ResponseDto<IVerification[]>>;
+    createSession(props: {
+        authToken: string;
+        payload: ICreateSessionPayload;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<CreateSessionResponse>>;
+    sendSessionMedia(props: {
+        authToken: string;
+        payload: ISendSessionMedia;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<SendSessionMediaResponse>>;
+    getSessionAttempts(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<SessionAttempts>>;
+    getUserVerifications(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IVerification[]>>;
 }
 
 interface CreateWithdrawal {
@@ -1498,8 +2059,16 @@ interface IWithdrawalDto {
     status: IWithdrawalStatus;
 }
 interface WithdrawalModuleType {
-    createWithdrawal(authToken: string, payload: CreateWithdrawal): Promise<ResponseDto<IWithdrawalDto>>;
-    fetchWithdrawal(authToken: string, filter: FilterWithdrawal): Promise<ResponseDto<FindWithdrawalsDto>>;
+    createWithdrawal(props: {
+        authToken: string;
+        payload: CreateWithdrawal;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IWithdrawalDto>>;
+    fetchWithdrawal(props: {
+        authToken: string;
+        filter: FilterWithdrawal;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<FindWithdrawalsDto>>;
 }
 
 interface ICreateDirectDepositPayload {
@@ -1570,30 +2139,59 @@ interface DirectDepositModuleType {
     createDirectDeposit(props: {
         authToken: string;
         payload: ICreateDirectDepositPayload;
+        options?: BackoffOptions;
     }): Promise<ResponseDto<ICreateDirectDepositResponse>>;
     validateDirectDeposit(props: {
         authToken: string;
         payload: IValidateDirectDepositPayload;
+        options?: BackoffOptions;
     }): Promise<ResponseDto<IValidateDirectDepositResponse>>;
-    fetchPaymentMethods(authToken: string): Promise<ResponseDto<IBlockchainCoin[]>>;
-    fetchActiveRPC(authToken: string): Promise<ResponseDto<IRPCServer>>;
+    fetchPaymentMethods(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IBlockchainCoin[]>>;
+    fetchActiveRPC(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IRPCServer>>;
 }
 
 declare class ConnectionFilterModule implements ConnectionFilterModuleType {
     private id;
     private connector;
+    private configBackOff;
     constructor(id: string);
-    create(authToken: string, payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>>;
-    update(authToken: string, payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>>;
-    getForAUser(authToken: string): Promise<ResponseDto<IConnectionFilter>>;
+    create(props: {
+        authToken: string;
+        payload: IConnectionFilter;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IConnectionFilter>>;
+    update(props: {
+        authToken: string;
+        payload: IConnectionFilter;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IConnectionFilter>>;
+    getForAUser(props: {
+        authToken: string;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IConnectionFilter>>;
 }
 
 declare class WithdrawalModule implements WithdrawalModuleType {
     private id;
     private connector;
+    private configBackOff;
     constructor(id: string);
-    createWithdrawal(authToken: string, payload: CreateWithdrawal): Promise<ResponseDto<IWithdrawalDto>>;
-    fetchWithdrawal(authToken: string, filter: FilterWithdrawal): Promise<ResponseDto<FindWithdrawalsDto>>;
+    createWithdrawal(props: {
+        authToken: string;
+        payload: CreateWithdrawal;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<IWithdrawalDto>>;
+    fetchWithdrawal(props: {
+        authToken: string;
+        filter: FilterWithdrawal;
+        options?: BackoffOptions;
+    }): Promise<ResponseDto<FindWithdrawalsDto>>;
 }
 
 declare class PaktSDK {
@@ -1627,4 +2225,4 @@ declare class PaktSDK {
     private static generateRandomString;
 }
 
-export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, BookmarkEnumType, BookmarkType, CHARACTERS, ChangeAuthenticationPasswordPayload, ChangePasswordDto, ChatModule, ChatModuleType, CollectionModule, CollectionModuleType, ConnectionFilterModule, ConnectionFilterModuleType, CreateCollectionDto, CreateFeedDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, ErrorUtils, FEED_TYPES, FEED_TYPES_ENUM, FeedModule, FeedModuleType, FilterFeedDto, FilterInviteDto, FilterReviewDto, FilterUploadDto, FilterUserDto, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindFeedDto, FindInvitesDto, FindNotificationDto, FindReviewDto, FindTransactionsDto, FindUploadDto, FindUsers, FindWithdrawalsDto, GoogleOAuthGenerateDto, GoogleOAuthValdatePayload, GoogleOAuthValidateDto, IAny, IBlockchainCoinDto, IChatConversation, IChatMessage, ICollectionBookmarkDto, ICollectionDto, ICollectionStatus, ICollectionTypeDto, IConnectionEvents, IConnectionFilter, IConnectionFilterDecider, IConnectionKeys, ICreatePaymentDto, ICreateSessionPayload, IFeed, IFile, IInviteDto, IInviteStatus, IModel, INotificationDto, IPaymentCoins, IPaymentDataDto, IPaymentStatusEnum, IPaymentStatusType, IRPCDto, IRegisterResponse, IReleasePaymentDto, IResendVerifyLink, IReviewDto, ISendSessionMedia, ISingleWalletDto, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, ITransactionStatsFormat, ITransactionType, IUploadDto, IUser, IUserTwoFaType, IValidatePaymentDto, IVerification, IVerificationStatus, IWalletBalanceDto, IWalletDto, IWalletExchangeDto, IWalletResponseDto, IWithdrawalDto, IWithdrawalStatus, InviteModule, InviteModuleType, LoginDto, LoginPayload, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, PaymentModule, PaymentModuleType, RegisterDto, RegisterPayload, ResendVerifyDto, ResendVerifyPayload, ResetDto, ResetPasswordPayload, ResponseDto, ReviewModule, ReviewModuleType, SendInviteDto, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UpdateCollectionDto, UpdateManyCollectionsDto, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, ValidateReferralDto, VerificationDocumentTypes, VerifyAccountPayload, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelCollectionDto, createBookMarkDto, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, isEmpty, parseUrlWithQuery, updateUserDto };
+export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, BookmarkEnumType, BookmarkType, CHARACTERS, ChangeAuthenticationPasswordPayload, ChangePasswordDto, ChatModule, ChatModuleType, CollectionModule, CollectionModuleType, ConnectionFilterModule, ConnectionFilterModuleType, CreateCollectionDto, CreateFeedDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, ErrorUtils, FEED_TYPES, FEED_TYPES_ENUM, FeedModule, FeedModuleType, FilterFeedDto, FilterInviteDto, FilterReviewDto, FilterUploadDto, FilterUserDto, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindFeedDto, FindInvitesDto, FindNotificationDto, FindReviewDto, FindTransactionsDto, FindUploadDto, FindUsers, FindWithdrawalsDto, GoogleOAuthGenerateDto, GoogleOAuthValdatePayload, GoogleOAuthValidateDto, IAny, IBlockchainCoinDto, IChatConversation, IChatMessage, ICollectionBookmarkDto, ICollectionDto, ICollectionStatus, ICollectionTypeDto, IConnectionEvents, IConnectionFilter, IConnectionFilterDecider, IConnectionKeys, ICreatePaymentDto, ICreateSessionPayload, IFeed, IFile, IInviteDto, IInviteStatus, IModel, INotificationDto, IPaymentCoins, IPaymentDataDto, IPaymentStatusEnum, IPaymentStatusType, IRPCDto, IRegisterResponse, IReleasePaymentDto, IResendVerifyLink, IReviewDto, ISendSessionMedia, ISingleWalletDto, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, ITransactionStatsFormat, ITransactionType, IUploadDto, IUser, IUserTwoFaType, IValidatePaymentDto, IVerification, IVerificationStatus, IWalletBalanceDto, IWalletDto, IWalletExchangeDto, IWalletResponseDto, IWithdrawalDto, IWithdrawalStatus, InviteModule, InviteModuleType, LoginDto, LoginPayload, NotificationModule, NotificationModuleType, PAKT_BACKOFF_OPTIONS, PAKT_CONFIG, PaktConfig, PaktSDK, PaymentModule, PaymentModuleType, RegisterDto, RegisterPayload, ResendVerifyDto, ResendVerifyPayload, ResetDto, ResetPasswordPayload, ResponseDto, ReviewModule, ReviewModuleType, SendInviteDto, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UpdateCollectionDto, UpdateManyCollectionsDto, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, ValidateReferralDto, VerificationDocumentTypes, VerifyAccountPayload, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelCollectionDto, createBookMarkDto, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, isEmpty, parseUrlWithQuery, updateUserDto };

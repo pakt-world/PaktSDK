@@ -9,7 +9,8 @@ import {
   IValidateDirectDepositResponse,
 } from "./direct-deposit.dto";
 import { PaktConnector } from "../../connector";
-import { API_PATHS, ErrorUtils, ResponseDto, Status } from "../../utils";
+import { API_PATHS, ErrorUtils, PAKT_BACKOFF_OPTIONS, ResponseDto, Status } from "../../utils";
+import { BackoffOptions } from "../../utils/backOff/backoff";
 
 @Service({
   factory: (data: { id: string }) => {
@@ -20,17 +21,20 @@ import { API_PATHS, ErrorUtils, ResponseDto, Status } from "../../utils";
 export class DirectDepositModule implements DirectDepositModuleType {
   private id: string;
   private connector: PaktConnector;
+  private configBackOff: BackoffOptions;
 
   constructor(id: string) {
     this.id = id;
     this.connector = Container.of(this.id).get(PaktConnector);
+    this.configBackOff = Container.of(this.id).get(PAKT_BACKOFF_OPTIONS);
   }
 
   createDirectDeposit(props: {
     authToken: string;
     payload: ICreateDirectDepositPayload;
+    options?: BackoffOptions;
   }): Promise<ResponseDto<ICreateDirectDepositResponse>> {
-    const { payload, authToken } = props;
+    const { payload, authToken, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const requestBody = { ...payload };
       const response: ResponseDto<ICreateDirectDepositResponse> = await this.connector.post({
@@ -40,13 +44,14 @@ export class DirectDepositModule implements DirectDepositModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
   validateDirectDeposit(props: {
     authToken: string;
     payload: IValidateDirectDepositPayload;
+    options?: BackoffOptions;
   }): Promise<ResponseDto<IValidateDirectDepositResponse>> {
-    const { payload, authToken } = props;
+    const { payload, authToken, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const requestBody = { ...payload };
       const response: ResponseDto<IValidateDirectDepositResponse> = await this.connector.post({
@@ -56,9 +61,10 @@ export class DirectDepositModule implements DirectDepositModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
-  fetchPaymentMethods(authToken: string): Promise<ResponseDto<IBlockchainCoin[]>> {
+  fetchPaymentMethods(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<IBlockchainCoin[]>> {
+    const { authToken, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IBlockchainCoin[]> = await this.connector.get({
         path: API_PATHS.FETCH_PAYMENT_METHODS,
@@ -66,9 +72,10 @@ export class DirectDepositModule implements DirectDepositModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
-  fetchActiveRPC(authToken: string): Promise<ResponseDto<IRPCServer>> {
+  fetchActiveRPC(props: { authToken: string; options: BackoffOptions }): Promise<ResponseDto<IRPCServer>> {
+    const { authToken, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IRPCServer> = await this.connector.get({
         path: API_PATHS.FETCH_ACTIVE_RPC,
@@ -76,6 +83,6 @@ export class DirectDepositModule implements DirectDepositModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 }

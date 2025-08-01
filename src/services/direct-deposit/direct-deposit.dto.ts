@@ -1,3 +1,4 @@
+import { BackoffOptions } from "../../utils/backOff/options";
 import { IAny, IModel, ResponseDto } from "../../utils";
 import { IUser } from "../auth";
 import { ICollectionDto } from "../collection";
@@ -76,14 +77,16 @@ export interface DirectDepositModuleType {
   createDirectDeposit(props: {
     authToken: string;
     payload: ICreateDirectDepositPayload;
+    options?: BackoffOptions;
   }): Promise<ResponseDto<ICreateDirectDepositResponse>>;
 
   validateDirectDeposit(props: {
     authToken: string;
     payload: IValidateDirectDepositPayload;
+    options?: BackoffOptions;
   }): Promise<ResponseDto<IValidateDirectDepositResponse>>;
 
-  fetchPaymentMethods(authToken: string): Promise<ResponseDto<IBlockchainCoin[]>>;
+  fetchPaymentMethods(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<IBlockchainCoin[]>>;
 
-  fetchActiveRPC(authToken: string): Promise<ResponseDto<IRPCServer>>;
+  fetchActiveRPC(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<IRPCServer>>;
 }
