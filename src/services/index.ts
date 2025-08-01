@@ -1,7 +1,7 @@
 import { Container, Service } from "typedi";
 import { PaktConfig } from "../utils/config";
 import { CHARACTERS } from "../utils/constants";
-import { AUTH_TOKEN, PAKT_CONFIG, TEMP_TOKEN } from "../utils/token";
+import { AUTH_TOKEN, PAKT_BACKOFF_OPTIONS, PAKT_CONFIG, TEMP_TOKEN } from "../utils/token";
 import { AccountModule, AccountModuleType } from "./account/account";
 import { AuthenticationModule, AuthenticationModuleType } from "./auth";
 import { BookMarkModule, BookMarkModuleType } from "./bookmark";
@@ -90,6 +90,7 @@ export class PaktSDK {
     Container.of(id).set(PAKT_CONFIG, defaultConfig);
     Container.of(id).set(AUTH_TOKEN, "");
     Container.of(id).set(TEMP_TOKEN, "");
+    Container.of(id).set(PAKT_BACKOFF_OPTIONS, config.defaultBackoff);
     return new PaktSDK(id);
   }
   /**

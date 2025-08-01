@@ -1,3 +1,4 @@
+import { BackoffOptions } from "../../utils/backOff/options";
 import { IAny, ResponseDto } from "../../utils/response";
 import { IUser } from "../auth";
 import { IInviteDto } from "../invite";
@@ -215,13 +216,46 @@ export interface UpdateManyCollectionsDto {
 }
 
 export interface CollectionModuleType {
-  getAll(authToken: string, filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionDto>>;
-  getById(authToken: string, id: string): Promise<ResponseDto<ICollectionDto>>;
-  getTypes(authToken: string, filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionTypeDto>>;
-  getACollectionType(authToken: string, typeId: string): Promise<ResponseDto<ICollectionTypeDto>>;
-  create(authToken: string, payload: CreateCollectionDto): Promise<ResponseDto<ICollectionDto>>;
-  createMany(authToken: string, payload: CreateManyCollectionDto): Promise<ResponseDto<ICollectionDto[]>>;
-  updateCollection(authToken: string, id: string, payload: UpdateCollectionDto): Promise<ResponseDto<{}>>;
-  deleteACollection(authToken: string, id: string): Promise<ResponseDto<{}>>;
-  updateManyCollections(authToken: string, collections: UpdateManyCollectionsDto): Promise<ResponseDto<{}>>;
+  getAll(props: {
+    authToken: string;
+    filter?: filterCollectionDto;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<FindCollectionDto>>;
+  getById(props: { authToken: string; id: string; options?: BackoffOptions }): Promise<ResponseDto<ICollectionDto>>;
+  getTypes(props: {
+    authToken: string;
+    filter?: filterCollectionDto;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<FindCollectionTypeDto>>;
+  getACollectionType(props: {
+    authToken: string;
+    typeId: string;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<ICollectionTypeDto>>;
+  create(props: {
+    authToken: string;
+    payload: CreateCollectionDto;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<ICollectionDto>>;
+  createMany(props: {
+    authToken: string;
+    payload: CreateManyCollectionDto;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<ICollectionDto[]>>;
+  updateCollection(props: {
+    authToken: string;
+    id: string;
+    payload: UpdateCollectionDto;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<{}>>;
+  deleteACollection(props: {
+    authToken: string;
+    collectionId: string;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<{}>>;
+  updateManyCollections(props: {
+    authToken: string;
+    collections: UpdateManyCollectionsDto;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<{}>>;
 }

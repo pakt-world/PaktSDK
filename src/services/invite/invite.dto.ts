@@ -1,3 +1,4 @@
+import { BackoffOptions } from "../../utils/backOff/options";
 import { ResponseDto } from "../../utils";
 import { IUser } from "../auth/auth.dto";
 import { ICollectionDto } from "../collection/collection.dto";
@@ -40,10 +41,18 @@ export interface FindInvitesDto {
 }
 
 export interface InviteModuleType {
-  sendInvite(authToken: string, payload: SendInviteDto): Promise<ResponseDto<{}>>;
-  acceptInvite(authToken: string, inviteId: string): Promise<ResponseDto<{}>>;
-  declineInvite(authToken: string, inviteId: string): Promise<ResponseDto<{}>>;
-  cancelInvite(authToken: string, inviteId: string): Promise<ResponseDto<{}>>;
-  getAll(authToken: string, filter?: FilterInviteDto): Promise<ResponseDto<FindInvitesDto>>;
-  getAnInvite(authToken: string, id: string): Promise<ResponseDto<IInviteDto>>;
+  sendInvite(props: { authToken: string; payload: SendInviteDto; options?: BackoffOptions }): Promise<ResponseDto<{}>>;
+  acceptInvite(props: { authToken: string; inviteId: string; options?: BackoffOptions }): Promise<ResponseDto<{}>>;
+  declineInvite(props: { authToken: string; inviteId: string; options?: BackoffOptions }): Promise<ResponseDto<{}>>;
+  cancelInvite(props: { authToken: string; inviteId: string; options?: BackoffOptions }): Promise<ResponseDto<{}>>;
+  getAll(props: {
+    authToken: string;
+    filter?: FilterInviteDto;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<FindInvitesDto>>;
+  getAnInvite(props: {
+    authToken: string;
+    inviteId: string;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<IInviteDto>>;
 }

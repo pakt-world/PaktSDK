@@ -3,6 +3,8 @@ import { PaktConnector } from "../../connector/connector";
 import { API_PATHS } from "../../utils/constants";
 import { ErrorUtils, ResponseDto, Status, parseUrlWithQuery } from "../../utils/response";
 import { CreateFeedDto, FeedModuleType, FilterFeedDto, FindFeedDto, IFeed } from "./feed.dto";
+import { BackoffOptions } from "../../utils/backOff/options";
+import { PAKT_BACKOFF_OPTIONS } from "../../utils/token";
 
 export * from "./feed.dto";
 
@@ -15,12 +17,16 @@ export * from "./feed.dto";
 export class FeedModule implements FeedModuleType {
   private id: string;
   private connector: PaktConnector;
+  private configBackOff: BackoffOptions;
+
   constructor(id: string) {
     this.id = id;
     this.connector = Container.of(this.id).get(PaktConnector);
+    this.configBackOff = Container.of(this.id).get(PAKT_BACKOFF_OPTIONS);
   }
 
-  create(authToken: string, payload: CreateFeedDto): Promise<ResponseDto<{}>> {
+  create(props: { authToken: string; payload: CreateFeedDto; options?: BackoffOptions }): Promise<ResponseDto<{}>> {
+    const { authToken, payload, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const credentials = { ...payload };
       const response: ResponseDto<{}> = await this.connector.post({
@@ -30,10 +36,15 @@ export class FeedModule implements FeedModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
-  getAll(authToken: string, filter?: FilterFeedDto): Promise<ResponseDto<FindFeedDto>> {
+  getAll(props: {
+    authToken: string;
+    filter?: FilterFeedDto;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<FindFeedDto>> {
+    const { authToken, filter, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const theFilter = filter ? { ...filter, isOwner: true } : { isOwner: true };
       const fetchUrl = parseUrlWithQuery(`${API_PATHS.FEEDS}/`, { ...theFilter });
@@ -43,10 +54,11 @@ export class FeedModule implements FeedModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
-  getById(authToken: string, filterId: string): Promise<ResponseDto<IFeed>> {
+  getById(props: { authToken: string; filterId: string; options?: BackoffOptions }): Promise<ResponseDto<IFeed>> {
+    const { authToken, filterId, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IFeed> = await this.connector.get({
         path: `${API_PATHS.FEEDS}/${filterId}`,
@@ -54,10 +66,11 @@ export class FeedModule implements FeedModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
-  dismissAllFeeds(authToken: string): Promise<ResponseDto<{}>> {
+  dismissAllFeeds(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<{}>> {
+    const { authToken, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IFeed> = await this.connector.put({
         path: `${API_PATHS.FEEDS_DISMISS_ALL}`,
@@ -65,10 +78,11 @@ export class FeedModule implements FeedModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
-  dismissAFeed(authToken: string, filterId: string): Promise<ResponseDto<{}>> {
+  dismissAFeed(props: { authToken: string; filterId: string; options?: BackoffOptions }): Promise<ResponseDto<{}>> {
+    const { authToken, filterId, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IFeed> = await this.connector.put({
         path: `${API_PATHS.FEEDS}/${filterId}/dismiss`,
@@ -76,6 +90,6 @@ export class FeedModule implements FeedModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options);
   }
 }

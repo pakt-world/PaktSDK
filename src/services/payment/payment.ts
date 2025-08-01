@@ -11,6 +11,8 @@ import {
   IValidatePaymentDto,
   PaymentModuleType,
 } from "./payment.dto";
+import { BackoffOptions } from "../../utils/backOff/options";
+import { PAKT_BACKOFF_OPTIONS } from "../../utils/token";
 
 export * from "./payment.dto";
 
@@ -23,12 +25,20 @@ export * from "./payment.dto";
 export class PaymentModule implements PaymentModuleType {
   private id: string;
   private connector: PaktConnector;
+  private configBackOff: BackoffOptions;
+
   constructor(id: string) {
     this.id = id;
     this.connector = Container.of(this.id).get(PaktConnector);
+    this.configBackOff = Container.of(this.id).get(PAKT_BACKOFF_OPTIONS);
   }
 
-  create(authToken: string, payload: ICreatePaymentDto): Promise<ResponseDto<IPaymentDataDto>> {
+  create(props: {
+    authToken: string;
+    payload: ICreatePaymentDto;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<IPaymentDataDto>> {
+    const { authToken, payload, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const credentials = { ...payload };
       const response: ResponseDto<IPaymentDataDto> = await this.connector.post({
@@ -38,10 +48,15 @@ export class PaymentModule implements PaymentModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
-  validate(authToken: string, payload: IValidatePaymentDto): Promise<ResponseDto<{}>> {
+  validate(props: {
+    authToken: string;
+    payload: IValidatePaymentDto;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<{}>> {
+    const { authToken, payload, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const credentials = { ...payload };
       const response: ResponseDto<IPaymentDataDto> = await this.connector.post({
@@ -51,10 +66,15 @@ export class PaymentModule implements PaymentModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
-  release(authToken: string, payload: IReleasePaymentDto): Promise<ResponseDto<{}>> {
+  release(props: {
+    authToken: string;
+    payload: IReleasePaymentDto;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<{}>> {
+    const { authToken, payload, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const credentials = { ...payload };
       const response: ResponseDto<IPaymentDataDto> = await this.connector.post({
@@ -64,10 +84,11 @@ export class PaymentModule implements PaymentModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
-  paymentMethods(authToken: string): Promise<ResponseDto<IBlockchainCoinDto[]>> {
+  paymentMethods(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<IBlockchainCoinDto[]>> {
+    const { options, authToken } = props;
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IBlockchainCoinDto[]> = await this.connector.get({
         path: `${API_PATHS.PAYMENT_METHODS}`,
@@ -75,10 +96,11 @@ export class PaymentModule implements PaymentModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
-  activeRpc(authToken: string): Promise<ResponseDto<IRPCDto>> {
+  activeRpc(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<IRPCDto>> {
+    const { authToken, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IRPCDto> = await this.connector.get({
         path: `${API_PATHS.RPC}`,
@@ -86,6 +108,6 @@ export class PaymentModule implements PaymentModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 }

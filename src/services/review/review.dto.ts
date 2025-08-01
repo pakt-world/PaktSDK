@@ -1,3 +1,4 @@
+import { BackoffOptions } from "../../utils/backOff/options";
 import { ResponseDto } from "../../utils/response";
 import { IUser } from "../auth";
 import { ICollectionDto } from "../collection";
@@ -36,7 +37,15 @@ export interface IReviewDto {
 }
 
 export interface ReviewModuleType {
-  addReview(authToken: string, payload: AddReviewDto): Promise<ResponseDto<void>>;
-  viewAll(authToken: string, filter?: FilterReviewDto): Promise<ResponseDto<FindReviewDto>>;
-  viewAReview(authToken: string, reviewId: string): Promise<ResponseDto<IReviewDto>>;
+  addReview(props: { authToken: string; payload: AddReviewDto; options?: BackoffOptions }): Promise<ResponseDto<void>>;
+  viewAll(props: {
+    authToken: string;
+    filter?: FilterReviewDto;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<FindReviewDto>>;
+  viewAReview(props: {
+    authToken: string;
+    reviewId: string;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<IReviewDto>>;
 }

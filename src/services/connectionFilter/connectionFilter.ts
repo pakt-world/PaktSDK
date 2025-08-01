@@ -1,7 +1,8 @@
 import Container, { Service } from "typedi";
 import { PaktConnector } from "../../connector";
-import { API_PATHS, ErrorUtils, ResponseDto, Status } from "../../utils";
+import { API_PATHS, ErrorUtils, PAKT_BACKOFF_OPTIONS, ResponseDto, Status } from "../../utils";
 import { ConnectionFilterModuleType, IConnectionFilter } from "./connectionFilter.dto";
+import { BackoffOptions } from "../../utils/backOff/options";
 
 export * from "./connectionFilter.dto";
 
@@ -14,13 +15,20 @@ export * from "./connectionFilter.dto";
 export class ConnectionFilterModule implements ConnectionFilterModuleType {
   private id: string;
   private connector: PaktConnector;
+  private configBackOff: BackoffOptions;
 
   constructor(id: string) {
     this.id = id;
     this.connector = Container.of(this.id).get(PaktConnector);
+    this.configBackOff = Container.of(this.id).get(PAKT_BACKOFF_OPTIONS);
   }
 
-  create(authToken: string, payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>> {
+  create(props: {
+    authToken: string;
+    payload: IConnectionFilter;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<IConnectionFilter>> {
+    const { payload, authToken, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const requestBody = { ...payload };
       const response: ResponseDto<IConnectionFilter> = await this.connector.post({
@@ -30,10 +38,15 @@ export class ConnectionFilterModule implements ConnectionFilterModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
-  update(authToken: string, payload: IConnectionFilter): Promise<ResponseDto<IConnectionFilter>> {
+  update(props: {
+    authToken: string;
+    payload: IConnectionFilter;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<IConnectionFilter>> {
+    const { payload, authToken, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const requestBody = { ...payload };
       const response: ResponseDto<IConnectionFilter> = await this.connector.patch({
@@ -43,10 +56,11 @@ export class ConnectionFilterModule implements ConnectionFilterModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
-  getForAUser(authToken: string): Promise<ResponseDto<IConnectionFilter>> {
+  getForAUser(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<IConnectionFilter>> {
+    const { authToken, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IConnectionFilter> = await this.connector.get({
         path: API_PATHS.GET_CONNECTION_FILTER,
@@ -54,6 +68,6 @@ export class ConnectionFilterModule implements ConnectionFilterModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 }

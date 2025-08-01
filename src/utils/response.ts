@@ -1,4 +1,4 @@
-import { backOff } from "./backOff/backoff";
+import { backOff, BackoffOptions } from "./backOff/backoff";
 
 export enum Status {
   SUCCESS = "success",
@@ -22,62 +22,11 @@ type ErrorWithMessage = {
 };
 
 export const ErrorUtils = {
-  // tryFail: async <T>(f: (() => Promise<T>) | (() => T)): Promise<ResponseDto<T>> => {
-  //   try {
-  //     const data = await f();
-  //     return {
-  //       data,
-  //       status: Status.SUCCESS,
-  //     };
-  //   } catch (e) {
-  //     const parseErr = ErrorUtils.toErrorWithMessage(e);
-  //     return {
-  //       data: null as unknown as T,
-  //       status: Status.ERROR,
-  //       message: parseErr ? parseErr.message : ["Internal Server Error"],
-  //       code: parseErr.code,
-  //     };
-  //   }
-  // },
-  // tryWithBackOff: async <T>(f: (() => Promise<T>) | (() => T)): Promise<T> => {
-  //   try {
-  //     const response = await backOff(
-  //       async () => {
-  //         return await ErrorUtils.newTryFail(f);
-  //       },
-  //       {
-  //         startingDelay: 5,
-  //         timeMultiple: 10,
-  //         numOfAttempts: 4,
-  //         maxDelay: 250,
-  //         delayFirstAttempt: false,
-  //       },
-  //     );
-  //     return response;
-  //   } catch (e) {
-  //     const parseErr = ErrorUtils.toErrorWithMessage(e);
-  //     return {
-  //       data: null as unknown as T,
-  //       status: Status.ERROR,
-  //       message: parseErr ? parseErr.message : ["Internal Server Error"],
-  //       code: parseErr.code,
-  //     } as unknown as T;
-  //   }
-  // },
-  newTryFail: async <T>(f: (() => Promise<T>) | (() => T)): Promise<T> => {
+  newTryFail: async <T>(f: (() => Promise<T>) | (() => T), options?: BackoffOptions): Promise<T> => {
     try {
-      const data = await backOff(
-        async () => {
-          return await f();
-        },
-        {
-          startingDelay: 5,
-          timeMultiple: 10,
-          numOfAttempts: 4,
-          maxDelay: 250,
-          delayFirstAttempt: false,
-        },
-      );
+      const data = await backOff(async () => {
+        return await f();
+      }, options || ErrorUtils.defaultBackOffOptions());
 
       return { ...data };
     } catch (e) {
@@ -133,6 +82,15 @@ export const ErrorUtils = {
       "message" in e &&
       typeof (e as Record<string, unknown>).message === "string"
     );
+  },
+  defaultBackOffOptions(): BackoffOptions {
+    return {
+      startingDelay: 5,
+      timeMultiple: 5,
+      numOfAttempts: 4,
+      maxDelay: 150,
+      delayFirstAttempt: false,
+    };
   },
 };
 

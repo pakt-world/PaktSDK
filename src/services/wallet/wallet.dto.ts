@@ -1,3 +1,4 @@
+import { BackoffOptions } from "../../utils/backOff/options";
 import { ResponseDto } from "../../utils/response";
 
 interface WalletUser {
@@ -128,12 +129,28 @@ export interface AggTxns {
 }
 
 export interface WalletModuleType {
-  getExchange(authToken: string): Promise<ResponseDto<IWalletExchangeDto>>;
-  getTransactions(authToken: string): Promise<ResponseDto<FindTransactionsDto>>;
-  getATransaction(authToken: string, id: string): Promise<ResponseDto<ITransactionDto>>;
-  getTransactionStats(authToken: string, format: ITransactionStatsFormat): Promise<ResponseDto<ITransactionStatsDto[]>>;
-  getAggregateTransactionStats(authToken: string): Promise<ResponseDto<AggTxns[]>>;
-  getWallets(authToken: string): Promise<ResponseDto<IWalletResponseDto>>;
-  getSingleWalletById(authToken: string, id: string): Promise<ResponseDto<ISingleWalletDto>>;
-  getSingleWalletByCoin(authToken: string, coin: string): Promise<ResponseDto<ISingleWalletDto>>;
+  getExchange(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<IWalletExchangeDto>>;
+  getTransactions(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<FindTransactionsDto>>;
+  getATransaction(props: {
+    authToken: string;
+    id: string;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<ITransactionDto>>;
+  getTransactionStats(props: {
+    authToken: string;
+    format: ITransactionStatsFormat;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<ITransactionStatsDto[]>>;
+  getAggregateTransactionStats(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<AggTxns[]>>;
+  getWallets(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<IWalletResponseDto>>;
+  getSingleWalletById(props: {
+    authToken: string;
+    id: string;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<ISingleWalletDto>>;
+  getSingleWalletByCoin(props: {
+    authToken: string;
+    coin: string;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<ISingleWalletDto>>;
 }

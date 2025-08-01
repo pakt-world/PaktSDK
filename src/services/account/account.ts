@@ -11,6 +11,8 @@ import {
   fetchAccountDto,
   updateUserDto,
 } from "./account.dto";
+import { BackoffOptions } from "../../utils/backOff/options";
+import { PAKT_BACKOFF_OPTIONS } from "../../utils/token";
 
 // Export all Types to Service
 export * from "./account.dto";
@@ -24,20 +26,24 @@ export * from "./account.dto";
 export class AccountModule implements AccountModuleType {
   private id: string;
   private connector: PaktConnector;
+  private configBackOff: BackoffOptions;
+
   constructor(id: string) {
     this.id = id;
     this.connector = Container.of(this.id).get(PaktConnector);
+    this.configBackOff = Container.of(this.id).get(PAKT_BACKOFF_OPTIONS);
   }
 
   /**
    * getUser.
    */
-  async getUser(authToken: string): Promise<ResponseDto<fetchAccountDto>> {
+  async getUser(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<fetchAccountDto>> {
+    const { authToken, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<fetchAccountDto> = await this.connector.get({ path: API_PATHS.ACCOUNT, authToken });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
   /**
@@ -46,12 +52,14 @@ export class AccountModule implements AccountModuleType {
    * @param profileImage string
    * @param type string
    */
-  async onboardEndpoint(
-    skillCategory: string,
-    profileImage: string,
-    type: string,
-    authToken: string,
-  ): Promise<ResponseDto<fetchAccountDto>> {
+  async onboardEndpoint(props: {
+    skillCategory: string;
+    profileImage: string;
+    type: string;
+    authToken: string;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<fetchAccountDto>> {
+    const { skillCategory, profileImage, type, authToken, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const body = { skillCategory, profileImage, type };
       const response: ResponseDto<fetchAccountDto> = await this.connector.post({
@@ -61,7 +69,7 @@ export class AccountModule implements AccountModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
   /**
@@ -70,9 +78,13 @@ export class AccountModule implements AccountModuleType {
    * @param profileImage string
    * @param type string
    */
-  async updateAccount(payload: updateUserDto, authToken: string): Promise<ResponseDto<fetchAccountDto>> {
+  async updateAccount(props: {
+    payload: updateUserDto;
+    authToken: string;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<fetchAccountDto>> {
+    const { authToken, payload, options } = props;
     return ErrorUtils.newTryFail(async () => {
-      const body = { ...payload };
       const response: ResponseDto<fetchAccountDto> = await this.connector.patch({
         path: API_PATHS.ACCOUNT_UPDATE,
         body: payload,
@@ -80,7 +92,7 @@ export class AccountModule implements AccountModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
   /**
@@ -88,11 +100,13 @@ export class AccountModule implements AccountModuleType {
    * @param oldPassword string
    * @param newPassword string
    */
-  async changePassword(
-    oldPassword: string,
-    newPassword: string,
-    authToken: string,
-  ): Promise<ResponseDto<fetchAccountDto>> {
+  async changePassword(props: {
+    oldPassword: string;
+    newPassword: string;
+    authToken: string;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<fetchAccountDto>> {
+    const { oldPassword, newPassword, authToken, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const body = { oldPassword, newPassword };
       const response: ResponseDto<fetchAccountDto> = await this.connector.put({
@@ -102,14 +116,19 @@ export class AccountModule implements AccountModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
   /**
    * initate2FA.
    * @param type TwoFATypeDto
    */
-  async initate2FA(type: TwoFATypeDto, authToken: string): Promise<ResponseDto<TwoFAresponse>> {
+  async initate2FA(props: {
+    type: TwoFATypeDto;
+    authToken: string;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<TwoFAresponse>> {
+    const { type, authToken, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const body = { type };
       const response: ResponseDto<TwoFAresponse> = await this.connector.post({
@@ -119,14 +138,15 @@ export class AccountModule implements AccountModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
   /**
    * active2FA.
    * @param code string
    */
-  async activate2FA(code: string, authToken: string): Promise<ResponseDto<void>> {
+  async activate2FA(props: { code: string; authToken: string; options?: BackoffOptions }): Promise<ResponseDto<void>> {
+    const { code, authToken, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const body = { code };
       const response: ResponseDto<void> = await this.connector.post({
@@ -136,14 +156,19 @@ export class AccountModule implements AccountModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
   /**
    * active2FA.
    * @param code string
    */
-  async deactivate2FA(code: string, authToken: string): Promise<ResponseDto<void>> {
+  async deactivate2FA(props: {
+    code: string;
+    authToken: string;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<void>> {
+    const { code, authToken, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const body = { code };
       const response: ResponseDto<void> = await this.connector.post({
@@ -153,10 +178,11 @@ export class AccountModule implements AccountModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
-  async sendEmailTwoFA(authToken: string): Promise<ResponseDto<{}>> {
+  async sendEmailTwoFA(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<{}>> {
+    const { authToken, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<{}> = await this.connector.post({
         path: API_PATHS.ACCOUNT_SEND_EMAIL_TWO_FA,
@@ -164,10 +190,15 @@ export class AccountModule implements AccountModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
-  async getAUser(id: string, authToken: string): Promise<ResponseDto<fetchAccountDto>> {
+  async getAUser(props: {
+    id: string;
+    authToken: string;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<fetchAccountDto>> {
+    const { id, authToken, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<fetchAccountDto> = await this.connector.get({
         path: `${API_PATHS.ACCOUNT_FETCH_SINGLE}${id}`,
@@ -175,9 +206,14 @@ export class AccountModule implements AccountModuleType {
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
-  async getUsers(authToken: string, filter?: FilterUserDto | undefined): Promise<ResponseDto<FindUsers>> {
+  async getUsers(props: {
+    authToken: string;
+    filter?: FilterUserDto | undefined;
+    options?: BackoffOptions;
+  }): Promise<ResponseDto<FindUsers>> {
+    const { filter, authToken, options } = props;
     if (filter) {
       const query = parseUrlWithQuery(API_PATHS.ACCOUNT_FETCH_ALL, { ...filter });
       return ErrorUtils.newTryFail(async () => {
@@ -190,16 +226,17 @@ export class AccountModule implements AccountModuleType {
       const response: ResponseDto<FindUsers> = await this.connector.get({ path: API_PATHS.ACCOUNT_FETCH_ALL });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
-    });
+    }, options || this.configBackOff);
   }
 
   /**
    * Logout.
    */
-  async logout(authToken: string): Promise<ResponseDto<void>> {
+  async logout(props: { authToken: string; options?: BackoffOptions }): Promise<ResponseDto<void>> {
+    const { authToken, options } = props;
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<void> = await this.connector.post({ path: API_PATHS.ACCOUNT_LOGOUT, authToken });
       return response;
-    });
+    }, options || this.configBackOff);
   }
 }
