@@ -20,7 +20,7 @@ pnpm add pakt-sdk
 ## Quick Start
 
 ```typescript
-import PaktSDK from "pakt-sdk";
+import { PaktSDK } from "pakt-sdk";
 
 const sdk = await PaktSDK.init({
   baseUrl: "https://api.pakt.world", // Required: API base URL
