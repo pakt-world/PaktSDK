@@ -35,6 +35,7 @@ declare const CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
 declare const API_PATHS: {
     API_VERSION: string;
     LOGIN: string;
+    LOGIN_TWO_FA: string;
     REGISTER: string;
     ACCOUNT_VERIFY: string;
     RESEND_VERIFY_LINK: string;
@@ -42,6 +43,7 @@ declare const API_PATHS: {
     RESET_PASSWORD: string;
     CHANGE_PASSWORD: string;
     VALIDATE_REFERRAL: string;
+    RESEND_TWO_FA_EMAIL_CODE: string;
     GOOGLE_OAUTH_GENERATE_STATE: string;
     GOOGLE_OAUTH_VALIDATE_STATE: string;
     COLLECTION: string;
@@ -232,6 +234,13 @@ type LoginDto = {
         expiresIn: number;
     };
 } & IUser;
+interface LoginTwoFADTO extends IUser {
+    token: string;
+    token_type: string;
+    expiresIn: number;
+    isVerified: boolean;
+    profileCompleteness: number;
+}
 interface RegisterDto {
     token: string;
     token_type: string;
@@ -260,6 +269,10 @@ interface VerifyAccountPayload {
 interface LoginPayload {
     email: string;
     password: string;
+}
+interface LoginTwoFAPayload {
+    code: string;
+    tempToken: string;
 }
 interface ChangeAuthenticationPasswordPayload {
     token: string;
@@ -321,6 +334,7 @@ interface GoogleOAuthValidateDto {
 }
 interface AuthenticationModuleType {
     login(payload: LoginPayload): Promise<ResponseDto<LoginDto>>;
+    loginTwoFa(payload: LoginTwoFAPayload): Promise<ResponseDto<LoginTwoFADTO>>;
     register(payload: RegisterPayload): Promise<ResponseDto<RegisterDto>>;
     verifyAccount(payload: VerifyAccountPayload): Promise<ResponseDto<AccountVerifyDto>>;
     resendVerifyLink(payload: ResendVerifyPayload): Promise<ResponseDto<IResendVerifyLink>>;
@@ -333,6 +347,7 @@ interface AuthenticationModuleType {
     validateReferral(token: string): Promise<ResponseDto<ValidateReferralDto>>;
     googleOAuthGenerateState(): Promise<ResponseDto<GoogleOAuthGenerateDto>>;
     googleOAuthValidateState(props: GoogleOAuthValdatePayload): Promise<ResponseDto<GoogleOAuthValidateDto>>;
+    resendTwoFAEmailCode(email: string): Promise<ResponseDto<{}>>;
 }
 
 declare class AuthenticationModule implements AuthenticationModuleType {
@@ -345,6 +360,12 @@ declare class AuthenticationModule implements AuthenticationModuleType {
      * @param password
      */
     login(payload: LoginPayload): Promise<ResponseDto<LoginDto>>;
+    /**
+     * login with Two FA. This method completes authentication for a user with Two-FA Activated.
+     * @param email
+     * @param password
+     */
+    loginTwoFa(payload: LoginTwoFAPayload): Promise<ResponseDto<LoginTwoFADTO>>;
     /**
      * register. This method creates a new user account.
      * @param firstName
@@ -382,6 +403,7 @@ declare class AuthenticationModule implements AuthenticationModuleType {
     validateReferral(token: string): Promise<ResponseDto<ValidateReferralDto>>;
     googleOAuthGenerateState(): Promise<ResponseDto<GoogleOAuthGenerateDto>>;
     googleOAuthValidateState(props: GoogleOAuthValdatePayload): Promise<ResponseDto<GoogleOAuthValidateDto>>;
+    resendTwoFAEmailCode(email: string): Promise<ResponseDto<{}>>;
 }
 
 type fetchAccountDto = {} & IUser;
@@ -1627,4 +1649,4 @@ declare class PaktSDK {
     private static generateRandomString;
 }
 
-export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, BookmarkEnumType, BookmarkType, CHARACTERS, ChangeAuthenticationPasswordPayload, ChangePasswordDto, ChatModule, ChatModuleType, CollectionModule, CollectionModuleType, ConnectionFilterModule, ConnectionFilterModuleType, CreateCollectionDto, CreateFeedDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, ErrorUtils, FEED_TYPES, FEED_TYPES_ENUM, FeedModule, FeedModuleType, FilterFeedDto, FilterInviteDto, FilterReviewDto, FilterUploadDto, FilterUserDto, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindFeedDto, FindInvitesDto, FindNotificationDto, FindReviewDto, FindTransactionsDto, FindUploadDto, FindUsers, FindWithdrawalsDto, GoogleOAuthGenerateDto, GoogleOAuthValdatePayload, GoogleOAuthValidateDto, IAny, IBlockchainCoinDto, IChatConversation, IChatMessage, ICollectionBookmarkDto, ICollectionDto, ICollectionStatus, ICollectionTypeDto, IConnectionEvents, IConnectionFilter, IConnectionFilterDecider, IConnectionKeys, ICreatePaymentDto, ICreateSessionPayload, IFeed, IFile, IInviteDto, IInviteStatus, IModel, INotificationDto, IPaymentCoins, IPaymentDataDto, IPaymentStatusEnum, IPaymentStatusType, IRPCDto, IRegisterResponse, IReleasePaymentDto, IResendVerifyLink, IReviewDto, ISendSessionMedia, ISingleWalletDto, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, ITransactionStatsFormat, ITransactionType, IUploadDto, IUser, IUserTwoFaType, IValidatePaymentDto, IVerification, IVerificationStatus, IWalletBalanceDto, IWalletDto, IWalletExchangeDto, IWalletResponseDto, IWithdrawalDto, IWithdrawalStatus, InviteModule, InviteModuleType, LoginDto, LoginPayload, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, PaymentModule, PaymentModuleType, RegisterDto, RegisterPayload, ResendVerifyDto, ResendVerifyPayload, ResetDto, ResetPasswordPayload, ResponseDto, ReviewModule, ReviewModuleType, SendInviteDto, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UpdateCollectionDto, UpdateManyCollectionsDto, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, ValidateReferralDto, VerificationDocumentTypes, VerifyAccountPayload, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelCollectionDto, createBookMarkDto, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, isEmpty, parseUrlWithQuery, updateUserDto };
+export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, BookmarkEnumType, BookmarkType, CHARACTERS, ChangeAuthenticationPasswordPayload, ChangePasswordDto, ChatModule, ChatModuleType, CollectionModule, CollectionModuleType, ConnectionFilterModule, ConnectionFilterModuleType, CreateCollectionDto, CreateFeedDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, ErrorUtils, FEED_TYPES, FEED_TYPES_ENUM, FeedModule, FeedModuleType, FilterFeedDto, FilterInviteDto, FilterReviewDto, FilterUploadDto, FilterUserDto, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindFeedDto, FindInvitesDto, FindNotificationDto, FindReviewDto, FindTransactionsDto, FindUploadDto, FindUsers, FindWithdrawalsDto, GoogleOAuthGenerateDto, GoogleOAuthValdatePayload, GoogleOAuthValidateDto, IAny, IBlockchainCoinDto, IChatConversation, IChatMessage, ICollectionBookmarkDto, ICollectionDto, ICollectionStatus, ICollectionTypeDto, IConnectionEvents, IConnectionFilter, IConnectionFilterDecider, IConnectionKeys, ICreatePaymentDto, ICreateSessionPayload, IFeed, IFile, IInviteDto, IInviteStatus, IModel, INotificationDto, IPaymentCoins, IPaymentDataDto, IPaymentStatusEnum, IPaymentStatusType, IRPCDto, IRegisterResponse, IReleasePaymentDto, IResendVerifyLink, IReviewDto, ISendSessionMedia, ISingleWalletDto, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, ITransactionStatsFormat, ITransactionType, IUploadDto, IUser, IUserTwoFaType, IValidatePaymentDto, IVerification, IVerificationStatus, IWalletBalanceDto, IWalletDto, IWalletExchangeDto, IWalletResponseDto, IWithdrawalDto, IWithdrawalStatus, InviteModule, InviteModuleType, LoginDto, LoginPayload, LoginTwoFADTO, LoginTwoFAPayload, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, PaymentModule, PaymentModuleType, RegisterDto, RegisterPayload, ResendVerifyDto, ResendVerifyPayload, ResetDto, ResetPasswordPayload, ResponseDto, ReviewModule, ReviewModuleType, SendInviteDto, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UpdateCollectionDto, UpdateManyCollectionsDto, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, ValidateReferralDto, VerificationDocumentTypes, VerifyAccountPayload, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelCollectionDto, createBookMarkDto, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, isEmpty, parseUrlWithQuery, updateUserDto };

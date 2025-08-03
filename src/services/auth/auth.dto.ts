@@ -73,6 +73,14 @@ export type LoginDto = {
   };
 } & IUser;
 
+export interface LoginTwoFADTO extends IUser {
+  token: string;
+  token_type: string;
+  expiresIn: number;
+  isVerified: boolean;
+  profileCompleteness: number;
+}
+
 export interface RegisterDto {
   token: string;
   token_type: string;
@@ -105,6 +113,10 @@ export interface VerifyAccountPayload {
 export interface LoginPayload {
   email: string;
   password: string;
+}
+export interface LoginTwoFAPayload {
+  code: string;
+  tempToken: string;
 }
 
 export interface ChangeAuthenticationPasswordPayload {
@@ -176,6 +188,7 @@ export interface GoogleOAuthValidateDto {
 
 export interface AuthenticationModuleType {
   login(payload: LoginPayload): Promise<ResponseDto<LoginDto>>;
+  loginTwoFa(payload: LoginTwoFAPayload): Promise<ResponseDto<LoginTwoFADTO>>;
   register(payload: RegisterPayload): Promise<ResponseDto<RegisterDto>>;
   verifyAccount(payload: VerifyAccountPayload): Promise<ResponseDto<AccountVerifyDto>>;
   resendVerifyLink(payload: ResendVerifyPayload): Promise<ResponseDto<IResendVerifyLink>>;
@@ -185,4 +198,5 @@ export interface AuthenticationModuleType {
   validateReferral(token: string): Promise<ResponseDto<ValidateReferralDto>>;
   googleOAuthGenerateState(): Promise<ResponseDto<GoogleOAuthGenerateDto>>;
   googleOAuthValidateState(props: GoogleOAuthValdatePayload): Promise<ResponseDto<GoogleOAuthValidateDto>>;
+  resendTwoFAEmailCode(email: string): Promise<ResponseDto<{}>>;
 }
