@@ -7,6 +7,7 @@ export const API_PATHS = {
   API_VERSION: "/v1",
   // Authentication endpoints
   LOGIN: "/auth/login",
+  LOGIN_TWO_FA: "/auth/login/2fa",
   REGISTER: "/auth/create-account",
   ACCOUNT_VERIFY: "/auth/account/verify",
   RESEND_VERIFY_LINK: "/auth/verify/resend",
@@ -14,6 +15,7 @@ export const API_PATHS = {
   RESET_PASSWORD: "/auth/password/reset",
   CHANGE_PASSWORD: "/auth/password/change",
   VALIDATE_REFERRAL: "/auth/referral/validate/",
+  RESEND_TWO_FA_EMAIL_CODE: "/auth/2fa/email/code",
   GOOGLE_OAUTH_GENERATE_STATE: "/auth/google/oauth/generate-state",
   GOOGLE_OAUTH_VALIDATE_STATE: "/auth/google/oauth/validate-state",
 

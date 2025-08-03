@@ -15,6 +15,8 @@ import {
   IResendVerifyLink,
   LoginDto,
   LoginPayload,
+  LoginTwoFADTO,
+  LoginTwoFAPayload,
   RegisterDto,
   RegisterPayload,
   ResendVerifyPayload,
@@ -56,6 +58,23 @@ export class AuthenticationModule implements AuthenticationModuleType {
       } else {
         Container.of(this.id).set(AUTH_TOKEN, response.data.token);
       }
+      return response;
+    });
+  }
+
+  /**
+   * login with Two FA. This method completes authentication for a user with Two-FA Activated.
+   * @param email
+   * @param password
+   */
+  async loginTwoFa(payload: LoginTwoFAPayload): Promise<ResponseDto<LoginTwoFADTO>> {
+    return ErrorUtils.newTryFail(async () => {
+      const response: ResponseDto<LoginTwoFADTO> = await this.connector.post({
+        path: API_PATHS.LOGIN_TWO_FA,
+        body: payload,
+      });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      Container.of(this.id).set(AUTH_TOKEN, response.data.token);
       return response;
     });
   }
@@ -168,7 +187,7 @@ export class AuthenticationModule implements AuthenticationModuleType {
     return ErrorUtils.newTryFail(async () => {
       const { token, tempToken } = props;
       const response: ResponseDto<ChangePasswordDto> = await this.connector.post({
-        path: `${API_PATHS.VALIDATE_PASSWORD_TOKEN}`,
+        path: API_PATHS.VALIDATE_PASSWORD_TOKEN,
         body: { tempToken, token },
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
@@ -180,7 +199,7 @@ export class AuthenticationModule implements AuthenticationModuleType {
     return ErrorUtils.newTryFail(async () => {
       const credentials = { token };
       const response: ResponseDto<ValidateReferralDto> = await this.connector.post({
-        path: `${API_PATHS.VALIDATE_REFERRAL}`,
+        path: API_PATHS.VALIDATE_REFERRAL,
         body: credentials,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
@@ -191,7 +210,7 @@ export class AuthenticationModule implements AuthenticationModuleType {
   async googleOAuthGenerateState(): Promise<ResponseDto<GoogleOAuthGenerateDto>> {
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<GoogleOAuthGenerateDto> = await this.connector.get({
-        path: `${API_PATHS.GOOGLE_OAUTH_GENERATE_STATE}`,
+        path: API_PATHS.GOOGLE_OAUTH_GENERATE_STATE,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
@@ -203,6 +222,16 @@ export class AuthenticationModule implements AuthenticationModuleType {
       const query = parseUrlWithQuery(API_PATHS.GOOGLE_OAUTH_VALIDATE_STATE, { state, code });
       const response: ResponseDto<GoogleOAuthValidateDto> = await this.connector.post({
         path: query,
+      });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
+    });
+  }
+  resendTwoFAEmailCode(email: string): Promise<ResponseDto<{}>> {
+    return ErrorUtils.newTryFail(async () => {
+      const response: ResponseDto<{}> = await this.connector.post({
+        body: { email },
+        path: API_PATHS.RESEND_TWO_FA_EMAIL_CODE,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
