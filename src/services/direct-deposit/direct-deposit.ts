@@ -11,6 +11,9 @@ import {
 import { PaktConnector } from "../../connector";
 import { API_PATHS, ErrorUtils, ResponseDto, Status } from "../../utils";
 
+// Export all Types to Service
+export * from "./direct-deposit.dto";
+
 @Service({
   factory: (data: { id: string }) => {
     return new DirectDepositModule(data.id);
