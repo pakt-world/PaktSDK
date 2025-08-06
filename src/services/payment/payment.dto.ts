@@ -13,9 +13,12 @@ export enum IPaymentStatusEnum {
 
 export type IPaymentStatusType = "pending" | "ongoing" | "completed" | "waiting" | "cancelled" | "deleted";
 
+export type IPaymentType = "direct-deposit" | "escrow";
+
 export interface ICreatePaymentDto {
   coin: IPaymentCoins;
   collection: string;
+  usdValue?: number;
 }
 
 export interface IPaymentDataDto {
