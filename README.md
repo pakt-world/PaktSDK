@@ -77,6 +77,27 @@ if (response.status === "success") {
 }
 ```
 
+### Login With TwoFA
+
+```typescript
+import { LoginTwoFAPayload } from "pakt-sdk";
+
+const loginData: LoginTwoFAPayload = {
+  code: "123456",
+  tempToken:
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1OWJlYTQRmZWQ4IiwiaWF0IjoxNzA0Nzg3MjkwLCJleHAiOjE3Nzc4NjAwMzB9.cPkZ-",
+};
+
+const sdkInit = await PaktSDK.init(configData);
+const response = await sdk.auth.loginTwoFa(loginData);
+
+if (response.status === "success") {
+  console.log("Logged in successfully");
+  console.log("User data:", response.data);
+  // Token is automatically stored for subsequent requests
+}
+```
+
 ### Registration
 
 ```typescript
@@ -499,6 +520,7 @@ const directDepositData: ICreateDirectDepositPayload = {
   name: "Project Direct Funding",
   description: "Direct deposit for project completion",
   owner: "user-id",
+  systemDeposit: true,
 };
 
 const directDeposit = await sdk.directDeposit.createDirectDeposit({

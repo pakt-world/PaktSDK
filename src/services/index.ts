@@ -38,6 +38,7 @@ export * from "./upload";
 export * from "./userVerification";
 export * from "./wallet";
 export * from "./withdrawal";
+export * from "./direct-deposit";
 
 @Service({ transient: true })
 export class PaktSDK {

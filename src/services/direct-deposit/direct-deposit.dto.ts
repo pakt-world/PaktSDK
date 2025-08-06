@@ -9,6 +9,7 @@ export interface ICreateDirectDepositPayload {
   name: string;
   description: string;
   owner: string;
+  systemDeposit?: boolean;
 }
 
 export interface IValidateDirectDepositPayload {
