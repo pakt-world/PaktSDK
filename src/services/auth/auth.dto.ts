@@ -193,6 +193,7 @@ export interface AuthenticationModuleType {
   verifyAccount(payload: VerifyAccountPayload): Promise<ResponseDto<AccountVerifyDto>>;
   resendVerifyLink(payload: ResendVerifyPayload): Promise<ResponseDto<IResendVerifyLink>>;
   resetPassword(payload: ResetPasswordPayload): Promise<ResponseDto<ResetDto>>;
+  resendResetPassword(payload: ResetPasswordPayload): Promise<ResponseDto<ResetDto>>;
   changePassword(payload: ChangeAuthenticationPasswordPayload): Promise<ResponseDto<ChangePasswordDto>>;
   validatePasswordToken(props: { token: string; tempToken: string }): Promise<ResponseDto<ValidatePasswordToken>>;
   validateReferral(token: string): Promise<ResponseDto<ValidateReferralDto>>;

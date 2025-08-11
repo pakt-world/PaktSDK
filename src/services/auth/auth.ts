@@ -150,6 +150,21 @@ export class AuthenticationModule implements AuthenticationModuleType {
   }
 
   /**
+   * resendResetPassword. This method resends an email for account password reset
+   * @param email
+   */
+  async resendResetPassword(payload: ResetPasswordPayload): Promise<ResponseDto<ResetDto>> {
+    return ErrorUtils.newTryFail(async () => {
+      const response: ResponseDto<ResetDto> = await this.connector.post({
+        path: API_PATHS.RESEND_RESET_PASSWORD,
+        body: payload,
+      });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
+    });
+  }
+
+  /**
    * resetPassword. This method sends an email for account password reset
    * @param email
    */

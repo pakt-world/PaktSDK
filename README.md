@@ -157,6 +157,27 @@ await sdk.auth.changePassword({
 });
 ```
 
+#### Resend Reset Password
+
+If the initial password reset email is not received, you can resend it:
+
+```typescript
+import { ResetPasswordPayload, ResponseDto, ResetDto } from "pakt-sdk";
+
+const resendData: ResetPasswordPayload = {
+  email: "user@example.com",
+};
+
+const response: ResponseDto<ResetDto> = await sdk.auth.resendResetPassword(resendData);
+
+if (response.status === "success") {
+  console.log("Reset password email resent successfully");
+  console.log("Temp token:", response.data.tempToken.token);
+  console.log("Token type:", response.data.tempToken.token_type);
+  console.log("Expires in:", response.data.tempToken.expiresIn);
+}
+```
+
 ### Google OAuth Integration
 
 ```typescript
