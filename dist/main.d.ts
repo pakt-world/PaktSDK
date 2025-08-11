@@ -41,6 +41,7 @@ declare const API_PATHS: {
     RESEND_VERIFY_LINK: string;
     VALIDATE_PASSWORD_TOKEN: string;
     RESET_PASSWORD: string;
+    RESEND_RESET_PASSWORD: string;
     CHANGE_PASSWORD: string;
     VALIDATE_REFERRAL: string;
     RESEND_TWO_FA_EMAIL_CODE: string;
@@ -339,6 +340,7 @@ interface AuthenticationModuleType {
     verifyAccount(payload: VerifyAccountPayload): Promise<ResponseDto<AccountVerifyDto>>;
     resendVerifyLink(payload: ResendVerifyPayload): Promise<ResponseDto<IResendVerifyLink>>;
     resetPassword(payload: ResetPasswordPayload): Promise<ResponseDto<ResetDto>>;
+    resendResetPassword(payload: ResetPasswordPayload): Promise<ResponseDto<ResetDto>>;
     changePassword(payload: ChangeAuthenticationPasswordPayload): Promise<ResponseDto<ChangePasswordDto>>;
     validatePasswordToken(props: {
         token: string;
@@ -385,6 +387,11 @@ declare class AuthenticationModule implements AuthenticationModuleType {
      * @param email
      */
     resendVerifyLink(payload: ResendVerifyPayload): Promise<ResponseDto<IResendVerifyLink>>;
+    /**
+     * resendResetPassword. This method sends an email for account password reset
+     * @param email
+     */
+    resendResetPassword(payload: ResetPasswordPayload): Promise<ResponseDto<ResetDto>>;
     /**
      * resetPassword. This method sends an email for account password reset
      * @param email

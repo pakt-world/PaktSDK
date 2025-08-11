@@ -13,6 +13,7 @@ export const API_PATHS = {
   RESEND_VERIFY_LINK: "/auth/verify/resend",
   VALIDATE_PASSWORD_TOKEN: "/auth/validate/password",
   RESET_PASSWORD: "/auth/password/reset",
+  RESEND_RESET_PASSWORD: "/auth/password/reset/resend",
   CHANGE_PASSWORD: "/auth/password/change",
   VALIDATE_REFERRAL: "/auth/referral/validate/",
   RESEND_TWO_FA_EMAIL_CODE: "/auth/2fa/email/code",
