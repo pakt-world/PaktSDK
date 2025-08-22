@@ -388,7 +388,7 @@ declare class AuthenticationModule implements AuthenticationModuleType {
      */
     resendVerifyLink(payload: ResendVerifyPayload): Promise<ResponseDto<IResendVerifyLink>>;
     /**
-     * resendResetPassword. This method sends an email for account password reset
+     * resendResetPassword. This method resends an email for account password reset
      * @param email
      */
     resendResetPassword(payload: ResetPasswordPayload): Promise<ResponseDto<ResetDto>>;
@@ -1551,7 +1551,7 @@ declare class WithdrawalModule implements WithdrawalModuleType {
 }
 
 interface ICreateDirectDepositPayload {
-    collectionType: string;
+    collectionType: "payments";
     amount: number;
     coin: string;
     name: string;
