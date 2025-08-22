@@ -3,7 +3,7 @@ import { IUser } from "../auth";
 import { ICollectionDto } from "../collection";
 
 export interface ICreateDirectDepositPayload {
-  collectionType: string;
+  collectionType: "payments";
   amount: number;
   coin: string;
   name: string;
