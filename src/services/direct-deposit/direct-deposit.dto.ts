@@ -8,7 +8,7 @@ export interface ICreateDirectDepositPayload {
   coin: string;
   name: string;
   description: string;
-  owner: string;
+  owner?: string;
   systemDeposit?: boolean;
 }
 
