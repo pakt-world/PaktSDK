@@ -21,8 +21,8 @@ export * from "./payment.dto";
   transient: true,
 })
 export class PaymentModule implements PaymentModuleType {
-  private id: string;
-  private connector: PaktConnector;
+  private readonly id: string;
+  private readonly connector: PaktConnector;
   constructor(id: string) {
     this.id = id;
     this.connector = Container.of(this.id).get(PaktConnector);

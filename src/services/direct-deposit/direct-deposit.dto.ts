@@ -18,7 +18,6 @@ export interface IValidateDirectDepositPayload {
   status?: string;
   owner?: string;
   meta?: Record<string, IAny>;
-  release?: boolean;
 }
 
 export interface ICreateDirectDepositResponse {
