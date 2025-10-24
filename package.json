@@ -1,7 +1,7 @@
 {
-  "name": "pakt-sdk",
-  "version": "0.1.53-beta",
-  "description": "The PAKT SDK is an advanced software development kit, purpose-built for web applications, that empowers developers to construct innovative products on the PAKT Operating System.",
+  "name": "@pakt/sdk",
+  "version": "0.1.54-beta",
+  "description": "Pakt Official SDK for AI and Developer Integration to the API of Prompt-to-Build businesses",
   "files": [
     "./dist/main.js",
     "./dist/main.d.ts"
@@ -28,7 +28,7 @@
   },
   "keywords": [
     "pakt",
-    "pakt-api",
+    "pakt-ai",
     "pakt-sdk"
   ],
   "author": {
