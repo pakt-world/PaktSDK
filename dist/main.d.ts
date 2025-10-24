@@ -1395,8 +1395,8 @@ interface PaymentModuleType {
 }
 
 declare class PaymentModule implements PaymentModuleType {
-    private id;
-    private connector;
+    private readonly id;
+    private readonly connector;
     constructor(id: string);
     create(authToken: string, payload: ICreatePaymentDto): Promise<ResponseDto<IPaymentDataDto>>;
     validate(authToken: string, payload: IValidatePaymentDto): Promise<ResponseDto<{}>>;
@@ -1565,7 +1565,6 @@ interface IValidateDirectDepositPayload {
     status?: string;
     owner?: string;
     meta?: Record<string, IAny>;
-    release?: boolean;
 }
 interface ICreateDirectDepositResponse {
     coin: string;
