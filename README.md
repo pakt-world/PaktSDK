@@ -40,6 +40,8 @@ const loginResponse = await sdk.auth.login({
 - [Authentication](#authentication)
 - [Account Management](#account-management)
 - [Collections (Projects)](#collections-projects)
+- [Collection Schema](#collection-schema)
+- [Collection Store](#collection-store)
 - [Wallet & Payments](#wallet--payments)
 - [Direct Deposits](#direct-deposits)
 - [Communication](#communication)
@@ -412,6 +414,338 @@ const updates = [
   /* array of updates with IDs */
 ];
 await sdk.collection.updateManyCollections(updates);
+```
+
+---
+
+## Collection Schema
+
+Collection schemas define the structure and fields for custom data models in your collections. They allow you to create typed, validated data structures with field definitions.
+
+### Get All Collection Schemas
+
+```typescript
+import { filterCollectionSchemaDto } from "pakt-sdk";
+
+const filters: filterCollectionSchemaDto = {
+  page: "1",
+  limit: "20",
+  name: "user-profile", // Optional: filter by schema name
+};
+
+const schemas = await sdk.collectionSchema.getAll("your-auth-token", filters);
+
+schemas.data.data.forEach((schema) => {
+  console.log(`Schema: ${schema.name}`);
+  console.log(`Reference: ${schema.reference}`);
+  console.log(`Description: ${schema.description}`);
+  console.log(`Fields: ${schema.schema.length}`);
+});
+```
+
+### Get Collection Schema by ID
+
+```typescript
+const schema = await sdk.collectionSchema.getById("your-auth-token", "schema-id");
+
+if (schema.status === "success") {
+  console.log("Schema name:", schema.data.name);
+  console.log("Schema reference:", schema.data.reference);
+  console.log("Field definitions:", schema.data.schema);
+}
+```
+
+### Create Collection Schema
+
+```typescript
+import { CreateCollectionSchemaDto, FieldDefinitionDto } from "pakt-sdk";
+
+// Define field structure
+const fields: FieldDefinitionDto[] = [
+  {
+    name: "email",
+    type: "string",
+    required: true,
+    unique: true,
+    default: "",
+  },
+  {
+    name: "fullName",
+    type: "string",
+    required: true,
+    unique: false,
+    default: "",
+  },
+  {
+    name: "age",
+    type: "number",
+    required: false,
+    unique: false,
+    default: "0",
+  },
+  {
+    name: "isActive",
+    type: "boolean",
+    required: false,
+    unique: false,
+    default: "true",
+  },
+];
+
+const newSchema: CreateCollectionSchemaDto = {
+  name: "User Profile Schema",
+  description: "Schema for storing user profile information",
+  schema: fields,
+};
+
+const createdSchema = await sdk.collectionSchema.create(newSchema);
+
+if (createdSchema.status === "success") {
+  console.log("Schema created with reference:", createdSchema.data.reference);
+  console.log("Schema ID:", createdSchema.data._id);
+}
+```
+
+### Update Collection Schema
+
+```typescript
+import { UpdateCollectionSchemaDto, FieldDefinitionDto } from "pakt-sdk";
+
+const updatedFields: FieldDefinitionDto[] = [
+  {
+    name: "email",
+    type: "string",
+    required: true,
+    unique: true,
+    default: "",
+  },
+  {
+    name: "fullName",
+    type: "string",
+    required: true,
+    unique: false,
+    default: "",
+  },
+  {
+    name: "phoneNumber",
+    type: "string",
+    required: false,
+    unique: false,
+    default: "",
+  },
+];
+
+const schemaUpdate: UpdateCollectionSchemaDto = {
+  description: "Updated user profile schema with phone number",
+  schema: updatedFields,
+};
+
+await sdk.collectionSchema.update("schema-id", schemaUpdate);
+```
+
+### Delete Collection Schema
+
+```typescript
+const deleteResponse = await sdk.collectionSchema.delete("schema-id");
+
+if (deleteResponse.status === "success") {
+  console.log("Schema deleted successfully");
+}
+```
+
+### Field Definition Types
+
+Collection schemas support various field types:
+
+- **string**: Text data
+- **number**: Numeric values
+- **boolean**: True/false values
+- **date**: Date and time values
+- **array**: Lists of values
+- **object**: Nested object structures
+
+Each field can be configured with:
+
+- `name`: Field identifier
+- `type`: Data type
+- `required`: Whether the field is mandatory
+- `unique`: Whether values must be unique across documents
+- `default`: Default value if not provided
+
+---
+
+## Collection Store
+
+Collection stores manage actual data instances based on collection schemas. They provide a flexible, schema-based data storage system.
+
+### Get All Store Items
+
+```typescript
+import { filterCollectionStoreDto } from "pakt-sdk";
+
+const schemaReference = "user-profile"; // Reference from schema
+
+const filters: filterCollectionStoreDto = {
+  page: "1",
+  limit: "20",
+  // Add any custom filters based on your schema fields
+  isActive: true,
+};
+
+const items = await sdk.collectionStore.getAll("your-auth-token", schemaReference, filters);
+
+console.log(`Total items: ${items.data.total}`);
+console.log(`Current page: ${items.data.page}`);
+console.log(`Total pages: ${items.data.pages}`);
+
+items.data.data.forEach((item) => {
+  console.log("Item ID:", item._id);
+  // Access custom fields based on your schema
+  console.log("Custom data:", item);
+});
+```
+
+### Get Store Item by ID
+
+```typescript
+const schemaReference = "user-profile";
+const itemId = "item-id";
+
+const item = await sdk.collectionStore.getById("your-auth-token", schemaReference, itemId);
+
+if (item.status === "success") {
+  console.log("Item found:", item.data);
+  console.log("Created at:", item.data.createdAt);
+  console.log("Updated at:", item.data.updatedAt);
+}
+```
+
+### Get Item Count
+
+```typescript
+import { filterCollectionStoreDto } from "pakt-sdk";
+
+const schemaReference = "user-profile";
+
+const filters: filterCollectionStoreDto = {
+  isActive: true, // Custom filter based on schema
+};
+
+const count = await sdk.collectionStore.getCount("your-auth-token", schemaReference, filters);
+
+if (count.status === "success") {
+  console.log(`Total matching items: ${count.data}`);
+}
+```
+
+### Create Store Item
+
+```typescript
+import { CreateCollectionStoreDto } from "pakt-sdk";
+
+const schemaReference = "user-profile";
+
+// Create data matching your schema structure
+const newItem: CreateCollectionStoreDto = {
+  email: "john.doe@example.com",
+  fullName: "John Doe",
+  age: 30,
+  isActive: true,
+  // Add any additional fields defined in your schema
+};
+
+const createdItem = await sdk.collectionStore.create("your-auth-token", schemaReference, newItem);
+
+if (createdItem.status === "success") {
+  console.log("Item created with ID:", createdItem.data._id);
+  console.log("Item data:", createdItem.data);
+}
+```
+
+### Update Store Item
+
+```typescript
+import { UpdateCollectionStoreDto } from "pakt-sdk";
+
+const schemaReference = "user-profile";
+const itemId = "item-id";
+
+const updates: UpdateCollectionStoreDto = {
+  age: 31,
+  phoneNumber: "+1234567890",
+  // Update any fields from your schema
+};
+
+const updatedItem = await sdk.collectionStore.update("your-auth-token", schemaReference, itemId, updates);
+
+if (updatedItem.status === "success") {
+  console.log("Item updated:", updatedItem.data);
+}
+```
+
+### Delete Store Item
+
+```typescript
+const schemaReference = "user-profile";
+const itemId = "item-id";
+
+const deleteResponse = await sdk.collectionStore.delete("your-auth-token", schemaReference, itemId);
+
+if (deleteResponse.status === "success") {
+  console.log("Item deleted successfully");
+}
+```
+
+### Complete Example: Schema + Store
+
+Here's a complete workflow showing how to create a schema and manage data:
+
+```typescript
+// Step 1: Create a schema
+const userSchema = await sdk.collectionSchema.create({
+  name: "User Profiles",
+  description: "Store user profile information",
+  schema: [
+    { name: "email", type: "string", required: true, unique: true, default: "" },
+    { name: "displayName", type: "string", required: true, unique: false, default: "" },
+    { name: "bio", type: "string", required: false, unique: false, default: "" },
+    { name: "verified", type: "boolean", required: false, unique: false, default: "false" },
+  ],
+});
+
+const schemaRef = userSchema.data.reference;
+
+// Step 2: Create items in the store
+const user1 = await sdk.collectionStore.create("auth-token", schemaRef, {
+  email: "alice@example.com",
+  displayName: "Alice Smith",
+  bio: "Software developer",
+  verified: true,
+});
+
+const user2 = await sdk.collectionStore.create("auth-token", schemaRef, {
+  email: "bob@example.com",
+  displayName: "Bob Jones",
+  bio: "Product manager",
+  verified: false,
+});
+
+// Step 3: Query the store
+const allUsers = await sdk.collectionStore.getAll("auth-token", schemaRef, {
+  limit: "10",
+});
+
+// Step 4: Update an item
+await sdk.collectionStore.update("auth-token", schemaRef, user2.data._id, {
+  verified: true,
+});
+
+// Step 5: Get count
+const verifiedCount = await sdk.collectionStore.getCount("auth-token", schemaRef, {
+  verified: true,
+});
+
+console.log(`Verified users: ${verifiedCount.data}`);
 ```
 
 ---

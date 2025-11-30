@@ -32,7 +32,7 @@ export class PaymentModule implements PaymentModuleType {
     return ErrorUtils.newTryFail(async () => {
       const credentials = { ...payload };
       const response: ResponseDto<IPaymentDataDto> = await this.connector.post({
-        path: `${API_PATHS.CREATE_ORDER}`,
+        path: `${API_PATHS.v1.CREATE_ORDER}`,
         body: credentials,
         authToken,
       });
@@ -45,7 +45,7 @@ export class PaymentModule implements PaymentModuleType {
     return ErrorUtils.newTryFail(async () => {
       const credentials = { ...payload };
       const response: ResponseDto<IPaymentDataDto> = await this.connector.post({
-        path: `${API_PATHS.VALIDATE_ORDER}`,
+        path: `${API_PATHS.v1.VALIDATE_ORDER}`,
         body: credentials,
         authToken,
       });
@@ -58,7 +58,7 @@ export class PaymentModule implements PaymentModuleType {
     return ErrorUtils.newTryFail(async () => {
       const credentials = { ...payload };
       const response: ResponseDto<IPaymentDataDto> = await this.connector.post({
-        path: `${API_PATHS.RELEASE_ORDER}`,
+        path: `${API_PATHS.v1.RELEASE_ORDER}`,
         body: credentials,
         authToken,
       });
@@ -70,7 +70,7 @@ export class PaymentModule implements PaymentModuleType {
   paymentMethods(authToken: string): Promise<ResponseDto<IBlockchainCoinDto[]>> {
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IBlockchainCoinDto[]> = await this.connector.get({
-        path: `${API_PATHS.PAYMENT_METHODS}`,
+        path: `${API_PATHS.v1.PAYMENT_METHODS}`,
         authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
@@ -81,7 +81,7 @@ export class PaymentModule implements PaymentModuleType {
   activeRpc(authToken: string): Promise<ResponseDto<IRPCDto>> {
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IRPCDto> = await this.connector.get({
-        path: `${API_PATHS.RPC}`,
+        path: `${API_PATHS.v1.RPC}`,
         authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;

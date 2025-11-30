@@ -7,6 +7,8 @@ import { AuthenticationModule, AuthenticationModuleType } from "./auth";
 import { BookMarkModule, BookMarkModuleType } from "./bookmark";
 import { ChatModule, ChatModuleType } from "./chat";
 import { CollectionModule, CollectionModuleType } from "./collection";
+import { CollectionSchemaModule, CollectionSchemaModuleType } from "./collectionSchema";
+import { CollectionStoreModule, CollectionStoreModuleType } from "./collectionStore";
 import { ConnectionFilterModule, ConnectionFilterModuleType } from "./connectionFilter";
 import { FeedModule, FeedModuleType } from "./feed";
 import { InviteModule, InviteModuleType } from "./invite";
@@ -24,6 +26,8 @@ export * from "./auth";
 export * from "./bookmark";
 export * from "./chat";
 export * from "./collection";
+export * from "./collectionSchema";
+export * from "./collectionStore";
 export * from "./connectionFilter";
 export * from "./feed";
 export * from "./invite";
@@ -41,6 +45,8 @@ export class PaktSDK {
   auth: AuthenticationModuleType;
   bookmark: BookMarkModuleType;
   collection: CollectionModuleType;
+  collectionSchema: CollectionSchemaModuleType;
+  collectionStore: CollectionStoreModuleType;
   account: AccountModuleType;
   notifications: NotificationModuleType;
   file: UploadModuleType;
@@ -58,6 +64,8 @@ export class PaktSDK {
   constructor(id: string) {
     this.auth = Container.of(id).get(AuthenticationModule);
     this.collection = Container.of(id).get(CollectionModule);
+    this.collectionSchema = Container.of(id).get(CollectionSchemaModule);
+    this.collectionStore = Container.of(id).get(CollectionStoreModule);
     this.account = Container.of(id).get(AccountModule);
     this.notifications = Container.of(id).get(NotificationModule);
     this.file = Container.of(id).get(UploadModule);

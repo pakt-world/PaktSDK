@@ -32,7 +32,7 @@ export class UserVerificationModule implements UserVerificationModuleType {
     const credentials = { ...payload };
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<CreateSessionResponse> = await this.connector.post({
-        path: API_PATHS.CREATE_SESSION,
+        path: API_PATHS.v1.CREATE_SESSION,
         body: credentials,
         authToken,
       });
@@ -45,7 +45,7 @@ export class UserVerificationModule implements UserVerificationModuleType {
     const credentials = { ...payload };
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<SendSessionMediaResponse> = await this.connector.post({
-        path: API_PATHS.SEND_SESSION_MEDIA,
+        path: API_PATHS.v1.SEND_SESSION_MEDIA,
         body: credentials,
         authToken,
       });
@@ -55,7 +55,7 @@ export class UserVerificationModule implements UserVerificationModuleType {
   }
 
   getSessionAttempts(authToken: string): Promise<ResponseDto<SessionAttempts>> {
-    const fetchUrl = parseUrlWithQuery(API_PATHS.SESSION_ATTEMPTS, null);
+    const fetchUrl = parseUrlWithQuery(API_PATHS.v1.SESSION_ATTEMPTS, null);
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<SessionAttempts> = await this.connector.get({
         path: fetchUrl,
@@ -67,7 +67,7 @@ export class UserVerificationModule implements UserVerificationModuleType {
   }
 
   getUserVerifications(authToken: string): Promise<ResponseDto<IVerification[]>> {
-    const fetchUrl = parseUrlWithQuery(API_PATHS.USER_VERIFICATION, null);
+    const fetchUrl = parseUrlWithQuery(API_PATHS.v1.USER_VERIFICATION, null);
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IVerification[]> = await this.connector.get({
         path: fetchUrl,
