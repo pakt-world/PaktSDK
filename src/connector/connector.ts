@@ -1,7 +1,6 @@
-import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from "axios";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { Container, Service } from "typedi";
 import { version } from "../../package.json";
-import { API_PATHS } from "../utils";
 import { PAKT_CONFIG } from "../utils/token";
 import { GetUrl, PostRequest } from "./connector.dto";
 
@@ -13,6 +12,10 @@ import { GetUrl, PostRequest } from "./connector.dto";
 })
 export class PaktConnector {
   constructor(private readonly id: string) {}
+
+  public fetchConfig() {
+    return Container.of(this.id).get(PAKT_CONFIG);
+  }
 
   public async get<T>(request: GetUrl) {
     return this.request<T>({ ...request, method: "GET" });
@@ -35,7 +38,7 @@ export class PaktConnector {
   }
 
   private async request<T>(
-    { path, params, body, method, authToken }: PostRequest,
+    { path, params, body, method, authToken, headers: _postRequestHeaders }: PostRequest,
     retry = 0,
     externalUrl?: string,
   ): Promise<T> {
@@ -43,11 +46,11 @@ export class PaktConnector {
 
     const url = externalUrl || this.getUrl({ path, params });
     const headers = await this.headers(retry, authToken);
-    
+
     const axiosConfig: AxiosRequestConfig = {
       method,
       url,
-      headers,
+      headers: { ...headers, ..._postRequestHeaders },
       data: body,
       timeout: 30000, // 30 second timeout
     };
@@ -56,40 +59,35 @@ export class PaktConnector {
     if (verbose) {
       console.debug(new Date().toISOString(), "SDK Request: ", method, url, body);
     }
-    
+
     try {
       const response: AxiosResponse<T> = await axios(axiosConfig);
       const end = Date.now() - start;
-      
+
       if (verbose) {
-        console.log(
-          new Date().toISOString(),
-          `SDK Response received in ${end}ms: `,
-          response.status,
-          response.data,
-        );
+        console.log(new Date().toISOString(), `SDK Response received in ${end}ms: `, response.status, response.data);
       }
-      
+
       return { ...response.data, code: response.status };
     } catch (error: unknown) {
       if (verbose) {
         console.warn(new Date().toISOString(), "Error: ", error);
       }
-      
+
       // Handle axios error response
       if (axios.isAxiosError(error) && error.response) {
         return { ...error.response.data, code: error.response.status };
       }
-      
+
       return Promise.reject(error);
     }
   }
 
   private getUrl({ path, params }: GetUrl) {
     const config = Container.of(this.id).get(PAKT_CONFIG);
-    const realPath = API_PATHS.API_VERSION + path;
-    const url = new URL(realPath || "", config.baseUrl);
-    console.log(realPath, url);
+    // const realPath = API_PATHS.API_VERSION + path;
+    const url = new URL(path || "", config.baseUrl);
+    console.log(path, url);
 
     if (params) {
       Object.keys(params)
@@ -107,13 +105,13 @@ export class PaktConnector {
   private async headers(retry: number, authToken?: string) {
     let authHeader = {};
     const config = Container.of(this.id).get(PAKT_CONFIG);
-    
+
     if (authToken) {
       authHeader = {
         Authorization: `Bearer ${authToken}`,
       };
     }
-    
+
     return {
       "Content-Type": "application/json",
       "x-pkt-sdk-version": version,

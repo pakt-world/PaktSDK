@@ -1,6 +1,7 @@
 export interface GetUrl {
   path?: string;
   params?: { [key: string]: string | number | boolean | undefined };
+  headers?: { [key: string]: string };
   authToken?: string;
 }
 

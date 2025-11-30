@@ -62,7 +62,7 @@ const defaultOptions: IBackOffOptions = {
   numOfAttempts: 10,
   retry: () => true,
   startingDelay: 100,
-  timeMultiple: 2
+  timeMultiple: 2,
 };
 
 export function getSanitizedOptions(options: BackoffOptions) {

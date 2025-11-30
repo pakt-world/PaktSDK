@@ -2,9 +2,13 @@ import { Token } from 'typedi';
 
 interface PaktConfig {
     baseUrl: string;
+    accessToken?: string;
     testnet?: boolean;
     verbose?: boolean;
 }
+declare const encryptString: (authKey: string) => {
+    "x-api-key": string;
+};
 
 declare enum Status {
     SUCCESS = "success",
@@ -14,7 +18,7 @@ interface ResponseDto<T> {
     data: T;
     status: Status;
     message?: string;
-    code?: string;
+    code?: number;
     statusCode?: number;
     validation?: Record<string, any>;
 }
@@ -34,83 +38,99 @@ declare const parseUrlWithQuery: (url: string, filter: object | any) => string;
 declare const CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 declare const API_PATHS: {
     API_VERSION: string;
-    LOGIN: string;
-    LOGIN_TWO_FA: string;
-    REGISTER: string;
-    ACCOUNT_VERIFY: string;
-    RESEND_VERIFY_LINK: string;
-    VALIDATE_PASSWORD_TOKEN: string;
-    RESET_PASSWORD: string;
-    RESEND_RESET_PASSWORD: string;
-    CHANGE_PASSWORD: string;
-    VALIDATE_REFERRAL: string;
-    RESEND_TWO_FA_EMAIL_CODE: string;
-    GOOGLE_OAUTH_GENERATE_STATE: string;
-    GOOGLE_OAUTH_VALIDATE_STATE: string;
-    COLLECTION: string;
-    COLLECTION_TYPE: string;
-    COLLECTION_MANY: string;
-    COLLECTION_UPDATE: string;
-    BOOKMARK: string;
-    NOTIFICATION_FETCH: string;
-    NOTIFICATION_MARK_ALL: string;
-    NOTIFICATION_MARK_ONE: string;
-    ACCOUNT: string;
-    ACCOUNT_ONBOARD: string;
-    ACCOUNT_UPDATE: string;
-    ACCOUNT_PASSWORD: string;
-    ACCOUNT_TWO_INIT: string;
-    ACCOUNT_TWO_ACTIVATE: string;
-    ACCOUNT_TWO_DEACTIVATE: string;
-    ACCOUNT_FETCH_ALL: string;
-    ACCOUNT_FETCH_SINGLE: string;
-    ACCOUNT_LOGOUT: string;
-    ACCOUNT_SEND_EMAIL_TWO_FA: string;
-    TRANSACTIONS: string;
-    A_TRANSACTION: string;
-    TRANSACTION_STATS: string;
-    TRANSACTION_AGGREGATE_STATS: string;
-    TRANSACTION_EXCHANGE: string;
-    WALLETS: string;
-    SINGLE_WALLET_BY_ID: string;
-    SINGLE_WALLET_BY_COIN: string;
-    FILE_UPLOAD: string;
-    ADD_REVIEW: string;
-    GET_REVIEW: string;
-    CREATE_WITHDRAWAL: string;
-    FETCH_WITHDRAWALS: string;
-    CREATE_SESSION: string;
-    SEND_SESSION_MEDIA: string;
-    SESSION_ATTEMPTS: string;
-    USER_VERIFICATION: string;
-    DELETE_SESSION: string;
-    GET_USER_MESSAGES: string;
-    CREATE_CONNECTION_FILTER: string;
-    GET_CONNECTION_FILTER: string;
-    UPDATE_CONNECTION_FILTER: string;
-    SEND_INVITE: string;
-    ACCEPT_INVITE: string;
-    DECLINE_INVITE: string;
-    VIEW_ALL_INVITE: string;
-    VIEW_A_INVITE: string;
-    CANCEL_AN_INVITE: string;
-    FEEDS: string;
-    FEEDS_DISMISS_ONE: string;
-    FEEDS_DISMISS_ALL: string;
-    CREATE_ORDER: string;
-    VALIDATE_ORDER: string;
-    RELEASE_ORDER: string;
-    PAYMENT_METHODS: string;
-    RPC: string;
-    FETCH_USER_REFERRALS: string;
-    FETCH_USER_REFERRAL_STATS: string;
-    SEND_REFERRALS_INVITE: string;
-    FETCH_CATEGORIES: string;
-    FETCH_CATEGORIES_BY_ID: string;
-    CREATE_DIRECT_DEPOSIT: string;
-    VALIDATE_DIRECT_DEPOSIT: string;
-    FETCH_PAYMENT_METHODS: string;
-    FETCH_ACTIVE_RPC: string;
+    v1: {
+        LOGIN: string;
+        LOGIN_TWO_FA: string;
+        REGISTER: string;
+        ACCOUNT_VERIFY: string;
+        RESEND_VERIFY_LINK: string;
+        VALIDATE_PASSWORD_TOKEN: string;
+        RESET_PASSWORD: string;
+        RESEND_RESET_PASSWORD: string;
+        CHANGE_PASSWORD: string;
+        VALIDATE_REFERRAL: string;
+        RESEND_TWO_FA_EMAIL_CODE: string;
+        GOOGLE_OAUTH_GENERATE_STATE: string;
+        GOOGLE_OAUTH_VALIDATE_STATE: string;
+        COLLECTION: string;
+        COLLECTION_TYPE: string;
+        COLLECTION_MANY: string;
+        COLLECTION_UPDATE: string;
+        BOOKMARK: string;
+        NOTIFICATION_FETCH: string;
+        NOTIFICATION_MARK_ALL: string;
+        NOTIFICATION_MARK_ONE: string;
+        ACCOUNT: string;
+        ACCOUNT_ONBOARD: string;
+        ACCOUNT_UPDATE: string;
+        ACCOUNT_PASSWORD: string;
+        ACCOUNT_TWO_INIT: string;
+        ACCOUNT_TWO_ACTIVATE: string;
+        ACCOUNT_TWO_DEACTIVATE: string;
+        ACCOUNT_FETCH_ALL: string;
+        ACCOUNT_FETCH_SINGLE: string;
+        ACCOUNT_LOGOUT: string;
+        ACCOUNT_SEND_EMAIL_TWO_FA: string;
+        TRANSACTIONS: string;
+        A_TRANSACTION: string;
+        TRANSACTION_STATS: string;
+        TRANSACTION_AGGREGATE_STATS: string;
+        TRANSACTION_EXCHANGE: string;
+        WALLETS: string;
+        SINGLE_WALLET_BY_ID: string;
+        SINGLE_WALLET_BY_COIN: string;
+        FILE_UPLOAD: string;
+        ADD_REVIEW: string;
+        GET_REVIEW: string;
+        CREATE_WITHDRAWAL: string;
+        FETCH_WITHDRAWALS: string;
+        CREATE_SESSION: string;
+        SEND_SESSION_MEDIA: string;
+        SESSION_ATTEMPTS: string;
+        USER_VERIFICATION: string;
+        DELETE_SESSION: string;
+        GET_USER_MESSAGES: string;
+        CREATE_CONNECTION_FILTER: string;
+        GET_CONNECTION_FILTER: string;
+        UPDATE_CONNECTION_FILTER: string;
+        SEND_INVITE: string;
+        ACCEPT_INVITE: string;
+        DECLINE_INVITE: string;
+        VIEW_ALL_INVITE: string;
+        VIEW_A_INVITE: string;
+        CANCEL_AN_INVITE: string;
+        FEEDS: string;
+        FEEDS_DISMISS_ONE: string;
+        FEEDS_DISMISS_ALL: string;
+        CREATE_ORDER: string;
+        VALIDATE_ORDER: string;
+        RELEASE_ORDER: string;
+        PAYMENT_METHODS: string;
+        RPC: string;
+        FETCH_USER_REFERRALS: string;
+        FETCH_USER_REFERRAL_STATS: string;
+        SEND_REFERRALS_INVITE: string;
+        FETCH_CATEGORIES: string;
+        FETCH_CATEGORIES_BY_ID: string;
+        CREATE_DIRECT_DEPOSIT: string;
+        VALIDATE_DIRECT_DEPOSIT: string;
+        FETCH_PAYMENT_METHODS: string;
+        FETCH_ACTIVE_RPC: string;
+    };
+    v2: {
+        COLLECTION_SCHEMA: {
+            FETCH_ONE: string;
+            FETCH_MANY: string;
+        };
+        COLLECTION_STORE: string;
+    };
+    SYSTEM_V2: {
+        COLLECTION_SCHEMA: {
+            CREATE: string;
+            UPDATE: string;
+            DELETE: string;
+        };
+    };
 };
 interface IModel {
     _id?: string;
@@ -1223,6 +1243,107 @@ declare class ChatModule implements ChatModuleType {
     getUserMessages(authToken: string): Promise<ResponseDto<IChatConversation[]>>;
 }
 
+interface FieldDefinitionDto {
+    name: string;
+    type: string;
+    required: boolean;
+    unique: boolean;
+    default: string;
+}
+interface ICollectionSchemaDto {
+    _id: string;
+    name: string;
+    reference: string;
+    description: string;
+    schema: FieldDefinitionDto[];
+    createdAt?: string | Date;
+    updatedAt?: string | Date;
+}
+type CreateCollectionSchemaDto = {
+    name: string;
+    description: string;
+    schema: FieldDefinitionDto[];
+};
+type UpdateCollectionSchemaDto = {
+    description?: string;
+    schema?: FieldDefinitionDto[];
+};
+type FindCollectionSchemaDto = {
+    page: number;
+    pages: number;
+    total: number;
+    limit: number;
+    data: ICollectionSchemaDto[];
+};
+type filterCollectionSchemaDto = {
+    page?: string;
+    limit?: string;
+    name?: string;
+};
+interface CollectionSchemaModuleType {
+    getAll(authToken: string, filter?: filterCollectionSchemaDto): Promise<ResponseDto<FindCollectionSchemaDto>>;
+    getById(authToken: string, id: string): Promise<ResponseDto<ICollectionSchemaDto>>;
+    create(payload: CreateCollectionSchemaDto): Promise<ResponseDto<ICollectionSchemaDto>>;
+    update(id: string, payload: UpdateCollectionSchemaDto): Promise<ResponseDto<ICollectionSchemaDto>>;
+    delete(id: string): Promise<ResponseDto<{}>>;
+}
+
+declare class CollectionSchemaModule implements CollectionSchemaModuleType {
+    private id;
+    private connector;
+    constructor(id: string);
+    getAll(authToken: string, filter?: filterCollectionSchemaDto): Promise<ResponseDto<FindCollectionSchemaDto>>;
+    getById(authToken: string, id: string): Promise<ResponseDto<ICollectionSchemaDto>>;
+    create(payload: CreateCollectionSchemaDto): Promise<ResponseDto<ICollectionSchemaDto>>;
+    update(id: string, payload: UpdateCollectionSchemaDto): Promise<ResponseDto<ICollectionSchemaDto>>;
+    delete(id: string): Promise<ResponseDto<{}>>;
+}
+
+interface ICollectionStoreDto {
+    _id: string;
+    [key: string]: any;
+    createdAt?: string | Date;
+    updatedAt?: string | Date;
+}
+type CreateCollectionStoreDto = {
+    [key: string]: any;
+};
+type UpdateCollectionStoreDto = {
+    [key: string]: any;
+};
+type FindCollectionStoreDto = {
+    page: number;
+    pages: number;
+    total: number;
+    limit: number;
+    data: ICollectionStoreDto[];
+};
+type filterCollectionStoreDto = {
+    page?: string;
+    limit?: string;
+    [key: string]: any;
+};
+interface CollectionStoreModuleType {
+    getAll(authToken: string, schemaReference: string, filter?: filterCollectionStoreDto): Promise<ResponseDto<FindCollectionStoreDto>>;
+    getById(authToken: string, schemaReference: string, id: string): Promise<ResponseDto<ICollectionStoreDto>>;
+    getCount(authToken: string, schemaReference: string, filter?: filterCollectionStoreDto): Promise<ResponseDto<number>>;
+    create(authToken: string, schemaReference: string, payload: CreateCollectionStoreDto): Promise<ResponseDto<ICollectionStoreDto>>;
+    update(authToken: string, schemaReference: string, id: string, payload: UpdateCollectionStoreDto): Promise<ResponseDto<ICollectionStoreDto>>;
+    delete(authToken: string, schemaReference: string, id: string): Promise<ResponseDto<{}>>;
+}
+
+declare class CollectionStoreModule implements CollectionStoreModuleType {
+    private id;
+    private connector;
+    constructor(id: string);
+    getAll(authToken: string, schemaReference: string, filter?: filterCollectionStoreDto): Promise<ResponseDto<FindCollectionStoreDto>>;
+    getById(authToken: string, schemaReference: string, id: string): Promise<ResponseDto<ICollectionStoreDto>>;
+    getCount(authToken: string, schemaReference: string, filter?: filterCollectionStoreDto): Promise<ResponseDto<number>>;
+    create(authToken: string, schemaReference: string, payload: CreateCollectionStoreDto): Promise<ResponseDto<ICollectionStoreDto>>;
+    update(authToken: string, schemaReference: string, id: string, payload: UpdateCollectionStoreDto): Promise<ResponseDto<ICollectionStoreDto>>;
+    delete(authToken: string, schemaReference: string, id: string): Promise<ResponseDto<{}>>;
+}
+
 type IConnectionKeys = "tags" | "tagCount" | "afroScore";
 type IConnectionFilterDecider = "greater_than" | "less_than" | "equal_to" | "contains" | "between";
 type IConnectionEvents = "CREATE_CONVERSATION";
@@ -1647,6 +1768,8 @@ declare class PaktSDK {
     auth: AuthenticationModuleType;
     bookmark: BookMarkModuleType;
     collection: CollectionModuleType;
+    collectionSchema: CollectionSchemaModuleType;
+    collectionStore: CollectionStoreModuleType;
     account: AccountModuleType;
     notifications: NotificationModuleType;
     file: UploadModuleType;
@@ -1674,4 +1797,4 @@ declare class PaktSDK {
     private static generateRandomString;
 }
 
-export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, BookmarkEnumType, BookmarkType, CHARACTERS, ChangeAuthenticationPasswordPayload, ChangePasswordDto, ChatModule, ChatModuleType, CollectionModule, CollectionModuleType, ConnectionFilterModule, ConnectionFilterModuleType, CreateCollectionDto, CreateFeedDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, DirectDepositModule, DirectDepositModuleType, ErrorUtils, FEED_TYPES, FEED_TYPES_ENUM, FeedModule, FeedModuleType, FilterFeedDto, FilterInviteDto, FilterReviewDto, FilterUploadDto, FilterUserDto, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionTypeDto, FindFeedDto, FindInvitesDto, FindNotificationDto, FindReviewDto, FindTransactionsDto, FindUploadDto, FindUsers, FindWithdrawalsDto, GoogleOAuthGenerateDto, GoogleOAuthValdatePayload, GoogleOAuthValidateDto, IAny, IBlockchainCoin, IBlockchainCoinDto, IChatConversation, IChatMessage, ICollectionBookmarkDto, ICollectionDto, ICollectionStatus, ICollectionTypeDto, IConnectionEvents, IConnectionFilter, IConnectionFilterDecider, IConnectionKeys, ICreateDirectDepositPayload, ICreateDirectDepositResponse, ICreatePaymentDto, ICreateSessionPayload, IFeed, IFile, IInviteDto, IInviteStatus, IModel, INotificationDto, IPaymentCoins, IPaymentDataDto, IPaymentStatusEnum, IPaymentStatusType, IPaymentType, IRPCDto, IRPCServer, IRegisterResponse, IReleasePaymentDto, IResendVerifyLink, IReviewDto, ISendSessionMedia, ISingleWalletDto, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, ITransactionStatsFormat, ITransactionType, IUploadDto, IUser, IUserTwoFaType, IValidateDirectDepositPayload, IValidateDirectDepositResponse, IValidatePaymentDto, IVerification, IVerificationStatus, IWalletBalanceDto, IWalletDto, IWalletExchangeDto, IWalletResponseDto, IWithdrawalDto, IWithdrawalStatus, InviteModule, InviteModuleType, LoginDto, LoginPayload, LoginTwoFADTO, LoginTwoFAPayload, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, PaymentModule, PaymentModuleType, RegisterDto, RegisterPayload, ResendVerifyDto, ResendVerifyPayload, ResetDto, ResetPasswordPayload, ResponseDto, ReviewModule, ReviewModuleType, SendInviteDto, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UpdateCollectionDto, UpdateManyCollectionsDto, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, ValidateReferralDto, VerificationDocumentTypes, VerifyAccountPayload, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelCollectionDto, createBookMarkDto, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterNotificationDto, isEmpty, parseUrlWithQuery, updateUserDto };
+export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, BookmarkEnumType, BookmarkType, CHARACTERS, ChangeAuthenticationPasswordPayload, ChangePasswordDto, ChatModule, ChatModuleType, CollectionModule, CollectionModuleType, CollectionSchemaModule, CollectionSchemaModuleType, CollectionStoreModule, CollectionStoreModuleType, ConnectionFilterModule, ConnectionFilterModuleType, CreateCollectionDto, CreateCollectionSchemaDto, CreateCollectionStoreDto, CreateFeedDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, DirectDepositModule, DirectDepositModuleType, ErrorUtils, FEED_TYPES, FEED_TYPES_ENUM, FeedModule, FeedModuleType, FieldDefinitionDto, FilterFeedDto, FilterInviteDto, FilterReviewDto, FilterUploadDto, FilterUserDto, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionSchemaDto, FindCollectionStoreDto, FindCollectionTypeDto, FindFeedDto, FindInvitesDto, FindNotificationDto, FindReviewDto, FindTransactionsDto, FindUploadDto, FindUsers, FindWithdrawalsDto, GoogleOAuthGenerateDto, GoogleOAuthValdatePayload, GoogleOAuthValidateDto, IAny, IBlockchainCoin, IBlockchainCoinDto, IChatConversation, IChatMessage, ICollectionBookmarkDto, ICollectionDto, ICollectionSchemaDto, ICollectionStatus, ICollectionStoreDto, ICollectionTypeDto, IConnectionEvents, IConnectionFilter, IConnectionFilterDecider, IConnectionKeys, ICreateDirectDepositPayload, ICreateDirectDepositResponse, ICreatePaymentDto, ICreateSessionPayload, IFeed, IFile, IInviteDto, IInviteStatus, IModel, INotificationDto, IPaymentCoins, IPaymentDataDto, IPaymentStatusEnum, IPaymentStatusType, IPaymentType, IRPCDto, IRPCServer, IRegisterResponse, IReleasePaymentDto, IResendVerifyLink, IReviewDto, ISendSessionMedia, ISingleWalletDto, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, ITransactionStatsFormat, ITransactionType, IUploadDto, IUser, IUserTwoFaType, IValidateDirectDepositPayload, IValidateDirectDepositResponse, IValidatePaymentDto, IVerification, IVerificationStatus, IWalletBalanceDto, IWalletDto, IWalletExchangeDto, IWalletResponseDto, IWithdrawalDto, IWithdrawalStatus, InviteModule, InviteModuleType, LoginDto, LoginPayload, LoginTwoFADTO, LoginTwoFAPayload, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, PaymentModule, PaymentModuleType, RegisterDto, RegisterPayload, ResendVerifyDto, ResendVerifyPayload, ResetDto, ResetPasswordPayload, ResponseDto, ReviewModule, ReviewModuleType, SendInviteDto, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UpdateCollectionDto, UpdateCollectionSchemaDto, UpdateCollectionStoreDto, UpdateManyCollectionsDto, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, ValidateReferralDto, VerificationDocumentTypes, VerifyAccountPayload, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelCollectionDto, createBookMarkDto, encryptString, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterCollectionSchemaDto, filterCollectionStoreDto, filterNotificationDto, isEmpty, parseUrlWithQuery, updateUserDto };

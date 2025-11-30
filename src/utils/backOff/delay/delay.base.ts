@@ -7,7 +7,7 @@ export abstract class Delay implements IDelay {
   constructor(private options: IBackOffOptions) {}
 
   public apply() {
-    return new Promise(resolve => setTimeout(resolve, this.jitteredDelay));
+    return new Promise((resolve) => setTimeout(resolve, this.jitteredDelay));
   }
 
   public setAttemptNumber(attempt: number) {

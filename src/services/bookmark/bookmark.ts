@@ -32,7 +32,7 @@ export class BookMarkModule {
    */
   async getAll(authToken: string, filter?: filterBookmarkDto): Promise<ResponseDto<FindCollectionBookMarkDto>> {
     return ErrorUtils.newTryFail(async () => {
-      const fetchUrl = parseUrlWithQuery(API_PATHS.BOOKMARK, filter);
+      const fetchUrl = parseUrlWithQuery(API_PATHS.v1.BOOKMARK, filter);
       const response: ResponseDto<FindCollectionBookMarkDto> = await this.connector.get({ path: fetchUrl, authToken });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
@@ -49,7 +49,7 @@ export class BookMarkModule {
     filter?: Record<string, any> | ICollectionBookmarkDto,
   ): Promise<ResponseDto<ICollectionBookmarkDto>> {
     return ErrorUtils.newTryFail(async () => {
-      const fetchUrl = parseUrlWithQuery(API_PATHS.BOOKMARK + "/" + id, filter);
+      const fetchUrl = parseUrlWithQuery(API_PATHS.v1.BOOKMARK + "/" + id, filter);
       const response: ResponseDto<ICollectionBookmarkDto> = await this.connector.get({ path: fetchUrl, authToken });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
@@ -64,7 +64,7 @@ export class BookMarkModule {
     return ErrorUtils.newTryFail(async () => {
       const credentials = { ...payload };
       const response: ResponseDto<ICollectionBookmarkDto> = await this.connector.post({
-        path: API_PATHS.BOOKMARK,
+        path: API_PATHS.v1.BOOKMARK,
         body: credentials,
         authToken,
       });
@@ -80,7 +80,7 @@ export class BookMarkModule {
   async delete(authToken: string, id: string): Promise<ResponseDto<ICollectionBookmarkDto>> {
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<ICollectionBookmarkDto> = await this.connector.delete({
-        path: API_PATHS.BOOKMARK + "/" + id,
+        path: API_PATHS.v1.BOOKMARK + "/" + id,
         authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;

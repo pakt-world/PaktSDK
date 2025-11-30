@@ -37,7 +37,7 @@ export class DirectDepositModule implements DirectDepositModuleType {
     return ErrorUtils.newTryFail(async () => {
       const requestBody = { ...payload };
       const response: ResponseDto<ICreateDirectDepositResponse> = await this.connector.post({
-        path: API_PATHS.CREATE_DIRECT_DEPOSIT,
+        path: API_PATHS.v1.CREATE_DIRECT_DEPOSIT,
         body: requestBody,
         authToken,
       });
@@ -53,7 +53,7 @@ export class DirectDepositModule implements DirectDepositModuleType {
     return ErrorUtils.newTryFail(async () => {
       const requestBody = { ...payload };
       const response: ResponseDto<IValidateDirectDepositResponse> = await this.connector.post({
-        path: API_PATHS.VALIDATE_DIRECT_DEPOSIT,
+        path: API_PATHS.v1.VALIDATE_DIRECT_DEPOSIT,
         body: requestBody,
         authToken,
       });
@@ -64,7 +64,7 @@ export class DirectDepositModule implements DirectDepositModuleType {
   fetchPaymentMethods(authToken: string): Promise<ResponseDto<IBlockchainCoin[]>> {
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IBlockchainCoin[]> = await this.connector.get({
-        path: API_PATHS.FETCH_PAYMENT_METHODS,
+        path: API_PATHS.v1.FETCH_PAYMENT_METHODS,
         authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
@@ -74,7 +74,7 @@ export class DirectDepositModule implements DirectDepositModuleType {
   fetchActiveRPC(authToken: string): Promise<ResponseDto<IRPCServer>> {
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IRPCServer> = await this.connector.get({
-        path: API_PATHS.FETCH_ACTIVE_RPC,
+        path: API_PATHS.v1.FETCH_ACTIVE_RPC,
         authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;

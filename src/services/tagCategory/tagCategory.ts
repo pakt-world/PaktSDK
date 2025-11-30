@@ -22,7 +22,7 @@ export class TagCategoryModule implements TagCategoriesModule {
     filter?: FilterTagCategories | undefined,
   ): Promise<ResponseDto<FindTagCategories>> {
     return ErrorUtils.newTryFail(async () => {
-      const url = `${API_PATHS.FETCH_CATEGORIES}`;
+      const url = `${API_PATHS.v1.FETCH_CATEGORIES}`;
       const fetchUrl = parseUrlWithQuery(url, filter);
       const response: ResponseDto<FindTagCategories> = await this.connector.get({ path: fetchUrl, authToken });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
@@ -31,7 +31,7 @@ export class TagCategoryModule implements TagCategoriesModule {
   }
   fetchACategory(authToken: string, id: string): Promise<ResponseDto<ITagCategory>> {
     return ErrorUtils.newTryFail(async () => {
-      const url = `${API_PATHS.FETCH_CATEGORIES_BY_ID}/${id}`;
+      const url = `${API_PATHS.v1.FETCH_CATEGORIES_BY_ID}/${id}`;
       const response: ResponseDto<ITagCategory> = await this.connector.get({ path: url, authToken });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;

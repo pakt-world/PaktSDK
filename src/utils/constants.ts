@@ -5,120 +5,136 @@ export const CHARACTERS =
 
 export const API_PATHS = {
   API_VERSION: "/v1",
-  // Authentication endpoints
-  LOGIN: "/auth/login",
-  LOGIN_TWO_FA: "/auth/login/2fa",
-  REGISTER: "/auth/create-account",
-  ACCOUNT_VERIFY: "/auth/account/verify",
-  RESEND_VERIFY_LINK: "/auth/verify/resend",
-  VALIDATE_PASSWORD_TOKEN: "/auth/validate/password",
-  RESET_PASSWORD: "/auth/password/reset",
-  RESEND_RESET_PASSWORD: "/auth/password/reset/resend",
-  CHANGE_PASSWORD: "/auth/password/change",
-  VALIDATE_REFERRAL: "/auth/referral/validate/",
-  RESEND_TWO_FA_EMAIL_CODE: "/auth/2fa/email/code",
-  GOOGLE_OAUTH_GENERATE_STATE: "/auth/google/oauth/generate-state",
-  GOOGLE_OAUTH_VALIDATE_STATE: "/auth/google/oauth/validate-state",
+  v1: {
+    // Authentication endpoints
+    LOGIN: "/v1/auth/login",
+    LOGIN_TWO_FA: "/v1/auth/login/2fa",
+    REGISTER: "/v1/auth/create-account",
+    ACCOUNT_VERIFY: "/v1/auth/account/verify",
+    RESEND_VERIFY_LINK: "/v1/auth/verify/resend",
+    VALIDATE_PASSWORD_TOKEN: "/v1/auth/validate/password",
+    RESET_PASSWORD: "/v1/auth/password/reset",
+    RESEND_RESET_PASSWORD: "/v1/auth/password/reset/resend",
+    CHANGE_PASSWORD: "/v1/auth/password/change",
+    VALIDATE_REFERRAL: "/v1/auth/referral/validate/",
+    RESEND_TWO_FA_EMAIL_CODE: "/v1/auth/2fa/email/code",
+    GOOGLE_OAUTH_GENERATE_STATE: "/v1/auth/google/oauth/generate-state",
+    GOOGLE_OAUTH_VALIDATE_STATE: "/v1/auth/google/oauth/validate-state",
 
-  // Collection endpoints
-  COLLECTION: "/collection",
-  COLLECTION_TYPE: "/collection-type",
-  COLLECTION_MANY: "/collection/many",
-  COLLECTION_UPDATE: "/collection",
+    // Collection endpoints
+    COLLECTION: "/v1/collection",
+    COLLECTION_TYPE: "/v1/collection-type",
+    COLLECTION_MANY: "/v1/collection/many",
+    COLLECTION_UPDATE: "/v1/collection",
 
-  // Bookmark endpoints
-  BOOKMARK: "/bookmark",
+    // Bookmark endpoints
+    BOOKMARK: "/v1/bookmark",
 
-  // Notifications
-  NOTIFICATION_FETCH: "/notifications/",
-  NOTIFICATION_MARK_ALL: "/notifications/mark/all",
-  NOTIFICATION_MARK_ONE: "/notifications/mark",
+    // Notifications
+    NOTIFICATION_FETCH: "/v1/notifications/",
+    NOTIFICATION_MARK_ALL: "/v1/notifications/mark/all",
+    NOTIFICATION_MARK_ONE: "/v1/notifications/mark",
 
-  // Manage Account and settings
-  ACCOUNT: "/account",
-  ACCOUNT_ONBOARD: "/account/onboard",
-  ACCOUNT_UPDATE: "/account/update",
-  ACCOUNT_PASSWORD: "/account/password/change",
-  ACCOUNT_TWO_INIT: "/account/initiate/2fa",
-  ACCOUNT_TWO_ACTIVATE: "/account/activate/2fa",
-  ACCOUNT_TWO_DEACTIVATE: "/account/deactivate/2fa",
-  ACCOUNT_FETCH_ALL: "/account/user",
-  ACCOUNT_FETCH_SINGLE: "/account/user/",
-  ACCOUNT_LOGOUT: "/account/logout",
-  ACCOUNT_SEND_EMAIL_TWO_FA: "/account/2fa/email",
+    // Manage Account and settings
+    ACCOUNT: "/v1/account",
+    ACCOUNT_ONBOARD: "/v1/account/onboard",
+    ACCOUNT_UPDATE: "/v1/account/update",
+    ACCOUNT_PASSWORD: "/v1/account/password/change",
+    ACCOUNT_TWO_INIT: "/v1/account/initiate/2fa",
+    ACCOUNT_TWO_ACTIVATE: "/v1/account/activate/2fa",
+    ACCOUNT_TWO_DEACTIVATE: "/v1/account/deactivate/2fa",
+    ACCOUNT_FETCH_ALL: "/v1/account/user",
+    ACCOUNT_FETCH_SINGLE: "/v1/account/user/",
+    ACCOUNT_LOGOUT: "/v1/account/logout",
+    ACCOUNT_SEND_EMAIL_TWO_FA: "/v1/account/2fa/email",
 
-  //transaction endpoints
-  TRANSACTIONS: "/transaction/",
-  A_TRANSACTION: "/transaction",
-  TRANSACTION_STATS: "/transaction/stats",
-  TRANSACTION_AGGREGATE_STATS: "/transaction/aggregate/stats",
-  TRANSACTION_EXCHANGE: "/transaction/exchange",
+    //transaction endpoi  nts
+    TRANSACTIONS: "/v1/transaction/",
+    A_TRANSACTION: "/v1/transaction",
+    TRANSACTION_STATS: "/v1/transaction/stats",
+    TRANSACTION_AGGREGATE_STATS: "/v1/transaction/aggregate/stats",
+    TRANSACTION_EXCHANGE: "/v1/transaction/exchange",
 
-  // Wallet Endpoints
-  WALLETS: "/wallet/",
-  SINGLE_WALLET_BY_ID: "/wallet/",
-  SINGLE_WALLET_BY_COIN: "/wallet/coin",
+    // Wallet Endpoints
+    WALLETS: "/v1/wallet/",
+    SINGLE_WALLET_BY_ID: "/v1/wallet/",
+    SINGLE_WALLET_BY_COIN: "/v1/wallet/coin",
 
-  // File Upload
-  FILE_UPLOAD: "/upload/",
+    // File Upload
+    FILE_UPLOAD: "/v1/upload/",
 
-  // Review
-  ADD_REVIEW: "/reviews/",
-  GET_REVIEW: "/reviews/",
+    // Review
+    ADD_REVIEW: "/v1/reviews/",
+    GET_REVIEW: "/v1/reviews/",
 
-  //Withdrawal
-  CREATE_WITHDRAWAL: "/withdrawals/",
-  FETCH_WITHDRAWALS: "/withdrawals/",
+    //Withdrawal
+    CREATE_WITHDRAWAL: "/v1/withdrawals/",
+    FETCH_WITHDRAWALS: "/v1/withdrawals/",
 
-  //User Verification
-  CREATE_SESSION: "/user-verification/veriff/session/new",
-  SEND_SESSION_MEDIA: "/user-verification/veriff/session/media",
-  SESSION_ATTEMPTS: "/user-verification/veriff/session/attempts",
-  USER_VERIFICATION: "/user-verification/user",
-  DELETE_SESSION: "/user-verification/veriff/session/delete",
+    //User Verification
+    CREATE_SESSION: "/v1/user-verification/veriff/session/new",
+    SEND_SESSION_MEDIA: "/v1/user-verification/veriff/session/media",
+    SESSION_ATTEMPTS: "/v1/user-verification/veriff/session/attempts",
+    USER_VERIFICATION: "/v1/user-verification/user",
+    DELETE_SESSION: "/v1/user-verification/veriff/session/delete",
 
-  //Chat
-  GET_USER_MESSAGES: "/chat/",
+    //Chat
+    GET_USER_MESSAGES: "/v1/chat/",
 
-  //Connection Filter
-  CREATE_CONNECTION_FILTER: "/conn-filter/",
-  GET_CONNECTION_FILTER: "/conn-filter/user",
-  UPDATE_CONNECTION_FILTER: "/conn-filter/",
+    //Connection Filter
+    CREATE_CONNECTION_FILTER: "/v1/conn-filter/",
+    GET_CONNECTION_FILTER: "/v1/conn-filter/user",
+    UPDATE_CONNECTION_FILTER: "/v1/conn-filter/",
 
-  //Invite
-  SEND_INVITE: "/invite/",
-  ACCEPT_INVITE: "/invite",
-  DECLINE_INVITE: "/invite",
-  VIEW_ALL_INVITE: "/invite/",
-  VIEW_A_INVITE: "/invite/",
-  CANCEL_AN_INVITE: "/invite/",
+    //Invite
+    SEND_INVITE: "/v1/invite/",
+    ACCEPT_INVITE: "/v1/invite",
+    DECLINE_INVITE: "/v1/invite",
+    VIEW_ALL_INVITE: "/v1/invite/",
+    VIEW_A_INVITE: "/v1/invite/",
+    CANCEL_AN_INVITE: "/v1/invite/",
 
-  //Feeds
-  FEEDS: "/feeds",
-  FEEDS_DISMISS_ONE: "/dismiss",
-  FEEDS_DISMISS_ALL: "/feeds/dismiss/all",
+    //Feeds
+    FEEDS: "/v1/feeds",
+    FEEDS_DISMISS_ONE: "/v1/feeds/dismiss",
+    FEEDS_DISMISS_ALL: "/v1/feeds/dismiss/all",
 
-  //Payment
-  CREATE_ORDER: "/payment/",
-  VALIDATE_ORDER: "/payment/validate",
-  RELEASE_ORDER: "/payment/release",
-  PAYMENT_METHODS: "/payment/coins",
-  RPC: "/payment/rpc",
+    //Payment
+    CREATE_ORDER: "/v1/payment/",
+    VALIDATE_ORDER: "/v1/payment/validate",
+    RELEASE_ORDER: "/v1/payment/release",
+    PAYMENT_METHODS: "/v1/payment/coins",
+    RPC: "/v1/payment/rpc",
 
-  //Referrals endpoint
-  FETCH_USER_REFERRALS: "/referrals/",
-  FETCH_USER_REFERRAL_STATS: "/referrals/stats",
-  SEND_REFERRALS_INVITE: "/referrals/invite",
+    //Referrals endpoint
+    FETCH_USER_REFERRALS: "/v1/referrals/",
+    FETCH_USER_REFERRAL_STATS: "/v1/referrals/stats",
+    SEND_REFERRALS_INVITE: "/v1/referrals/invite",
 
-  //Tags-category endpoint
-  FETCH_CATEGORIES: "/tag-category/",
-  FETCH_CATEGORIES_BY_ID: "/tag-category",
+    //Tags-category endpoint
+    FETCH_CATEGORIES: "/v1/tag-category/",
+    FETCH_CATEGORIES_BY_ID: "/v1/tag-category",
 
-  //Direct Deposit endpoints
-  CREATE_DIRECT_DEPOSIT: "/payment-public/direct-deposit",
-  VALIDATE_DIRECT_DEPOSIT: "/payment-public/validate",
-  FETCH_PAYMENT_METHODS: "/payment-public/coins",
-  FETCH_ACTIVE_RPC: "/payment-public/rpc",
+    //Direct Deposit endpoints
+    CREATE_DIRECT_DEPOSIT: "/v1/payment-public/direct-deposit",
+    VALIDATE_DIRECT_DEPOSIT: "/v1/payment-public/validate",
+    FETCH_PAYMENT_METHODS: "/v1/payment-public/coins",
+    FETCH_ACTIVE_RPC: "/v1/payment-public/rpc",
+  },
+  v2: {
+    COLLECTION_SCHEMA: {
+      FETCH_ONE: "/v2/collection-schema/",
+      FETCH_MANY: "/v2/collection-schema/",
+    },
+    COLLECTION_STORE: "/v2/collection-store",
+  },
+  SYSTEM_V2: {
+    COLLECTION_SCHEMA: {
+      CREATE: "/system-v2/collection-schema",
+      UPDATE: "/system-v2/collection-schema",
+      DELETE: "/system-v2/collection-schema",
+    },
+  },
 };
 export interface IModel {
   _id?: string;

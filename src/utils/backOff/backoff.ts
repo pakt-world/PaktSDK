@@ -1,8 +1,4 @@
-import {
-  IBackOffOptions,
-  getSanitizedOptions,
-  BackoffOptions
-} from "./options";
+import { IBackOffOptions, getSanitizedOptions, BackoffOptions } from "./options";
 import { DelayFactory } from "./delay/delay.factory";
 
 export { BackoffOptions, IBackOffOptions };
@@ -13,10 +9,7 @@ export { BackoffOptions, IBackOffOptions };
  * @param options options to customize the backoff behavior
  * @returns Promise that resolves to the result of the `request` function
  */
-export async function backOff<T>(
-  request: () => Promise<T>,
-  options: BackoffOptions = {}
-): Promise<T> {
+export async function backOff<T>(request: () => Promise<T>, options: BackoffOptions = {}): Promise<T> {
   const sanitizedOptions = getSanitizedOptions(options);
   const backOff = new BackOff(request, sanitizedOptions);
 
@@ -26,10 +19,7 @@ export async function backOff<T>(
 class BackOff<T> {
   private attemptNumber = 0;
 
-  constructor(
-    private request: () => Promise<T>,
-    private options: IBackOffOptions
-  ) {}
+  constructor(private request: () => Promise<T>, private options: IBackOffOptions) {}
 
   public async execute(): Promise<T> {
     while (!this.attemptLimitReached) {
