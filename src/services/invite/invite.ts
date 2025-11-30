@@ -21,7 +21,7 @@ export class InviteModule implements InviteModuleType {
 
   sendInvite(authToken: string, payload: SendInviteDto): Promise<ResponseDto<{}>> {
     return ErrorUtils.newTryFail(async () => {
-      const url = `${API_PATHS.SEND_INVITE}`;
+      const url = `${API_PATHS.v1.SEND_INVITE}`;
       const payloadInfo = { ...payload };
       const response: ResponseDto<{}> = await this.connector.post({
         path: url,
@@ -35,7 +35,7 @@ export class InviteModule implements InviteModuleType {
 
   acceptInvite(authToken: string, inviteId: string): Promise<ResponseDto<{}>> {
     return ErrorUtils.newTryFail(async () => {
-      const url = `${API_PATHS.ACCEPT_INVITE}/${inviteId}/accept`;
+      const url = `${API_PATHS.v1.ACCEPT_INVITE}/${inviteId}/accept`;
       const response: ResponseDto<{}> = await this.connector.post({
         path: url,
         authToken,
@@ -47,7 +47,7 @@ export class InviteModule implements InviteModuleType {
 
   declineInvite(authToken: string, inviteId: string): Promise<ResponseDto<{}>> {
     return ErrorUtils.newTryFail(async () => {
-      const url = `${API_PATHS.DECLINE_INVITE}/${inviteId}/decline`;
+      const url = `${API_PATHS.v1.DECLINE_INVITE}/${inviteId}/decline`;
       const response: ResponseDto<{}> = await this.connector.post({
         path: url,
         authToken,
@@ -59,7 +59,7 @@ export class InviteModule implements InviteModuleType {
 
   getAll(authToken: string, filter?: FilterInviteDto): Promise<ResponseDto<FindInvitesDto>> {
     return ErrorUtils.newTryFail(async () => {
-      const fetchUrl = parseUrlWithQuery(API_PATHS.VIEW_ALL_INVITE, filter);
+      const fetchUrl = parseUrlWithQuery(API_PATHS.v1.VIEW_ALL_INVITE, filter);
       const response: ResponseDto<FindInvitesDto> = await this.connector.get({ path: fetchUrl, authToken });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
@@ -68,7 +68,7 @@ export class InviteModule implements InviteModuleType {
 
   getAnInvite(authToken: string, id: string): Promise<ResponseDto<IInviteDto>> {
     return ErrorUtils.newTryFail(async () => {
-      const fetchUrl = `${API_PATHS.VIEW_A_INVITE}/${id}`;
+      const fetchUrl = `${API_PATHS.v1.VIEW_A_INVITE}/${id}`;
       const response: ResponseDto<IInviteDto> = await this.connector.get({ path: fetchUrl, authToken });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
@@ -77,7 +77,7 @@ export class InviteModule implements InviteModuleType {
 
   cancelInvite(authToken: string, inviteId: string): Promise<ResponseDto<{}>> {
     return ErrorUtils.newTryFail(async () => {
-      const url = `${API_PATHS.CANCEL_AN_INVITE}/${inviteId}/cancel`;
+      const url = `${API_PATHS.v1.CANCEL_AN_INVITE}/${inviteId}/cancel`;
       const response: ResponseDto<{}> = await this.connector.post({
         path: url,
         authToken,

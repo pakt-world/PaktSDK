@@ -24,7 +24,7 @@ export class UploadModule implements UploadModuleType {
     const credentials = { ...payload };
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IUploadDto> = await this.connector.post({
-        path: API_PATHS.FILE_UPLOAD,
+        path: API_PATHS.v1.FILE_UPLOAD,
         body: credentials,
         authToken,
       });
@@ -36,8 +36,8 @@ export class UploadModule implements UploadModuleType {
   getFileUploads(authToken: string, filter: FilterUploadDto): Promise<ResponseDto<FindUploadDto>> {
     return ErrorUtils.newTryFail(async () => {
       const theFilter = filter ? filter : {};
-      const fetchUrl = parseUrlWithQuery(API_PATHS.FILE_UPLOAD, theFilter);
-      const url = filter ? API_PATHS.FILE_UPLOAD : fetchUrl;
+      const fetchUrl = parseUrlWithQuery(API_PATHS.v1.FILE_UPLOAD, theFilter);
+      const url = filter ? API_PATHS.v1.FILE_UPLOAD : fetchUrl;
 
       const response: ResponseDto<FindUploadDto> = await this.connector.get({
         path: url,
@@ -50,7 +50,7 @@ export class UploadModule implements UploadModuleType {
   getAFileUpload(authToken: string, id: string): Promise<ResponseDto<IUploadDto>> {
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IUploadDto> = await this.connector.get({
-        path: `${API_PATHS.FILE_UPLOAD}${id}`,
+        path: `${API_PATHS.v1.FILE_UPLOAD}${id}`,
         authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;

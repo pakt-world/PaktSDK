@@ -22,7 +22,7 @@ export class ReviewModule implements ReviewModuleType {
 
   viewAll(authToken: string, filter?: FilterReviewDto | undefined): Promise<ResponseDto<FindReviewDto>> {
     return ErrorUtils.newTryFail(async () => {
-      const fetchUrl = parseUrlWithQuery(API_PATHS.GET_REVIEW, filter);
+      const fetchUrl = parseUrlWithQuery(API_PATHS.v1.GET_REVIEW, filter);
 
       const response: ResponseDto<FindReviewDto> = await this.connector.get({
         path: fetchUrl,
@@ -36,7 +36,7 @@ export class ReviewModule implements ReviewModuleType {
   viewAReview(authToken: string, reviewId: string): Promise<ResponseDto<IReviewDto>> {
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IReviewDto> = await this.connector.get({
-        path: `${API_PATHS.GET_REVIEW}${reviewId}`,
+        path: `${API_PATHS.v1.GET_REVIEW}${reviewId}`,
         authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
@@ -48,7 +48,7 @@ export class ReviewModule implements ReviewModuleType {
     const reviewPayload = { ...payload };
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<void> = await this.connector.post({
-        path: API_PATHS.ADD_REVIEW,
+        path: API_PATHS.v1.ADD_REVIEW,
         body: reviewPayload,
         authToken,
       });

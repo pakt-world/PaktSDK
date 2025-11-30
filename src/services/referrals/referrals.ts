@@ -19,7 +19,7 @@ export class ReferralsModule implements UserReferralModule {
 
   fetchUserReferrals(authToken: string, filter?: Record<string, any>): Promise<ResponseDto<FindUserReferrals>> {
     return ErrorUtils.newTryFail(async () => {
-      const url = `${API_PATHS.FETCH_USER_REFERRALS}`;
+      const url = `${API_PATHS.v1.FETCH_USER_REFERRALS}`;
       const fetchUrl = parseUrlWithQuery(url, filter);
       const response: ResponseDto<FindUserReferrals> = await this.connector.get({ path: fetchUrl, authToken });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
@@ -28,7 +28,7 @@ export class ReferralsModule implements UserReferralModule {
   }
   fetchUserReferralsStats(authToken: string): Promise<ResponseDto<IUserReferralStats>> {
     return ErrorUtils.newTryFail(async () => {
-      const url = `${API_PATHS.FETCH_USER_REFERRAL_STATS}`;
+      const url = `${API_PATHS.v1.FETCH_USER_REFERRAL_STATS}`;
 
       const response: ResponseDto<IUserReferralStats> = await this.connector.get({ path: url, authToken });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
@@ -38,7 +38,7 @@ export class ReferralsModule implements UserReferralModule {
   sendReferrralsInvite(authToken: string, emails: string[]): Promise<ResponseDto<{}>> {
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<{}> = await this.connector.post({
-        path: API_PATHS.SEND_REFERRALS_INVITE,
+        path: API_PATHS.v1.SEND_REFERRALS_INVITE,
         body: emails,
         authToken,
       });

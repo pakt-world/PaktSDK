@@ -38,7 +38,7 @@ export class CollectionModule implements CollectionModuleType {
    */
   async getAll(authToken: string, filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionDto>> {
     return ErrorUtils.newTryFail(async () => {
-      const fetchUrl = parseUrlWithQuery(`${API_PATHS.COLLECTION}`, filter);
+      const fetchUrl = parseUrlWithQuery(`${API_PATHS.v1.COLLECTION}`, filter);
       const response: ResponseDto<FindCollectionDto> = await this.connector.get({ path: fetchUrl, authToken });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
@@ -51,7 +51,7 @@ export class CollectionModule implements CollectionModuleType {
    */
   async getById(authToken: string, id: string): Promise<ResponseDto<ICollectionDto>> {
     return ErrorUtils.newTryFail(async () => {
-      const fetchUrl = API_PATHS.COLLECTION + "/" + id;
+      const fetchUrl = API_PATHS.v1.COLLECTION + "/" + id;
       const response: ResponseDto<ICollectionDto> = await this.connector.get({ path: fetchUrl, authToken });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
@@ -64,7 +64,7 @@ export class CollectionModule implements CollectionModuleType {
    */
   async getTypes(authToken: string, filter?: filterCollectionDto): Promise<ResponseDto<FindCollectionTypeDto>> {
     return ErrorUtils.newTryFail(async () => {
-      const fetchUrl = parseUrlWithQuery(API_PATHS.COLLECTION_TYPE, filter);
+      const fetchUrl = parseUrlWithQuery(API_PATHS.v1.COLLECTION_TYPE, filter);
       const response: ResponseDto<FindCollectionTypeDto> = await this.connector.get({ path: fetchUrl, authToken });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
@@ -79,7 +79,7 @@ export class CollectionModule implements CollectionModuleType {
     return ErrorUtils.newTryFail(async () => {
       const credentials = { ...payload };
       const response: ResponseDto<ICollectionDto> = await this.connector.post({
-        path: API_PATHS.COLLECTION,
+        path: API_PATHS.v1.COLLECTION,
         body: credentials,
         authToken,
       });
@@ -96,7 +96,7 @@ export class CollectionModule implements CollectionModuleType {
     return ErrorUtils.newTryFail(async () => {
       const credentials = { ...payload };
       const response: ResponseDto<ICollectionDto[]> = await this.connector.post({
-        path: API_PATHS.COLLECTION,
+        path: API_PATHS.v1.COLLECTION,
         body: credentials,
         authToken,
       });
@@ -107,7 +107,7 @@ export class CollectionModule implements CollectionModuleType {
 
   updateCollection(authToken: string, id: string, payload: UpdateCollectionDto): Promise<ResponseDto<{}>> {
     return ErrorUtils.newTryFail(async () => {
-      const query = `${API_PATHS.COLLECTION_UPDATE}/${id}`;
+      const query = `${API_PATHS.v1.COLLECTION_UPDATE}/${id}`;
       const credentials = { ...payload };
       const response: ResponseDto<{}> = await this.connector.patch({
         path: query,
@@ -121,7 +121,7 @@ export class CollectionModule implements CollectionModuleType {
 
   getACollectionType(authToken: string, typeId: string): Promise<ResponseDto<ICollectionTypeDto>> {
     return ErrorUtils.newTryFail(async () => {
-      const fetchUrl = parseUrlWithQuery(`${API_PATHS.COLLECTION_TYPE}/${typeId}`, { id: typeId });
+      const fetchUrl = parseUrlWithQuery(`${API_PATHS.v1.COLLECTION_TYPE}/${typeId}`, { id: typeId });
       const response: ResponseDto<ICollectionTypeDto> = await this.connector.get({
         path: fetchUrl,
         authToken,
@@ -134,7 +134,7 @@ export class CollectionModule implements CollectionModuleType {
   deleteACollection(authToken: string, collectionId: string): Promise<ResponseDto<{}>> {
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<ICollectionTypeDto> = await this.connector.delete({
-        path: `${API_PATHS.COLLECTION}/${collectionId}`,
+        path: `${API_PATHS.v1.COLLECTION}/${collectionId}`,
         authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
@@ -145,7 +145,7 @@ export class CollectionModule implements CollectionModuleType {
   updateManyCollections(authToken: string, collections: UpdateManyCollectionsDto): Promise<ResponseDto<{}>> {
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<ICollectionTypeDto> = await this.connector.patch({
-        path: `${API_PATHS.COLLECTION}/many/update`,
+        path: `${API_PATHS.v1.COLLECTION}/many/update`,
         body: { collections },
         authToken,
       });
