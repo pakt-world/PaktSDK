@@ -24,7 +24,7 @@ export class ConnectionFilterModule implements ConnectionFilterModuleType {
     return ErrorUtils.newTryFail(async () => {
       const requestBody = { ...payload };
       const response: ResponseDto<IConnectionFilter> = await this.connector.post({
-        path: API_PATHS.CREATE_CONNECTION_FILTER,
+        path: API_PATHS.v1.CREATE_CONNECTION_FILTER,
         body: requestBody,
         authToken,
       });
@@ -37,7 +37,7 @@ export class ConnectionFilterModule implements ConnectionFilterModuleType {
     return ErrorUtils.newTryFail(async () => {
       const requestBody = { ...payload };
       const response: ResponseDto<IConnectionFilter> = await this.connector.patch({
-        path: API_PATHS.UPDATE_CONNECTION_FILTER,
+        path: API_PATHS.v1.UPDATE_CONNECTION_FILTER,
         body: requestBody,
         authToken,
       });
@@ -49,7 +49,7 @@ export class ConnectionFilterModule implements ConnectionFilterModuleType {
   getForAUser(authToken: string): Promise<ResponseDto<IConnectionFilter>> {
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IConnectionFilter> = await this.connector.get({
-        path: API_PATHS.GET_CONNECTION_FILTER,
+        path: API_PATHS.v1.GET_CONNECTION_FILTER,
         authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;

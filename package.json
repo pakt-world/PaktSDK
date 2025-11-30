@@ -1,6 +1,6 @@
 {
   "name": "@pakt/sdk",
-  "version": "0.1.54-beta",
+  "version": "0.1.55-beta",
   "description": "Pakt Official SDK for AI and Developer Integration to the API of Prompt-to-Build businesses",
   "files": [
     "./dist/main.js",
@@ -19,7 +19,6 @@
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
     "build": "rimraf ./dist && tsup",
-    "server": "node build/usage/registration.js",
     "sd": "tsc --experimentalDecorators --resolveJsonModule ./src/services/index.ts"
   },
   "repository": {
@@ -44,6 +43,7 @@
     "@types/jest": "^27.4.1",
     "@types/node": "^18.15.11",
     "@types/uuid": "^9.0.1",
+    "@types/crypto-js": "4.1.1",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
     "@typescript-eslint/parser": "^5.20.0",
     "dotenv": "^16.0.3",
@@ -64,6 +64,7 @@
   "dependencies": {
     "axios": "^1.11.0",
     "reflect-metadata": "^0.1.13",
+    "crypto-js": "4.1.1",
     "typedi": "^0.10.0"
   }
 }

@@ -24,7 +24,7 @@ export class FeedModule implements FeedModuleType {
     return ErrorUtils.newTryFail(async () => {
       const credentials = { ...payload };
       const response: ResponseDto<{}> = await this.connector.post({
-        path: `${API_PATHS.FEEDS}/`,
+        path: `${API_PATHS.v1.FEEDS}/`,
         body: credentials,
         authToken,
       });
@@ -36,7 +36,7 @@ export class FeedModule implements FeedModuleType {
   getAll(authToken: string, filter?: FilterFeedDto): Promise<ResponseDto<FindFeedDto>> {
     return ErrorUtils.newTryFail(async () => {
       const theFilter = filter ? { ...filter, isOwner: true } : { isOwner: true };
-      const fetchUrl = parseUrlWithQuery(`${API_PATHS.FEEDS}/`, { ...theFilter });
+      const fetchUrl = parseUrlWithQuery(`${API_PATHS.v1.FEEDS}/`, { ...theFilter });
       const response: ResponseDto<FindFeedDto> = await this.connector.get({
         path: fetchUrl,
         authToken,
@@ -49,7 +49,7 @@ export class FeedModule implements FeedModuleType {
   getById(authToken: string, filterId: string): Promise<ResponseDto<IFeed>> {
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IFeed> = await this.connector.get({
-        path: `${API_PATHS.FEEDS}/${filterId}`,
+        path: `${API_PATHS.v1.FEEDS}/${filterId}`,
         authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
@@ -60,7 +60,7 @@ export class FeedModule implements FeedModuleType {
   dismissAllFeeds(authToken: string): Promise<ResponseDto<{}>> {
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IFeed> = await this.connector.put({
-        path: `${API_PATHS.FEEDS_DISMISS_ALL}`,
+        path: `${API_PATHS.v1.FEEDS_DISMISS_ALL}`,
         authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
@@ -71,7 +71,7 @@ export class FeedModule implements FeedModuleType {
   dismissAFeed(authToken: string, filterId: string): Promise<ResponseDto<{}>> {
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<IFeed> = await this.connector.put({
-        path: `${API_PATHS.FEEDS}/${filterId}/dismiss`,
+        path: `${API_PATHS.v1.FEEDS}/${filterId}/dismiss`,
         authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
