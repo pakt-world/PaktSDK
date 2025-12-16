@@ -31,22 +31,38 @@ export type filterCollectionStoreDto = {
 
 export interface CollectionStoreModuleType {
   getAll(
+    props: {
+      authToken: string;
+      schemaReference: string;
+      filter?: filterCollectionStoreDto;
+    },
+  ): Promise<ResponseDto<FindCollectionStoreDto>>;
+  getById(props: {
+    authToken: string,
+    schemaReference: string,
+    id: string,
+  }): Promise<ResponseDto<ICollectionStoreDto>>;
+  getCount(props: {
     authToken: string,
     schemaReference: string,
     filter?: filterCollectionStoreDto,
-  ): Promise<ResponseDto<FindCollectionStoreDto>>;
-  getById(authToken: string, schemaReference: string, id: string): Promise<ResponseDto<ICollectionStoreDto>>;
-  getCount(authToken: string, schemaReference: string, filter?: filterCollectionStoreDto): Promise<ResponseDto<number>>;
+  }): Promise<ResponseDto<number>>;
   create(
-    authToken: string,
-    schemaReference: string,
-    payload: CreateCollectionStoreDto,
+    props: {
+      authToken: string,
+      schemaReference: string,
+      payload: CreateCollectionStoreDto,
+    },
   ): Promise<ResponseDto<ICollectionStoreDto>>;
-  update(
+  update(props: {
     authToken: string,
     schemaReference: string,
     id: string,
     payload: UpdateCollectionStoreDto,
-  ): Promise<ResponseDto<ICollectionStoreDto>>;
-  delete(authToken: string, schemaReference: string, id: string): Promise<ResponseDto<{}>>;
+  }): Promise<ResponseDto<ICollectionStoreDto>>;
+  delete(props: {
+    authToken: string,
+    schemaReference: string,
+    id: string,
+  }): Promise<ResponseDto<{}>>;
 }

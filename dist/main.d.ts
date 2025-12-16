@@ -1324,24 +1324,74 @@ type filterCollectionStoreDto = {
     [key: string]: any;
 };
 interface CollectionStoreModuleType {
-    getAll(authToken: string, schemaReference: string, filter?: filterCollectionStoreDto): Promise<ResponseDto<FindCollectionStoreDto>>;
-    getById(authToken: string, schemaReference: string, id: string): Promise<ResponseDto<ICollectionStoreDto>>;
-    getCount(authToken: string, schemaReference: string, filter?: filterCollectionStoreDto): Promise<ResponseDto<number>>;
-    create(authToken: string, schemaReference: string, payload: CreateCollectionStoreDto): Promise<ResponseDto<ICollectionStoreDto>>;
-    update(authToken: string, schemaReference: string, id: string, payload: UpdateCollectionStoreDto): Promise<ResponseDto<ICollectionStoreDto>>;
-    delete(authToken: string, schemaReference: string, id: string): Promise<ResponseDto<{}>>;
+    getAll(props: {
+        authToken: string;
+        schemaReference: string;
+        filter?: filterCollectionStoreDto;
+    }): Promise<ResponseDto<FindCollectionStoreDto>>;
+    getById(props: {
+        authToken: string;
+        schemaReference: string;
+        id: string;
+    }): Promise<ResponseDto<ICollectionStoreDto>>;
+    getCount(props: {
+        authToken: string;
+        schemaReference: string;
+        filter?: filterCollectionStoreDto;
+    }): Promise<ResponseDto<number>>;
+    create(props: {
+        authToken: string;
+        schemaReference: string;
+        payload: CreateCollectionStoreDto;
+    }): Promise<ResponseDto<ICollectionStoreDto>>;
+    update(props: {
+        authToken: string;
+        schemaReference: string;
+        id: string;
+        payload: UpdateCollectionStoreDto;
+    }): Promise<ResponseDto<ICollectionStoreDto>>;
+    delete(props: {
+        authToken: string;
+        schemaReference: string;
+        id: string;
+    }): Promise<ResponseDto<{}>>;
 }
 
 declare class CollectionStoreModule implements CollectionStoreModuleType {
     private id;
     private connector;
     constructor(id: string);
-    getAll(authToken: string, schemaReference: string, filter?: filterCollectionStoreDto): Promise<ResponseDto<FindCollectionStoreDto>>;
-    getById(authToken: string, schemaReference: string, id: string): Promise<ResponseDto<ICollectionStoreDto>>;
-    getCount(authToken: string, schemaReference: string, filter?: filterCollectionStoreDto): Promise<ResponseDto<number>>;
-    create(authToken: string, schemaReference: string, payload: CreateCollectionStoreDto): Promise<ResponseDto<ICollectionStoreDto>>;
-    update(authToken: string, schemaReference: string, id: string, payload: UpdateCollectionStoreDto): Promise<ResponseDto<ICollectionStoreDto>>;
-    delete(authToken: string, schemaReference: string, id: string): Promise<ResponseDto<{}>>;
+    getAll(props: {
+        authToken: string;
+        schemaReference: string;
+        filter?: filterCollectionStoreDto;
+    }): Promise<ResponseDto<FindCollectionStoreDto>>;
+    getById(props: {
+        authToken: string;
+        schemaReference: string;
+        id: string;
+    }): Promise<ResponseDto<ICollectionStoreDto>>;
+    getCount(props: {
+        authToken: string;
+        schemaReference: string;
+        filter?: filterCollectionStoreDto;
+    }): Promise<ResponseDto<number>>;
+    create(props: {
+        authToken: string;
+        schemaReference: string;
+        payload: CreateCollectionStoreDto;
+    }): Promise<ResponseDto<ICollectionStoreDto>>;
+    update(props: {
+        authToken: string;
+        schemaReference: string;
+        id: string;
+        payload: UpdateCollectionStoreDto;
+    }): Promise<ResponseDto<ICollectionStoreDto>>;
+    delete(props: {
+        authToken: string;
+        schemaReference: string;
+        id: string;
+    }): Promise<ResponseDto<{}>>;
 }
 
 type IConnectionKeys = "tags" | "tagCount" | "afroScore";

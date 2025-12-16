@@ -1,6 +1,6 @@
 {
   "name": "@pakt/sdk",
-  "version": "0.1.55-beta",
+  "version": "0.2.0",
   "description": "Pakt Official SDK for AI and Developer Integration to the API of Prompt-to-Build businesses",
   "files": [
     "./dist/main.js",
