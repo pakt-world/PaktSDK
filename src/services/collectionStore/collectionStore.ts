@@ -28,10 +28,12 @@ export class CollectionStoreModule implements CollectionStoreModuleType {
   }
 
   async getAll(
-    authToken: string,
-    schemaReference: string,
-    filter?: filterCollectionStoreDto,
-  ): Promise<ResponseDto<FindCollectionStoreDto>> {
+    props: {
+      authToken: string,
+      schemaReference: string,
+      filter?: filterCollectionStoreDto,
+    }): Promise<ResponseDto<FindCollectionStoreDto>> {
+    const {authToken, schemaReference, filter } = props;
     return ErrorUtils.newTryFail(async () => {
       const fetchUrl = parseUrlWithQuery(`${API_PATHS.v2.COLLECTION_STORE}/${schemaReference}`, filter);
       const response: ResponseDto<FindCollectionStoreDto> = await this.connector.get({ path: fetchUrl, authToken });
@@ -40,7 +42,8 @@ export class CollectionStoreModule implements CollectionStoreModuleType {
     });
   }
 
-  async getById(authToken: string, schemaReference: string, id: string): Promise<ResponseDto<ICollectionStoreDto>> {
+  async getById(props: {authToken: string, schemaReference: string, id: string}): Promise<ResponseDto<ICollectionStoreDto>> {
+    const {authToken, schemaReference, id } = props;
     return ErrorUtils.newTryFail(async () => {
       const fetchUrl = `${API_PATHS.v2.COLLECTION_STORE}/${schemaReference}/${id}`;
       const response: ResponseDto<ICollectionStoreDto> = await this.connector.get({ path: fetchUrl, authToken });
@@ -50,10 +53,12 @@ export class CollectionStoreModule implements CollectionStoreModuleType {
   }
 
   async getCount(
-    authToken: string,
-    schemaReference: string,
-    filter?: filterCollectionStoreDto,
-  ): Promise<ResponseDto<number>> {
+    props: {
+      authToken: string,
+      schemaReference: string,
+      filter?: filterCollectionStoreDto,
+    }): Promise<ResponseDto<number>> {
+    const {authToken, schemaReference, filter } = props;
     return ErrorUtils.newTryFail(async () => {
       const fetchUrl = parseUrlWithQuery(`${API_PATHS.v2.COLLECTION_STORE}/${schemaReference}/count`, filter);
       const response: ResponseDto<number> = await this.connector.get({ path: fetchUrl, authToken });
@@ -63,10 +68,12 @@ export class CollectionStoreModule implements CollectionStoreModuleType {
   }
 
   async create(
-    authToken: string,
-    schemaReference: string,
-    payload: CreateCollectionStoreDto,
-  ): Promise<ResponseDto<ICollectionStoreDto>> {
+    props: {
+      authToken: string,
+      schemaReference: string,
+      payload: CreateCollectionStoreDto,
+    }): Promise<ResponseDto<ICollectionStoreDto>> {
+    const {authToken, schemaReference, payload } = props;
     return ErrorUtils.newTryFail(async () => {
       const response: ResponseDto<ICollectionStoreDto> = await this.connector.post({
         path: `${API_PATHS.v2.COLLECTION_STORE}/${schemaReference}`,
@@ -79,11 +86,13 @@ export class CollectionStoreModule implements CollectionStoreModuleType {
   }
 
   async update(
-    authToken: string,
-    schemaReference: string,
-    id: string,
-    payload: UpdateCollectionStoreDto,
-  ): Promise<ResponseDto<ICollectionStoreDto>> {
+    props: {
+      authToken: string,
+      schemaReference: string,
+      id: string,
+      payload: UpdateCollectionStoreDto,
+    }): Promise<ResponseDto<ICollectionStoreDto>> {
+    const {authToken, id, schemaReference, payload } = props;
     return ErrorUtils.newTryFail(async () => {
       const fetchUrl = `${API_PATHS.v2.COLLECTION_STORE}/${schemaReference}/${id}`;
       const response: ResponseDto<ICollectionStoreDto> = await this.connector.patch({
@@ -96,7 +105,8 @@ export class CollectionStoreModule implements CollectionStoreModuleType {
     });
   }
 
-  async delete(authToken: string, schemaReference: string, id: string): Promise<ResponseDto<{}>> {
+  async delete(props: { authToken: string, schemaReference: string, id: string }): Promise<ResponseDto<{}>> {
+    const { authToken, schemaReference, id } = props;
     return ErrorUtils.newTryFail(async () => {
       const fetchUrl = `${API_PATHS.v2.COLLECTION_STORE}/${schemaReference}/${id}`;
       const response: ResponseDto<{}> = await this.connector.delete({
