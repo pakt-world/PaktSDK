@@ -29,10 +29,10 @@ export const ErrorUtils = {
           return await f();
         },
         {
-          startingDelay: 5,
+          startingDelay: 50,
           timeMultiple: 10,
-          numOfAttempts: 4,
-          maxDelay: 250,
+          numOfAttempts: 10,
+          maxDelay: 3550,
           delayFirstAttempt: false,
         },
       );
