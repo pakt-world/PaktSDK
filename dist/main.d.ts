@@ -1,5 +1,4 @@
 import { Token } from 'typedi';
-import * as _tanstack_react_query_build_legacy_types from '@tanstack/react-query/build/legacy/types';
 
 interface PaktConfig {
     baseUrl: string;
@@ -1848,67 +1847,4 @@ declare class PaktSDK {
     private static generateRandomString;
 }
 
-declare function setSDK(sdk: PaktSDK): void;
-declare function getSDK(): PaktSDK;
-declare function setAuthToken(token: string): void;
-declare function getToken(): string | null;
-declare function reset(): void;
-
-/**
- * Query key factory for collection store operations.
- * Provides centralized query key generation for consistency and reusability.
- */
-declare const collectionKeys: {
-    all: (schemaReference: string) => readonly ["collections", string];
-    lists: (schemaReference: string) => readonly ["collections", string, "list"];
-    list: (schemaReference: string, filter?: filterCollectionStoreDto) => readonly ["collections", string, "list", filterCollectionStoreDto | undefined];
-    details: (schemaReference: string) => readonly ["collections", string, "detail"];
-    detail: (schemaReference: string, id: string) => readonly ["collections", string, "detail", string];
-    count: (schemaReference: string) => readonly ["collections", string, "count"];
-};
-/**
- * Factory hook for collection store operations.
- * Returns query and mutation hooks for managing collection store items.
- * @param schemaReference - The schema reference identifier
- * @returns Object containing query and mutation hooks
- */
-declare function useCollections(schemaReference: string): {
-    getCountQuery: _tanstack_react_query_build_legacy_types.UseQueryResult<ResponseDto<number>, Error>;
-    useCollectionsQuery: (filter?: filterCollectionStoreDto) => _tanstack_react_query_build_legacy_types.UseQueryResult<ResponseDto<FindCollectionStoreDto>, Error>;
-    useCollectionById: (id: string) => _tanstack_react_query_build_legacy_types.UseQueryResult<ResponseDto<ICollectionStoreDto>, Error>;
-    createCollection: _tanstack_react_query_build_legacy_types.UseMutationResult<ResponseDto<ICollectionStoreDto>, Error, CreateCollectionStoreDto, unknown>;
-    updateCollection: _tanstack_react_query_build_legacy_types.UseMutationResult<ResponseDto<ICollectionStoreDto>, Error, {
-        id: string;
-        payload: UpdateCollectionStoreDto;
-    }, unknown>;
-    deleteCollection: _tanstack_react_query_build_legacy_types.UseMutationResult<ResponseDto<object>, Error, string, unknown>;
-};
-
-/**
- * Query key factory for collection schema operations.
- * Provides centralized query key generation for consistency and reusability.
- */
-declare const collectionSchemaKeys: {
-    all: () => readonly ["collection-schemas"];
-    lists: () => readonly ["collection-schemas", "list"];
-    list: (filter?: filterCollectionSchemaDto) => readonly ["collection-schemas", "list", filterCollectionSchemaDto | undefined];
-    details: () => readonly ["collection-schemas", "detail"];
-    detail: (id: string) => readonly ["collection-schemas", "detail", string];
-};
-/**
- * Factory hook for collection schema operations.
- * Returns query and mutation hooks for managing collection schemas.
- * @returns Object containing query and mutation hooks
- */
-declare function useCollectionSchemas(): {
-    useSchemasQuery: (filter?: filterCollectionSchemaDto) => _tanstack_react_query_build_legacy_types.UseQueryResult<ResponseDto<FindCollectionSchemaDto>, Error>;
-    useSchemaById: (id: string) => _tanstack_react_query_build_legacy_types.UseQueryResult<ResponseDto<ICollectionSchemaDto>, Error>;
-    createSchema: _tanstack_react_query_build_legacy_types.UseMutationResult<ResponseDto<ICollectionSchemaDto>, Error, CreateCollectionSchemaDto, unknown>;
-    updateSchema: _tanstack_react_query_build_legacy_types.UseMutationResult<ResponseDto<ICollectionSchemaDto>, Error, {
-        id: string;
-        payload: UpdateCollectionSchemaDto;
-    }, unknown>;
-    deleteSchema: _tanstack_react_query_build_legacy_types.UseMutationResult<ResponseDto<object>, Error, string, unknown>;
-};
-
-export { API_PATHS, AUTH_TOKEN, AccountModule, type AccountModuleType, type AccountVerifyDto, type AddReviewDto, type AggTxns, AuthenticationModule, type AuthenticationModuleType, BookMarkModule, type BookMarkModuleType, BookmarkEnumType, type BookmarkType, CHARACTERS, type ChangeAuthenticationPasswordPayload, type ChangePasswordDto, ChatModule, type ChatModuleType, CollectionModule, type CollectionModuleType, CollectionSchemaModule, type CollectionSchemaModuleType, CollectionStoreModule, type CollectionStoreModuleType, ConnectionFilterModule, type ConnectionFilterModuleType, type CreateCollectionDto, type CreateCollectionSchemaDto, type CreateCollectionStoreDto, type CreateFeedDto, type CreateFileUpload, type CreateManyCollectionDto, type CreateSessionResponse, type CreateWithdrawal, DirectDepositModule, type DirectDepositModuleType, ErrorUtils, type FEED_TYPES, FEED_TYPES_ENUM, FeedModule, type FeedModuleType, type FieldDefinitionDto, type FilterFeedDto, type FilterInviteDto, type FilterReviewDto, type FilterUploadDto, type FilterUserDto, type FilterWithdrawal, type FindCollectionBookMarkDto, type FindCollectionDto, type FindCollectionSchemaDto, type FindCollectionStoreDto, type FindCollectionTypeDto, type FindFeedDto, type FindInvitesDto, type FindNotificationDto, type FindReviewDto, type FindTransactionsDto, type FindUploadDto, type FindUsers, type FindWithdrawalsDto, type GoogleOAuthGenerateDto, type GoogleOAuthValdatePayload, type GoogleOAuthValidateDto, type IAny, type IBlockchainCoin, type IBlockchainCoinDto, type IChatConversation, type IChatMessage, type ICollectionBookmarkDto, type ICollectionDto, type ICollectionSchemaDto, type ICollectionStatus, type ICollectionStoreDto, type ICollectionTypeDto, type IConnectionEvents, type IConnectionFilter, type IConnectionFilterDecider, type IConnectionKeys, type ICreateDirectDepositPayload, type ICreateDirectDepositResponse, type ICreatePaymentDto, type ICreateSessionPayload, type IFeed, type IFile, type IInviteDto, type IInviteStatus, type IModel, type INotificationDto, type IPaymentCoins, type IPaymentDataDto, IPaymentStatusEnum, type IPaymentStatusType, type IPaymentType, type IRPCDto, type IRPCServer, type IRegisterResponse, type IReleasePaymentDto, type IResendVerifyLink, type IReviewDto, type ISendSessionMedia, type ISingleWalletDto, type ITransactionDto$1 as ITransactionDto, type ITransactionStatsDto, type ITransactionStatsFormat, type ITransactionType, type IUploadDto, type IUser, type IUserTwoFaType, type IValidateDirectDepositPayload, type IValidateDirectDepositResponse, type IValidatePaymentDto, type IVerification, type IVerificationStatus, type IWalletBalanceDto, type IWalletDto, type IWalletExchangeDto, type IWalletResponseDto, type IWithdrawalDto, type IWithdrawalStatus, InviteModule, type InviteModuleType, type LoginDto, type LoginPayload, type LoginTwoFADTO, type LoginTwoFAPayload, NotificationModule, type NotificationModuleType, PAKT_CONFIG, type PaktConfig, PaktSDK, PaymentModule, type PaymentModuleType, type RegisterDto, type RegisterPayload, type ResendVerifyDto, type ResendVerifyPayload, type ResetDto, type ResetPasswordPayload, type ResponseDto, ReviewModule, type ReviewModuleType, type SendInviteDto, type SendSessionMediaResponse, type SessionAttempts, Status, TEMP_TOKEN, type TwoFATypeDto, type TwoFAresponse, type UpdateCollectionDto, type UpdateCollectionSchemaDto, type UpdateCollectionStoreDto, type UpdateManyCollectionsDto, UploadModule, type UploadModuleType, UserVerificationModule, type UserVerificationModuleType, type ValidatePasswordToken, type ValidateReferralDto, type VerificationDocumentTypes, type VerifyAccountPayload, WalletModule, type WalletModuleType, WithdrawalModule, type WithdrawalModuleType, type assignCollectionDto, type cancelCollectionDto, collectionKeys, collectionSchemaKeys, type createBookMarkDto, encryptString, type expectedISOCountries, type fetchAccountDto, type filterBookmarkDto, type filterCollectionDto, type filterCollectionSchemaDto, type filterCollectionStoreDto, type filterNotificationDto, getSDK, getToken, isEmpty, parseUrlWithQuery, reset, setAuthToken, setSDK, type updateUserDto, useCollectionSchemas, useCollections };
+export { API_PATHS, AUTH_TOKEN, AccountModule, AccountModuleType, AccountVerifyDto, AddReviewDto, AggTxns, AuthenticationModule, AuthenticationModuleType, BookMarkModule, BookMarkModuleType, BookmarkEnumType, BookmarkType, CHARACTERS, ChangeAuthenticationPasswordPayload, ChangePasswordDto, ChatModule, ChatModuleType, CollectionModule, CollectionModuleType, CollectionSchemaModule, CollectionSchemaModuleType, CollectionStoreModule, CollectionStoreModuleType, ConnectionFilterModule, ConnectionFilterModuleType, CreateCollectionDto, CreateCollectionSchemaDto, CreateCollectionStoreDto, CreateFeedDto, CreateFileUpload, CreateManyCollectionDto, CreateSessionResponse, CreateWithdrawal, DirectDepositModule, DirectDepositModuleType, ErrorUtils, FEED_TYPES, FEED_TYPES_ENUM, FeedModule, FeedModuleType, FieldDefinitionDto, FilterFeedDto, FilterInviteDto, FilterReviewDto, FilterUploadDto, FilterUserDto, FilterWithdrawal, FindCollectionBookMarkDto, FindCollectionDto, FindCollectionSchemaDto, FindCollectionStoreDto, FindCollectionTypeDto, FindFeedDto, FindInvitesDto, FindNotificationDto, FindReviewDto, FindTransactionsDto, FindUploadDto, FindUsers, FindWithdrawalsDto, GoogleOAuthGenerateDto, GoogleOAuthValdatePayload, GoogleOAuthValidateDto, IAny, IBlockchainCoin, IBlockchainCoinDto, IChatConversation, IChatMessage, ICollectionBookmarkDto, ICollectionDto, ICollectionSchemaDto, ICollectionStatus, ICollectionStoreDto, ICollectionTypeDto, IConnectionEvents, IConnectionFilter, IConnectionFilterDecider, IConnectionKeys, ICreateDirectDepositPayload, ICreateDirectDepositResponse, ICreatePaymentDto, ICreateSessionPayload, IFeed, IFile, IInviteDto, IInviteStatus, IModel, INotificationDto, IPaymentCoins, IPaymentDataDto, IPaymentStatusEnum, IPaymentStatusType, IPaymentType, IRPCDto, IRPCServer, IRegisterResponse, IReleasePaymentDto, IResendVerifyLink, IReviewDto, ISendSessionMedia, ISingleWalletDto, ITransactionDto$1 as ITransactionDto, ITransactionStatsDto, ITransactionStatsFormat, ITransactionType, IUploadDto, IUser, IUserTwoFaType, IValidateDirectDepositPayload, IValidateDirectDepositResponse, IValidatePaymentDto, IVerification, IVerificationStatus, IWalletBalanceDto, IWalletDto, IWalletExchangeDto, IWalletResponseDto, IWithdrawalDto, IWithdrawalStatus, InviteModule, InviteModuleType, LoginDto, LoginPayload, LoginTwoFADTO, LoginTwoFAPayload, NotificationModule, NotificationModuleType, PAKT_CONFIG, PaktConfig, PaktSDK, PaymentModule, PaymentModuleType, RegisterDto, RegisterPayload, ResendVerifyDto, ResendVerifyPayload, ResetDto, ResetPasswordPayload, ResponseDto, ReviewModule, ReviewModuleType, SendInviteDto, SendSessionMediaResponse, SessionAttempts, Status, TEMP_TOKEN, TwoFATypeDto, TwoFAresponse, UpdateCollectionDto, UpdateCollectionSchemaDto, UpdateCollectionStoreDto, UpdateManyCollectionsDto, UploadModule, UploadModuleType, UserVerificationModule, UserVerificationModuleType, ValidatePasswordToken, ValidateReferralDto, VerificationDocumentTypes, VerifyAccountPayload, WalletModule, WalletModuleType, WithdrawalModule, WithdrawalModuleType, assignCollectionDto, cancelCollectionDto, createBookMarkDto, encryptString, expectedISOCountries, fetchAccountDto, filterBookmarkDto, filterCollectionDto, filterCollectionSchemaDto, filterCollectionStoreDto, filterNotificationDto, isEmpty, parseUrlWithQuery, updateUserDto };
