@@ -7,6 +7,5 @@ export default defineConfig((options: Options) => ({
   // format: ["esm"],
   dts: true,
   minify: true,
-  external: ["@tanstack/react-query", "react"],
   ...options,
 }));
