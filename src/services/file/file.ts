@@ -2,16 +2,16 @@ import Container, { Service } from "typedi";
 import { PaktConnector } from "../../connector";
 import { API_PATHS } from "../../utils/constants";
 import { ErrorUtils, ResponseDto, Status, parseUrlWithQuery } from "../../utils/response";
-import { CreateFileUpload, FilterUploadDto, FindUploadDto, IUploadDto, UploadModuleType } from "./upload.dto";
-export * from "./upload.dto";
+import { ICreateFileDto, IFilterFileDto, IFindFileDto, IFileDto, FileModuleType } from "./file.dto";
+export * from "./file.dto";
 
 @Service({
   factory: (data: { id: string }) => {
-    return new UploadModule(data.id);
+    return new FileModule(data.id);
   },
   transient: true,
 })
-export class UploadModule implements UploadModuleType {
+export class FileModule implements FileModuleType {
   private id: string;
   private connector: PaktConnector;
 
@@ -20,10 +20,10 @@ export class UploadModule implements UploadModuleType {
     this.connector = Container.of(this.id).get(PaktConnector);
   }
 
-  fileUpload(authToken: string, payload: CreateFileUpload): Promise<ResponseDto<IUploadDto>> {
+  fileUpload(authToken: string, payload: ICreateFileDto): Promise<ResponseDto<IFileDto>> {
     const credentials = { ...payload };
     return ErrorUtils.newTryFail(async () => {
-      const response: ResponseDto<IUploadDto> = await this.connector.post({
+      const response: ResponseDto<IFileDto> = await this.connector.post({
         path: API_PATHS.v1.FILE_UPLOAD,
         body: credentials,
         authToken,
@@ -33,23 +33,22 @@ export class UploadModule implements UploadModuleType {
     });
   }
 
-  getFileUploads(authToken: string, filter: FilterUploadDto): Promise<ResponseDto<FindUploadDto>> {
+  getFiles(authToken: string, filter: IFilterFileDto): Promise<ResponseDto<IFindFileDto>> {
     return ErrorUtils.newTryFail(async () => {
       const theFilter = filter ? filter : {};
       const fetchUrl = parseUrlWithQuery(API_PATHS.v1.FILE_UPLOAD, theFilter);
-      const url = filter ? API_PATHS.v1.FILE_UPLOAD : fetchUrl;
 
-      const response: ResponseDto<FindUploadDto> = await this.connector.get({
-        path: url,
+      const response: ResponseDto<IFindFileDto> = await this.connector.get({
+        path: fetchUrl,
         authToken,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
     });
   }
-  getAFileUpload(authToken: string, id: string): Promise<ResponseDto<IUploadDto>> {
+  getFile(authToken: string, id: string): Promise<ResponseDto<IFileDto>> {
     return ErrorUtils.newTryFail(async () => {
-      const response: ResponseDto<IUploadDto> = await this.connector.get({
+      const response: ResponseDto<IFileDto> = await this.connector.get({
         path: `${API_PATHS.v1.FILE_UPLOAD}${id}`,
         authToken,
       });

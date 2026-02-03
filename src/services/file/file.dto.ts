@@ -15,11 +15,11 @@ interface UploadedUser {
   score: number;
 }
 
-export interface CreateFileUpload {
+export interface ICreateFileDto {
   file: Object;
 }
 
-export interface IUploadDto {
+export interface IFileDto {
   _id: string;
   name: string;
   uploaded_by: UploadedUser | string;
@@ -31,21 +31,21 @@ export interface IUploadDto {
   updatedAt?: string | Date;
 }
 
-export interface FindUploadDto {
+export interface IFindFileDto {
   count: number;
   pages: number;
-  data: IUploadDto[];
+  data: IFileDto[];
 }
 
-export type FilterUploadDto =
+export type IFilterFileDto =
   | ({
       page?: string;
       limit?: string;
-    } & IUploadDto)
+    } & IFileDto)
   | any;
 
-export interface UploadModuleType {
-  fileUpload(authToken: string, payload: CreateFileUpload): Promise<ResponseDto<IUploadDto>>;
-  getFileUploads(authToken: string, filter?: FilterUploadDto): Promise<ResponseDto<FindUploadDto>>;
-  getAFileUpload(authToken: string, id: string): Promise<ResponseDto<IUploadDto>>;
+export interface FileModuleType {
+  fileUpload(authToken: string, payload: ICreateFileDto): Promise<ResponseDto<IFileDto>>;
+  getFiles(authToken: string, filter?: IFilterFileDto): Promise<ResponseDto<IFindFileDto>>;
+  getFile(authToken: string, id: string): Promise<ResponseDto<IFileDto>>;
 }

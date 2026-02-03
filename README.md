@@ -3,7 +3,7 @@
 # PAKT SDK
 
 PAKT SDK is a comprehensive software development kit for building applications on the PAKT Operating System. It provides a complete suite of tools for project
-collaboration, blockchain payments, user management, and more.collaboration, blockchain payments, user management, and more.
+collaboration, blockchain escrow, user management, and more.
 
 ## Installation
 
@@ -42,7 +42,7 @@ const loginResponse = await sdk.auth.login({
 - [Collections (Projects)](#collections-projects)
 - [Collection Schema](#collection-schema)
 - [Collection Store](#collection-store)
-- [Wallet & Payments](#wallet--payments)
+- [Wallet & Escrow](#wallet--escrow)
 - [Direct Deposits](#direct-deposits)
 - [Communication](#communication)
 - [File Management](#file-management)
@@ -750,9 +750,9 @@ console.log(`Verified users: ${verifiedCount.data}`);
 
 ---
 
-## Wallet & Payments
+## Wallet & Escrow
 
-Comprehensive blockchain-based payment system with multi-cryptocurrency support.
+Comprehensive blockchain-based escrow and payment system with multi-cryptocurrency support.
 
 ### Wallet Management
 
@@ -770,40 +770,40 @@ const usdcWallet = await sdk.wallet.getSingleWalletByCoin("usdc");
 const avaxWallet = await sdk.wallet.getSingleWalletByCoin("avax");
 ```
 
-### Payment Processing
+### Escrow Processing
 
 ```typescript
-import { ICreatePaymentDto } from "pakt-sdk";
+import { ICreateEscrowDto } from "pakt-sdk";
 
-// Create payment order
-const paymentOrder: ICreatePaymentDto = {
+// Create escrow payment order
+const escrowOrder: ICreateEscrowDto = {
   coin: "usdc", // or "avax"
-  collectionId: "collectionId",
+  collection: "collection-id",
 };
 
-const payment = await sdk.payment.create(paymentOrder);
+const escrow = await sdk.escrow.create(escrowOrder);
 
-if (payment.status === "success") {
-  console.log("Payment order created");
-  console.log("Amount to pay:", payment.data.amount);
-  console.log("Blockchain address:", payment.data.address);
-  console.log("Required confirmations:", payment.data.confirmation);
+if (escrow.status === "success") {
+  console.log("Escrow order created");
+  console.log("Amount to pay:", escrow.data.amountToPay);
+  console.log("Blockchain address:", escrow.data.address);
+  console.log("Required chain:", escrow.data.chainId);
 }
 ```
 
-### Payment Validation & Release
+### Escrow Validation & Release
 
 ```typescript
-// Validate payment transaction
-const validation = await sdk.payment.validate({
-  paymentId: "payment-id",
-  transactionHash: "blockchain-tx-hash",
+// Validate escrow status
+const validation = await sdk.escrow.validate({
+  collection: "collection-id",
+  status: "ongoing",
 });
 
-// Release escrowed payment (for collection completion)
-await sdk.payment.release({
-  collectionId: "collectionId",
-  recipientId: "user-id",
+// Release escrowed funds (for collection completion)
+await sdk.escrow.release({
+  collection: "collection-id",
+  amount: 500,
 });
 ```
 
@@ -1061,12 +1061,10 @@ await sdk.feed.dismissAllFeeds();
 ### File Upload
 
 ```typescript
-import { CreateFileUpload } from "pakt-sdk";
+import { ICreateFileDto } from "pakt-sdk";
 
-const fileData: CreateFileUpload = {
-  file: fileBuffer, // or file data
-  fileName: "document.pdf",
-  fileType: "application/pdf",
+const fileData: ICreateFileDto = {
+  file: fileBuffer, // or file object
 };
 
 const upload = await sdk.file.fileUpload(fileData);
@@ -1077,13 +1075,13 @@ console.log("File uploaded:", upload.data.url);
 
 ```typescript
 // Get all uploaded files
-const files = await sdk.file.getFileUploads({
-  limit: 20,
-  offset: 0,
+const files = await sdk.file.getFiles({
+  limit: "20",
+  page: "1",
 });
 
 // Get specific file
-const file = await sdk.file.getAFileUpload("file-id");
+const file = await sdk.file.getFile("file-id");
 ```
 
 ---
