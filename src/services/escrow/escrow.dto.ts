@@ -1,8 +1,8 @@
 import { ResponseDto } from "../../utils";
 
-export type IPaymentCoins = "usdc" | "avax";
+export type IEscrowCoins = "usdc" | "avax";
 
-export enum IPaymentStatusEnum {
+export enum IEscrowStatusEnum {
   PENDING = "pending",
   ONGOING = "ongoing",
   COMPLETED = "completed",
@@ -11,17 +11,17 @@ export enum IPaymentStatusEnum {
   DELETED = "deleted",
 }
 
-export type IPaymentStatusType = "pending" | "ongoing" | "completed" | "waiting" | "cancelled" | "deleted";
+export type IEscrowStatusType = "pending" | "ongoing" | "completed" | "waiting" | "cancelled" | "deleted";
 
-export type IPaymentType = "direct-deposit" | "escrow";
+export type IEscrowType = "direct-deposit" | "escrow";
 
-export interface ICreatePaymentDto {
-  coin: IPaymentCoins;
+export interface ICreateEscrowDto {
+  coin: IEscrowCoins;
   collection: string;
   usdValue?: number;
 }
 
-export interface IPaymentDataDto {
+export interface IEscrowDataDto {
   coin: string;
   address: string;
   collectionAmount: number;
@@ -35,12 +35,12 @@ export interface IPaymentDataDto {
   chainId: string;
 }
 
-export interface IValidatePaymentDto {
+export interface IValidateEscrowDto {
   collection: string;
-  status?: IPaymentStatusType;
+  status?: IEscrowStatusType;
 }
 
-export interface IReleasePaymentDto {
+export interface IReleaseEscrowDto {
   collection: string;
   amount: number;
 }
@@ -71,10 +71,10 @@ export interface IRPCDto {
   active: boolean;
 }
 
-export interface PaymentModuleType {
-  create(authToken: string, payload: ICreatePaymentDto): Promise<ResponseDto<IPaymentDataDto>>;
-  validate(authToken: string, payload: IValidatePaymentDto): Promise<ResponseDto<{}>>;
-  release(authToken: string, payload: IReleasePaymentDto): Promise<ResponseDto<{}>>;
+export interface EscrowModuleType {
+  create(authToken: string, payload: ICreateEscrowDto): Promise<ResponseDto<IEscrowDataDto>>;
+  validate(authToken: string, payload: IValidateEscrowDto): Promise<ResponseDto<{}>>;
+  release(authToken: string, payload: IReleaseEscrowDto): Promise<ResponseDto<{}>>;
   paymentMethods(authToken: string): Promise<ResponseDto<IBlockchainCoinDto[]>>;
   activeRpc(authToken: string): Promise<ResponseDto<IRPCDto>>;
 }
