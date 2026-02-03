@@ -13,9 +13,9 @@ import { ConnectionFilterModule, ConnectionFilterModuleType } from "./connection
 import { FeedModule, FeedModuleType } from "./feed";
 import { InviteModule, InviteModuleType } from "./invite";
 import { NotificationModule, NotificationModuleType } from "./notification";
-import { PaymentModule, PaymentModuleType } from "./payment";
+import { EscrowModule, EscrowModuleType } from "./escrow";
 import { ReviewModule, ReviewModuleType } from "./review";
-import { UploadModule, UploadModuleType } from "./upload/upload";
+import { FileModule, FileModuleType } from "./file/file";
 import { UserVerificationModule, UserVerificationModuleType } from "./userVerification";
 import { WalletModule, WalletModuleType } from "./wallet";
 import { WithdrawalModule, WithdrawalModuleType } from "./withdrawal";
@@ -32,9 +32,9 @@ export * from "./connectionFilter";
 export * from "./feed";
 export * from "./invite";
 export * from "./notification";
-export * from "./payment";
+export * from "./escrow";
 export * from "./review";
-export * from "./upload";
+export * from "./file";
 export * from "./userVerification";
 export * from "./wallet";
 export * from "./withdrawal";
@@ -49,7 +49,7 @@ export class PaktSDK {
   collectionStore: CollectionStoreModuleType;
   account: AccountModuleType;
   notifications: NotificationModuleType;
-  file: UploadModuleType;
+  file: FileModuleType;
   wallet: WalletModuleType;
   withdrawal: WithdrawalModuleType;
   review: ReviewModuleType;
@@ -58,7 +58,7 @@ export class PaktSDK {
   connectionFilter: ConnectionFilterModuleType;
   invite: InviteModuleType;
   feed: FeedModuleType;
-  payment: PaymentModuleType;
+  escrow: EscrowModuleType;
   directDeposit: DirectDepositModuleType;
 
   constructor(id: string) {
@@ -68,7 +68,7 @@ export class PaktSDK {
     this.collectionStore = Container.of(id).get(CollectionStoreModule);
     this.account = Container.of(id).get(AccountModule);
     this.notifications = Container.of(id).get(NotificationModule);
-    this.file = Container.of(id).get(UploadModule);
+    this.file = Container.of(id).get(FileModule);
     this.wallet = Container.of(id).get(WalletModule);
     this.withdrawal = Container.of(id).get(WithdrawalModule);
     this.review = Container.of(id).get(ReviewModule);
@@ -78,7 +78,7 @@ export class PaktSDK {
     this.connectionFilter = Container.of(id).get(ConnectionFilterModule);
     this.invite = Container.of(id).get(InviteModule);
     this.feed = Container.of(id).get(FeedModule);
-    this.payment = Container.of(id).get(PaymentModule);
+    this.escrow = Container.of(id).get(EscrowModule);
     this.directDeposit = Container.of(id).get(DirectDepositModule);
   }
   /**
