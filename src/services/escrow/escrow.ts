@@ -4,23 +4,23 @@ import { API_PATHS } from "../../utils/constants";
 import { ErrorUtils, ResponseDto, Status } from "../../utils/response";
 import {
   IBlockchainCoinDto,
-  ICreatePaymentDto,
-  IPaymentDataDto,
+  ICreateEscrowDto,
+  IEscrowDataDto,
   IRPCDto,
-  IReleasePaymentDto,
-  IValidatePaymentDto,
-  PaymentModuleType,
-} from "./payment.dto";
+  IReleaseEscrowDto,
+  IValidateEscrowDto,
+  EscrowModuleType,
+} from "./escrow.dto";
 
-export * from "./payment.dto";
+export * from "./escrow.dto";
 
 @Service({
   factory: (data: { id: string }) => {
-    return new PaymentModule(data.id);
+    return new EscrowModule(data.id);
   },
   transient: true,
 })
-export class PaymentModule implements PaymentModuleType {
+export class EscrowModule implements EscrowModuleType {
   private readonly id: string;
   private readonly connector: PaktConnector;
   constructor(id: string) {
@@ -28,10 +28,10 @@ export class PaymentModule implements PaymentModuleType {
     this.connector = Container.of(this.id).get(PaktConnector);
   }
 
-  create(authToken: string, payload: ICreatePaymentDto): Promise<ResponseDto<IPaymentDataDto>> {
+  create(authToken: string, payload: ICreateEscrowDto): Promise<ResponseDto<IEscrowDataDto>> {
     return ErrorUtils.newTryFail(async () => {
       const credentials = { ...payload };
-      const response: ResponseDto<IPaymentDataDto> = await this.connector.post({
+      const response: ResponseDto<IEscrowDataDto> = await this.connector.post({
         path: `${API_PATHS.v1.CREATE_ORDER}`,
         body: credentials,
         authToken,
@@ -41,10 +41,10 @@ export class PaymentModule implements PaymentModuleType {
     });
   }
 
-  validate(authToken: string, payload: IValidatePaymentDto): Promise<ResponseDto<{}>> {
+  validate(authToken: string, payload: IValidateEscrowDto): Promise<ResponseDto<{}>> {
     return ErrorUtils.newTryFail(async () => {
       const credentials = { ...payload };
-      const response: ResponseDto<IPaymentDataDto> = await this.connector.post({
+      const response: ResponseDto<IEscrowDataDto> = await this.connector.post({
         path: `${API_PATHS.v1.VALIDATE_ORDER}`,
         body: credentials,
         authToken,
@@ -54,10 +54,10 @@ export class PaymentModule implements PaymentModuleType {
     });
   }
 
-  release(authToken: string, payload: IReleasePaymentDto): Promise<ResponseDto<{}>> {
+  release(authToken: string, payload: IReleaseEscrowDto): Promise<ResponseDto<{}>> {
     return ErrorUtils.newTryFail(async () => {
       const credentials = { ...payload };
-      const response: ResponseDto<IPaymentDataDto> = await this.connector.post({
+      const response: ResponseDto<IEscrowDataDto> = await this.connector.post({
         path: `${API_PATHS.v1.RELEASE_ORDER}`,
         body: credentials,
         authToken,

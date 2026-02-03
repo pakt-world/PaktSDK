@@ -3,7 +3,7 @@ import { IUser } from "../auth";
 import { IInviteDto } from "../invite";
 import { IReviewDto } from "../review";
 import { ITagCategory } from "../tagCategory/tagCategory.dto";
-import { IUploadDto } from "../upload";
+import { IFileDto } from '../file/file.dto';
 import { IWalletDto } from "../wallet";
 
 export interface ICollectionTypeDto {
@@ -35,7 +35,7 @@ export interface ICollectionDto {
   parent?: ICollectionDto | string;
   collections?: ICollectionDto[] | string[];
   stage?: number;
-  image?: IUploadDto;
+  image?: IFileDto;
   invite?: string | IInviteDto;
   invites?: string[] | IInviteDto[];
   applications?: string[]; //TODO:: addd IApplicationDto
