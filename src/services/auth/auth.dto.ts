@@ -186,6 +186,62 @@ export interface GoogleOAuthValidateDto {
   type: "sign_in" | "sign_up";
 }
 
+export interface Web3AuthRequestPayload {
+  account: string;
+}
+
+export interface Web3AuthRequestDto {
+  message: string;
+  tempToken: {
+    token: string;
+    expiresIn: number;
+    token_type: string;
+  };
+}
+
+export interface Web3AuthValidatePayload {
+  signedMessage: string;
+  tempToken: string;
+  tokenId?: string;
+}
+
+export type Web3AuthValidateDto = {
+  token?: string;
+  token_type?: string;
+  expiresIn?: number;
+  isVerified?: boolean;
+  timeZone?: string;
+  account?: string;
+  tempToken?: {
+    token: string;
+    expiresIn: number;
+    token_type: string;
+  };
+  twoFa?: {
+    status: boolean;
+    type: IUserTwoFaType;
+  };
+  email?: string;
+  referral?: string;
+};
+
+export interface Web3AuthOnboardPayload {
+  tempToken: string;
+  email: string;
+  firstName: string;
+  lastName?: string;
+}
+
+export interface Web3AuthOnboardDto {
+  tempToken: {
+    token: string;
+    expiresIn: number;
+    token_type: string;
+  };
+  isVerified: boolean;
+  timeZone?: string;
+}
+
 export interface AuthenticationModuleType {
   login(payload: LoginPayload): Promise<ResponseDto<LoginDto>>;
   loginTwoFa(payload: LoginTwoFAPayload): Promise<ResponseDto<LoginTwoFADTO>>;
@@ -200,4 +256,7 @@ export interface AuthenticationModuleType {
   googleOAuthGenerateState(): Promise<ResponseDto<GoogleOAuthGenerateDto>>;
   googleOAuthValidateState(props: GoogleOAuthValdatePayload): Promise<ResponseDto<GoogleOAuthValidateDto>>;
   resendTwoFAEmailCode(email: string): Promise<ResponseDto<{}>>;
+  web3AuthRequest(payload: Web3AuthRequestPayload): Promise<ResponseDto<Web3AuthRequestDto>>;
+  web3AuthValidate(payload: Web3AuthValidatePayload): Promise<ResponseDto<Web3AuthValidateDto>>;
+  web3AuthOnboard(payload: Web3AuthOnboardPayload): Promise<ResponseDto<Web3AuthOnboardDto>>;
 }
