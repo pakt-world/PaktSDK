@@ -20,6 +20,9 @@ export const API_PATHS = {
     RESEND_TWO_FA_EMAIL_CODE: "/v1/auth/2fa/email/code",
     GOOGLE_OAUTH_GENERATE_STATE: "/v1/auth/google/oauth/generate-state",
     GOOGLE_OAUTH_VALIDATE_STATE: "/v1/auth/google/oauth/validate-state",
+    WEB3_AUTH_REQUEST: "/v1/auth/web3/request",
+    WEB3_AUTH_VALIDATE: "/v1/auth/web3/validate",
+    WEB3_AUTH_ONBOARD: "/v1/auth/web3/onboard",
 
     // Collection endpoints
     COLLECTION: "/v1/collection",
