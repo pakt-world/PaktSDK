@@ -25,6 +25,12 @@ import {
   ValidatePasswordToken,
   ValidateReferralDto,
   VerifyAccountPayload,
+  Web3AuthOnboardDto,
+  Web3AuthOnboardPayload,
+  Web3AuthRequestDto,
+  Web3AuthRequestPayload,
+  Web3AuthValidateDto,
+  Web3AuthValidatePayload,
 } from "./auth.dto";
 
 // Export all Types to Service
@@ -247,6 +253,47 @@ export class AuthenticationModule implements AuthenticationModuleType {
       const response: ResponseDto<{}> = await this.connector.post({
         body: { email },
         path: API_PATHS.v1.RESEND_TWO_FA_EMAIL_CODE,
+      });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      return response;
+    });
+  }
+
+  async web3AuthRequest(payload: Web3AuthRequestPayload): Promise<ResponseDto<Web3AuthRequestDto>> {
+    return ErrorUtils.newTryFail(async () => {
+      const response: ResponseDto<Web3AuthRequestDto> = await this.connector.post({
+        path: API_PATHS.v1.WEB3_AUTH_REQUEST,
+        body: payload,
+      });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      if (response.data?.tempToken?.token) {
+        Container.of(this.id).set(TEMP_TOKEN, response.data.tempToken.token);
+      }
+      return response;
+    });
+  }
+
+  async web3AuthValidate(payload: Web3AuthValidatePayload): Promise<ResponseDto<Web3AuthValidateDto>> {
+    return ErrorUtils.newTryFail(async () => {
+      const response: ResponseDto<Web3AuthValidateDto> = await this.connector.post({
+        path: API_PATHS.v1.WEB3_AUTH_VALIDATE,
+        body: payload,
+      });
+      if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
+      if (response.data?.token) {
+        Container.of(this.id).set(AUTH_TOKEN, response.data.token);
+      } else if (response.data?.tempToken?.token) {
+        Container.of(this.id).set(TEMP_TOKEN, response.data.tempToken.token);
+      }
+      return response;
+    });
+  }
+
+  async web3AuthOnboard(payload: Web3AuthOnboardPayload): Promise<ResponseDto<Web3AuthOnboardDto>> {
+    return ErrorUtils.newTryFail(async () => {
+      const response: ResponseDto<Web3AuthOnboardDto> = await this.connector.post({
+        path: API_PATHS.v1.WEB3_AUTH_ONBOARD,
+        body: payload,
       });
       if (Number(response.statusCode || response.code) > 226 || response.status === Status.ERROR) return response;
       return response;
